@@ -389,8 +389,14 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
         <div class="macro"><div class="m-n" id="dCarb">0</div><div class="m-t">碳水 g</div></div>
         <div class="macro"><div class="m-n" id="dFat">0</div><div class="m-t">脂肪 g</div></div>
       </div>
-      <div class="pbar"><i id="dietPbarFg"></i></div>
-      <div class="pbar-lbl" id="dietPbarLbl">蛋白 0 / 0 g</div>
+      <div class="pbar"><i id="dietCalBar"></i></div>
+      <div class="pbar-lbl" id="dietCalLbl">热量 0 / 0 kcal</div>
+      <div class="pbar"><i id="dietProteinBar"></i></div>
+      <div class="pbar-lbl" id="dietProteinLbl">蛋白质 0 / 0 g</div>
+      <div class="pbar"><i id="dietCarbBar"></i></div>
+      <div class="pbar-lbl" id="dietCarbLbl">碳水 0 / 0 g</div>
+      <div class="pbar"><i id="dietFatBar"></i></div>
+      <div class="pbar-lbl" id="dietFatLbl">脂肪 0 / 0 g</div>
     </div>
 
     <h2>补剂时间表</h2>
@@ -1299,9 +1305,17 @@ function renderDiet(){
   document.getElementById('dPro').textContent=Math.round(t.p);
   document.getElementById('dCarb').textContent=Math.round(t.c);
   document.getElementById('dFat').textContent=Math.round(t.f);
-  const target=proteinTarget();
-  document.getElementById('dietPbarFg').style.width=(Math.min(1,t.p/target)*100)+'%';
-  document.getElementById('dietPbarLbl').textContent='蛋白 '+Math.round(t.p)+' / '+target+' g';
+  const targets=dailyTargets();
+  const progress=[
+    ['Cal',t.cal,targets.cal,'热量','kcal'],
+    ['Protein',t.p,targets.p,'蛋白质','g'],
+    ['Carb',t.c,targets.c,'碳水','g'],
+    ['Fat',t.f,targets.f,'脂肪','g']
+  ];
+  progress.forEach(([key,current,target,label,unit])=>{
+    document.getElementById('diet'+key+'Bar').style.width=(Math.min(1,current/target)*100)+'%';
+    document.getElementById('diet'+key+'Lbl').textContent=label+' '+Math.round(current)+' / '+target+' '+unit;
+  });
 
   const supp=(state.supplements&&state.supplements[today()])||{};
   const dayPlan=planFor(today());
