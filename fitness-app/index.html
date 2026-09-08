@@ -353,11 +353,13 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
     <div class="progress-bar"><i id="trainProgress" style="width:0%"></i></div>
     <div class="card prep-card" id="restCard">
       <div class="prep-title"><span>⏱ 组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
-      <div style="display:flex;align-items:center;gap:10px"><b id="restTimer" style="font-size:28px;color:var(--orange)">00:00</b><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div>
+      <div style="display:flex;align-items:center;gap:10px"><b id="restTimer" style="font-size:28px;color:var(--orange)">00:00</b><button class="btn-secondary" id="restAdd">+30秒</button><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div>
+      <div class="prep-note" style="margin-top:9px">用法：完成正式组 → 填写次数并离开输入框 → 自动按该动作休息时间倒计时。主动作通常120–180秒，辅助动作60–90秒；呼吸仍急促或动作准备未完成时，可多休息30–60秒。</div>
     </div>
     <div class="card prep-card">
       <div class="prep-title"><span>🔥 训练前热身</span><span class="prep-sub" id="warmTime">约 5 分钟</span></div>
       <ul class="prep-list" id="warmList"></ul>
+      <div class="prep-note">图例：橙色＝身体姿势，灰色＝杠铃、哑铃、训练凳或器械。图例只提示动作方向，实际以动作要点和无痛幅度为准。</div>
     </div>
     <div id="exList"></div>
     <div class="card prep-card">
@@ -551,6 +553,27 @@ const PROGRAMS={
     {id:'legs_core',name:'核心训练（可选）',sets:'2组 × 8-12次',workSets:2,minReps:8,maxReps:12,rir:3,rest:60,muscle:'核心',coef:0,step:0,wtag:'自重',equipmentId:'bodyweight_core',priority:4,warmupSets:0,autoProgress:false,optional:true,side:'时间允许时进行 · 最多6分钟',tip:'选择能保持腰椎稳定的死虫式或平板支撑；一旦腰背代偿或疼痛立即停止。',svg:LEGACY_PROGRAMS.legs[4].svg}
   ]
 };
+
+// 与 v2 动作一一对应的示意图。橙色是身体，灰色是器械；仅用于提示姿势方向。
+const EXERCISE_SVGS={
+  push_barbell_bench:S(L(18,112,102,112,G)+L(28,112,28,140,G)+L(92,112,92,140,G)+D(84,88,7)+L(76,92,44,100)+L(44,100,28,114)+L(55,96,48,70)+L(72,92,70,70)+L(34,66,86,66,G)+L(48,70,34,66)+L(70,70,86,66)),
+  push_incline_db:S(L(28,118,82,72,G)+L(28,118,28,140,G)+D(78,62,7)+L(72,70,52,90)+L(52,90,34,118)+L(65,78,48,58)+L(80,70,68,48)+L(44,52,52,64,G)+L(64,44,72,56,G)),
+  push_shoulder_press:S(L(42,62,42,128,G)+L(42,112,78,112,G)+D(62,48,7)+L(62,58,62,92)+L(62,92,52,114)+L(62,92,76,114)+L(62,66,48,50)+L(48,50,48,30)+L(62,66,76,50)+L(76,50,76,30)+L(42,25,54,25,G)+L(70,25,82,25,G)),
+  push_lateral_raise:LEGACY_PROGRAMS.push[2].svg,
+  push_cable_pressdown:S(L(96,18,96,140,G)+L(70,18,96,18,G)+L(82,18,82,55,G)+D(52,34,7)+L(52,44,52,90)+L(52,90,42,128)+L(52,90,64,128)+L(52,54,66,64)+L(66,64,70,82)+L(52,54,42,68)+L(42,68,46,84)+L(42,84,74,84,G)),
+  pull_pullup:LEGACY_PROGRAMS.pull[0].svg,
+  pull_chest_supported_row:S(L(34,112,78,62,G)+L(34,112,34,140,G)+D(72,50,7)+L(68,58,48,82)+L(48,82,36,112)+L(58,68,36,58)+L(36,58,22,72)+L(22,72,16,72,G)+L(50,86,72,112)+L(72,112,82,138)),
+  pull_cable_row:S(L(18,22,18,132,G)+L(18,68,38,68,G)+D(70,48,7)+L(66,56,58,90)+L(58,90,42,112)+L(58,90,82,112)+L(62,66,44,74)+L(44,74,30,68)+L(30,68,18,68,G)+L(42,112,28,138)+L(82,112,94,138)),
+  pull_reverse_fly:S(L(48,58,48,128,G)+L(48,110,78,110,G)+D(64,44,7)+L(64,54,64,92)+L(64,62,34,70)+L(34,70,22,62)+L(64,62,94,70)+L(94,70,106,62)+L(64,92,54,114)+L(64,92,78,114)),
+  pull_db_curl:S(D(60,28,7)+L(60,38,60,84)+L(60,84,48,126)+L(60,84,74,126)+L(60,48,46,66)+L(46,66,50,82)+L(60,48,74,66)+L(74,66,70,82)+L(44,82,54,82,G)+L(66,82,76,82,G)),
+  legs_back_squat:S(D(60,34,7)+L(60,44,60,82)+L(60,82,44,108)+L(44,108,36,140)+L(60,82,78,108)+L(78,108,88,140)+L(34,48,86,48,G)+L(60,52,38,48)+L(60,52,82,48)),
+  legs_barbell_rdl:S(D(68,30,7)+L(66,40,52,70)+L(52,70,48,104)+L(48,104,38,140)+L(48,104,68,140)+L(54,66,38,94)+L(66,48,76,92)+L(30,96,84,96,G)),
+  legs_bulgarian_split_squat:S(L(82,104,108,104,G)+D(52,32,7)+L(52,42,52,82)+L(52,82,34,106)+L(34,106,28,140)+L(52,82,78,102)+L(78,102,94,104)+L(52,50,40,72)+L(52,50,66,72)+L(34,72,44,72,G)+L(62,72,72,72,G)),
+  legs_leg_curl:S(L(24,78,94,78,G)+L(30,78,30,126,G)+D(84,58,7)+L(76,62,48,72)+L(48,72,34,78)+L(44,76,62,96)+L(62,96,82,88)+L(82,88,94,94,G)+L(94,82,94,102,G)),
+  legs_calf_raise:S(D(60,26,7)+L(60,36,60,84)+L(60,84,50,122)+L(60,84,72,122)+L(50,122,46,142)+L(72,122,76,142)+L(36,146,86,146,G)+L(46,142,40,146)+L(76,142,82,146)+L(60,46,44,66)+L(60,46,76,66)+L(38,66,48,66,G)+L(72,66,82,66,G)),
+  legs_core:S(L(18,126,104,126,G)+D(34,108,7)+L(42,108,62,102)+L(62,102,80,116)+L(54,104,48,78)+L(48,78,36,64)+L(62,102,76,80)+L(76,80,90,70)+L(44,106,34,88)+L(70,108,86,92))
+};
+Object.values(PROGRAMS).flat().forEach(e=>{ if(EXERCISE_SVGS[e.id]) e.svg=EXERCISE_SVGS[e.id]; });
 
 // 热身与放松（按推/拉/腿日分别给）
 const WARMUP={
@@ -1425,6 +1448,7 @@ document.getElementById('exList').addEventListener('change',e=>{
 });
 
 document.getElementById('restPause').addEventListener('click',e=>{ restPaused=!restPaused; e.currentTarget.textContent=restPaused?'继续':'暂停'; });
+document.getElementById('restAdd').addEventListener('click',()=>{ restRemaining+=30; paintRestTimer(); });
 document.getElementById('restSkip').addEventListener('click',()=>{ clearInterval(restTimerId); restTimerId=null; restRemaining=0; paintRestTimer(); });
 
 // 训练日切换
