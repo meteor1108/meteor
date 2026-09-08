@@ -529,6 +529,12 @@ const LEGACY_PROGRAMS={
 // v2 增肌计划：动作顺序按“技术要求最高/负荷最大 → 辅助 → 孤立”排列。
 // 所有重量都是保守起点；首次实际训练记录会覆盖起点。器械重量不会跨器械共用。
 const PLAN_VERSION='ppl-hypertrophy-v2';
+const PROFILE_VERSION='fy-65kg-hypertrophy-v1';
+const INITIAL_WEIGHTS={
+  barbell_bench:40,incline_dumbbell:12.5,shoulder_press:10,dumbbell_lateral_raise:5,cable_pressdown:20,
+  chest_supported_row:15,seated_cable_row:30,reverse_pec_deck:20,dumbbell_curl:7.5,
+  barbell_squat:40,barbell_rdl:40,dumbbell_bulgarian:7.5,leg_curl_not_checked:20,dumbbell_calf_raise:15
+};
 const PROGRAMS={
   push:[
     {id:'push_barbell_bench',name:'杠铃卧推',sets:'4组 × 6-8次',workSets:4,minReps:6,maxReps:8,rir:2,rest:180,muscle:'胸·三头',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_bench',priority:1,warmupSets:2,autoProgress:true,side:'杠铃总重 · 建议有保护杆或保护人',tip:'眼睛位于杠铃下方，肩胛后收下沉，双脚踩稳；杠铃落在胸骨下段，前臂接近垂直，推起时保持肩胛稳定。',svg:LEGACY_PROGRAMS.push[0].svg},
@@ -729,7 +735,7 @@ function setFoodQty(name, meal, delta){
 
 const defaultState={
   schemaVersion:2, planVersion:PLAN_VERSION,
-  goal:'bulk', weight:65, target:75, deadline:'2026-12-31',
+  profileVersion:PROFILE_VERSION, goal:'bulk', weight:65, target:69, deadline:'2027-06-30',
   checkins:[], training:{}, setLogs:{}, diet:{}, weights:{}, bodyWeights:{}, bg:'', planEpoch:'', planOverrides:{}, feedback:{},
   sessionSnapshots:{}, painLogs:[], progressionFreeze:{}, recoveryDeferred:{}, equipmentStatus:{legs_leg_curl:'notChecked'}, legacySetLogs:{}, legacyTraining:{}, migrationPending:false
 };
@@ -766,6 +772,13 @@ let state=load();
 if(!state.setLogs) state.setLogs={};
 if(!state.planEpoch) state.planEpoch=today();
 if(!state.planVersion) state.planVersion=PLAN_VERSION;
+if(state.profileVersion!==PROFILE_VERSION){
+  state.goal='bulk'; state.weight=65; state.target=69; state.deadline='2027-06-30';
+  state.weights=Object.assign({},INITIAL_WEIGHTS,state.weights||{});
+  state.bodyWeights=state.bodyWeights||{};
+  if(!state.bodyWeights[today()]) state.bodyWeights[today()]=65;
+  state.profileVersion=PROFILE_VERSION;
+}
 save(state);
 let curDay='push';
 let openIdx=null; // 当前展开详情（看图片/要点）的动作下标
@@ -1014,7 +1027,7 @@ function fmtSets(rows){
 function progression(ex,prev,day,index){
   if(!ex.autoProgress) return '此动作不自动加重';
   if(state.progressionFreeze?.[ex.id]) return '已冻结自动加重：先处理疼痛记录';
-  if(!prev||!prev.sets.length) return '首次记录：选择能保留约2次余力的重量';
+  if(!prev||!prev.sets.length) return '首次校准：以RIR 3完成，偏重时立即减重';
   const rx=rxInfo(ex), rows=prev.sets.filter(x=>(x.setType||'working')==='working'&&Number(x.reps)>0);
   const safe=rows.every(x=>!x.pain&&x.formOk!==false);
   if(rows.length>=rx.sets&&safe&&rows.every(x=>Number(x.reps)>=rx.max&&Number(x.rir)>=rx.rir)){
@@ -1167,6 +1180,7 @@ function renderTrain(){
     const rows=logBucket(today(),curDay,i,false);
     const setCount=adv.light?Math.max(2,rx.sets-1):rx.sets;
     const warmupCount=e.warmupSets||0;
+    const targetRir=adv.light?3:(prev?rx.rir:3);
     const suggested=progression(e,prev,curDay,i);
     if(e.coef&&prev){
       state.appliedProgression=state.appliedProgression||{};
@@ -1194,7 +1208,7 @@ function renderTrain(){
         <div><span class="side-tag">${e.side}</span></div>
         <div class="tip">${e.tip}</div>
         <button class="btn-secondary stop-pain" style="margin-top:8px;color:var(--red)">出现异常疼痛：停止</button>
-        <div class="rx-line"><span class="rx-tag">正式组 RIR ${adv.light?3:rx.rir}</span><span class="rx-tag">休息 ${rx.rest}秒</span><span class="rx-tag ${suggested.includes('加')?'up':''}">${suggested}</span></div>
+        <div class="rx-line"><span class="rx-tag">正式组 RIR ${targetRir}${prev?'':'（首次校准）'}</span><span class="rx-tag">休息 ${rx.rest}秒</span><span class="rx-tag ${suggested.includes('加')?'up':''}">${suggested}</span></div>
         <div class="last-log">上次：${prev?prev.date+' · '+fmtSets(prev.sets):'暂无记录'}</div>
         <div class="set-editor">
           <div class="set-head"><span>类型</span><span>重量kg</span><span>次数</span><span>RIR</span></div>
@@ -1209,7 +1223,7 @@ function renderTrain(){
             return `<div class="set-row"><b>${isWarmup?'热'+(si+1):'正'+(workIndex+1)}</b>
               <input class="set-input" data-field="kg" data-set="${si}" data-set-type="${type}" inputmode="decimal" type="number" step="${e.step||1}" value="${baseKg}">
               <input class="set-input" data-field="reps" data-set="${si}" inputmode="numeric" type="number" min="0" value="${row.reps??''}" placeholder="${rx.min}-${rx.max}">
-              <input class="set-input" data-field="rir" data-set="${si}" inputmode="numeric" type="number" min="0" max="10" value="${row.rir??''}" placeholder="${isWarmup?'—':(adv.light?3:rx.rir)}">
+              <input class="set-input" data-field="rir" data-set="${si}" inputmode="numeric" type="number" min="0" max="10" value="${row.rir??''}" placeholder="${isWarmup?'—':targetRir}">
             </div>`;
           }).join('')}
         </div>
