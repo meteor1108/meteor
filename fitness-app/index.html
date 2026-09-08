@@ -351,6 +351,10 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <span id="trainDone">已完成 0/6</span>
     </div>
     <div class="progress-bar"><i id="trainProgress" style="width:0%"></i></div>
+    <div class="card prep-card" id="restCard">
+      <div class="prep-title"><span>⏱ 组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><b id="restTimer" style="font-size:28px;color:var(--orange)">00:00</b><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div>
+    </div>
     <div class="card prep-card">
       <div class="prep-title"><span>🔥 训练前热身</span><span class="prep-sub" id="warmTime">约 5 分钟</span></div>
       <ul class="prep-list" id="warmList"></ul>
@@ -440,6 +444,12 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <div class="bg-hint" id="bgHint">未设置背景，当前使用默认氛围光斑</div>
     </div>
     <button class="save-btn" id="saveBtn">保存</button>
+    <div class="bg-actions" style="margin-top:10px">
+      <button class="btn-secondary" id="exportBtn">导出JSON备份</button>
+      <button class="btn-secondary" id="importBtn">导入JSON</button>
+      <input type="file" id="importInput" accept="application/json,.json" style="display:none">
+    </div>
+    <div class="bg-hint" id="dataHint">计划版本：ppl-hypertrophy-v2 · 导入异常文件不会覆盖现有数据</div>
   </section>
 
   <nav class="tabbar">
@@ -477,7 +487,7 @@ function R(x,y,w,h){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" r
 const S=b=>`<svg viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
 
 // coef: 起始重量(kg)，0 表示自重；step: 每次 +/− 步长(kg)；wtag: 重量含义(总重/单只/配重)；side: 器械握持说明；tip: 动作要点
-const PROGRAMS={
+const LEGACY_PROGRAMS={
   push:[
     {name:'器械推胸',sets:'3组 × 8-12次',muscle:'胸·三头',coef:25,step:5,wtag:'配重',side:'双手握把 · 重量为器械配重',tip:'座椅调到握把与胸中部齐平，肩胛后收贴背；推起时不锁死肘，回程保持控制。',
       svg:S(L(40,28,40,96,G)+L(40,28,52,28,G)+D(60,24,8)+L(60,34,60,72)+L(60,72,48,92)+L(48,92,44,110)+L(60,72,72,92)+L(72,92,76,110)+L(60,42,40,50)+L(40,50,30,56,G)+L(60,42,80,50)+L(80,50,90,56,G)+L(40,50,52,58)+L(80,50,68,58))},
@@ -511,6 +521,34 @@ const PROGRAMS={
       svg:S(D(60,24,8)+L(60,38,60,84)+L(60,84,50,118)+L(50,118,47,140)+L(60,84,70,118)+L(70,118,73,140)+L(47,140,44,146)+L(73,140,76,146)+L(30,146,90,146,G)+L(60,40,50,58)+L(60,40,70,58))},
     {name:'臀桥',sets:'3组 × 15次',muscle:'臀·腘绳',coef:0,step:0,wtag:'',side:'自重 · 仰卧屈膝',tip:'仰卧屈膝，脚踩实，臀部发力顶起至躯干与大腿成一直线，顶峰夹臀；下放控制。',
       svg:S(L(24,132,96,132,G)+D(32,116,8)+L(38,116,46,112)+L(46,112,66,84)+L(66,84,60,116)+L(60,116,64,130))}
+  ]
+};
+
+// v2 增肌计划：动作顺序按“技术要求最高/负荷最大 → 辅助 → 孤立”排列。
+// 所有重量都是保守起点；首次实际训练记录会覆盖起点。器械重量不会跨器械共用。
+const PLAN_VERSION='ppl-hypertrophy-v2';
+const PROGRAMS={
+  push:[
+    {id:'push_barbell_bench',name:'杠铃卧推',sets:'4组 × 6-8次',workSets:4,minReps:6,maxReps:8,rir:2,rest:180,muscle:'胸·三头',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_bench',priority:1,warmupSets:2,autoProgress:true,side:'杠铃总重 · 建议有保护杆或保护人',tip:'眼睛位于杠铃下方，肩胛后收下沉，双脚踩稳；杠铃落在胸骨下段，前臂接近垂直，推起时保持肩胛稳定。',svg:LEGACY_PROGRAMS.push[0].svg},
+    {id:'push_incline_db',name:'上斜哑铃卧推',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:120,muscle:'上胸·三头',coef:12.5,step:2.5,wtag:'单只',equipmentId:'incline_dumbbell',priority:2,warmupSets:1,autoProgress:true,side:'双手各一只 · 凳角约20–30°',tip:'肩胛贴凳，手腕叠在肘上方；下放至上胸两侧的无痛深度，避免凳角过高变成肩推。',svg:LEGACY_PROGRAMS.push[1].svg},
+    {id:'push_shoulder_press',name:'哑铃或器械肩推',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:120,muscle:'肩·三头',coef:10,step:2.5,wtag:'单只/配重',equipmentId:'shoulder_press',priority:2,warmupSets:1,autoProgress:true,side:'优先选择肩部无痛的哑铃或器械',tip:'背部贴靠垫，前臂保持接近垂直；推至肘接近伸直即可，不耸肩、不用腰部过度反弓。',svg:LEGACY_PROGRAMS.push[3].svg},
+    {id:'push_lateral_raise',name:'哑铃侧平举',sets:'3组 × 12-20次',workSets:3,minReps:12,maxReps:20,rir:2,rest:75,muscle:'肩中束',coef:5,step:2.5,wtag:'单只',equipmentId:'dumbbell_lateral_raise',priority:3,warmupSets:0,autoProgress:true,side:'双手各一只 · 重量为单只哑铃',tip:'微屈肘，在身体略前方抬至肩高以内；肩膀远离耳朵，控制下落，不借力甩动。',svg:LEGACY_PROGRAMS.push[2].svg},
+    {id:'push_cable_pressdown',name:'绳索下压',sets:'3组 × 10-15次',workSets:3,minReps:10,maxReps:15,rir:2,rest:75,muscle:'三头',coef:20,step:5,wtag:'配重',equipmentId:'cable_pressdown',priority:3,warmupSets:0,autoProgress:true,side:'双手握绳 · 记录器械配重',tip:'上臂固定在身体两侧，伸肘至接近锁定，回程保持控制；躯干不要前后摆动。',svg:LEGACY_PROGRAMS.push[4].svg}
+  ],
+  pull:[
+    {id:'pull_pullup',name:'引体向上',sets:'3组 × 6-10次',workSets:3,minReps:6,maxReps:10,rir:2,rest:150,muscle:'背阔·肱二头',coef:0,step:0,wtag:'自重/辅助',equipmentId:'pullup_station',priority:1,warmupSets:1,autoProgress:true,side:'自重65kg或辅助 · 握距略宽于肩',tip:'先让肩胛下沉，再把胸口拉向杠；避免摆腿和耸肩。低于6次时记录辅助重量，不用动作变形凑次数。',svg:LEGACY_PROGRAMS.pull[0].svg},
+    {id:'pull_chest_supported_row',name:'胸托哑铃或器械划船',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:120,muscle:'中背·背阔',coef:15,step:2.5,wtag:'单只/配重',equipmentId:'chest_supported_row',priority:1,warmupSets:1,autoProgress:true,side:'胸口贴靠垫 · 明确记录哑铃或器械',tip:'胸部保持贴垫，肘向后下方拉，顶峰夹背；不要抬胸借力或耸肩。',svg:LEGACY_PROGRAMS.pull[1].svg},
+    {id:'pull_cable_row',name:'坐姿绳索划船',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:90,muscle:'背',coef:30,step:5,wtag:'配重',equipmentId:'seated_cable_row',priority:2,warmupSets:0,autoProgress:true,side:'双手握把 · 记录器械配重',tip:'脊柱保持中立，肘向后拉至腹部；回程让肩胛自然前伸，但不靠躯干大幅摆动。',svg:LEGACY_PROGRAMS.pull[2].svg},
+    {id:'pull_reverse_fly',name:'反向蝴蝶机',sets:'2组 × 12-20次',workSets:2,minReps:12,maxReps:20,rir:2,rest:75,muscle:'后三角·上背',coef:20,step:5,wtag:'配重',equipmentId:'reverse_pec_deck',priority:3,warmupSets:0,autoProgress:true,side:'胸口贴靠垫 · 握把与肩同高或略低',tip:'保持肘部轻微弯曲，用后束带动手臂向外打开；不要耸肩或过度挺腰。',svg:LEGACY_PROGRAMS.push[1].svg},
+    {id:'pull_db_curl',name:'哑铃弯举',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:75,muscle:'肱二头',coef:7.5,step:2.5,wtag:'单只',equipmentId:'dumbbell_curl',priority:3,warmupSets:0,autoProgress:true,side:'双手各一只 · 重量为单只哑铃',tip:'上臂固定，手腕保持中立，完整屈肘后控制下放；不要用腰部摆动。',svg:LEGACY_PROGRAMS.pull[3].svg}
+  ],
+  legs:[
+    {id:'legs_back_squat',name:'杠铃深蹲',sets:'4组 × 6-8次',workSets:4,minReps:6,maxReps:8,rir:2,rest:180,muscle:'股四头·臀',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_squat',priority:1,warmupSets:3,autoProgress:true,side:'杠铃总重 · 使用深蹲架保护杆',tip:'脚掌三点着地，膝盖与脚尖同向，躯干保持稳定；下蹲至能维持骨盆和腰背位置的深度，再沿脚掌中部站起。',svg:LEGACY_PROGRAMS.legs[0].svg},
+    {id:'legs_barbell_rdl',name:'杠铃罗马尼亚硬拉',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:150,muscle:'腘绳·臀',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_rdl',priority:1,warmupSets:1,autoProgress:true,side:'杠铃总重 · 杠铃贴腿移动',tip:'膝微屈并固定，髋部向后推，保持脊柱中立；在腿后侧充分拉伸且腰背不变形的位置返回。',svg:LEGACY_PROGRAMS.legs[1].svg},
+    {id:'legs_bulgarian_split_squat',name:'保加利亚分腿蹲',sets:'2组 × 每腿8-12次',workSets:2,minReps:8,maxReps:12,rir:2,rest:120,muscle:'股四头·臀',coef:7.5,step:2.5,wtag:'单只',equipmentId:'dumbbell_bulgarian',priority:2,warmupSets:0,autoProgress:true,side:'双手各一只 · 每腿分别完成',tip:'前脚站稳，后脚轻放凳面；下蹲时前膝与脚尖同向，重心主要留在前脚。',svg:LEGACY_PROGRAMS.legs[2].svg},
+    {id:'legs_leg_curl',name:'腿弯举',sets:'3组 × 10-15次',workSets:3,minReps:10,maxReps:15,rir:2,rest:90,muscle:'腘绳肌',coef:20,step:5,wtag:'配重',equipmentId:'leg_curl_not_checked',equipmentStatus:'notChecked',priority:2,warmupSets:0,autoProgress:true,side:'器械待确认 · 首次使用前核对是否为腿弯举',tip:'调整转轴对准膝关节，固定骨盆；屈膝到舒适范围后控制回程，不要快速弹回。',svg:LEGACY_PROGRAMS.legs[4].svg},
+    {id:'legs_calf_raise',name:'站姿提踵',sets:'3组 × 10-15次',workSets:3,minReps:10,maxReps:15,rir:2,rest:75,muscle:'小腿',coef:15,step:2.5,wtag:'单只',equipmentId:'dumbbell_calf_raise',priority:3,warmupSets:0,autoProgress:true,side:'双手各一只 · 重量为单只哑铃',tip:'前脚掌踩稳，脚跟在可控范围充分下放再抬高；顶点停顿，不用膝关节弹动。',svg:LEGACY_PROGRAMS.legs[3].svg},
+    {id:'legs_core',name:'核心训练（可选）',sets:'2组 × 8-12次',workSets:2,minReps:8,maxReps:12,rir:3,rest:60,muscle:'核心',coef:0,step:0,wtag:'自重',equipmentId:'bodyweight_core',priority:4,warmupSets:0,autoProgress:false,optional:true,side:'时间允许时进行 · 最多6分钟',tip:'选择能保持腰椎稳定的死虫式或平板支撑；一旦腰背代偿或疼痛立即停止。',svg:LEGACY_PROGRAMS.legs[4].svg}
   ]
 };
 
@@ -667,15 +705,34 @@ function setFoodQty(name, meal, delta){
 }
 
 const defaultState={
+  schemaVersion:2, planVersion:PLAN_VERSION,
   goal:'bulk', weight:65, target:75, deadline:'2026-12-31',
-  checkins:[], training:{}, setLogs:{}, diet:{}, weights:{}, bg:'', planEpoch:'', planOverrides:{}, feedback:{}
+  checkins:[], training:{}, setLogs:{}, diet:{}, weights:{}, bodyWeights:{}, bg:'', planEpoch:'', planOverrides:{}, feedback:{},
+  sessionSnapshots:{}, painLogs:[], progressionFreeze:{}, recoveryDeferred:{}, equipmentStatus:{legs_leg_curl:'notChecked'}, legacySetLogs:{}, legacyTraining:{}, migrationPending:false
 };
+
+function freshState(){ return JSON.parse(JSON.stringify(defaultState)); }
+function migrateState(raw){
+  if(!raw) return freshState();
+  if((raw.schemaVersion||1)<2){
+    try{
+      const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+      localStorage.setItem('fitnessState_backup_v1_'+stamp,JSON.stringify(raw));
+    }catch(e){}
+    raw.legacySetLogs=raw.setLogs||{};
+    raw.legacyTraining=raw.training||{};
+    raw.setLogs={}; raw.training={};
+    raw.schemaVersion=2; raw.planVersion=PLAN_VERSION;
+    raw.migrationPending=Object.keys(raw.legacySetLogs).length>0;
+  }
+  return Object.assign(freshState(),raw);
+}
 
 function load(){
   try{
     const s=JSON.parse(localStorage.getItem(KEY));
-    return s?Object.assign({},defaultState,s):JSON.parse(JSON.stringify(defaultState));
-  }catch(e){ return JSON.parse(JSON.stringify(defaultState)); }
+    return migrateState(s);
+  }catch(e){ return freshState(); }
 }
 function save(s){
   try{ localStorage.setItem(KEY,JSON.stringify(s)); }
@@ -685,12 +742,24 @@ function save(s){
 let state=load();
 if(!state.setLogs) state.setLogs={};
 if(!state.planEpoch) state.planEpoch=today();
+if(!state.planVersion) state.planVersion=PLAN_VERSION;
+save(state);
 let curDay='push';
 let openIdx=null; // 当前展开详情（看图片/要点）的动作下标
 let curFoodCat='全部'; // 自选食物分类
 let curMeal='breakfast'; // 当前餐次（早/午/晚/加餐）
 let calYear=new Date().getFullYear(); // 日历查看的年份
 let calMonth=new Date().getMonth(); // 日历查看的月份（0-11）
+let restTimerId=null, restPaused=false, restRemaining=0;
+
+function paintRestTimer(){
+  const el=document.getElementById('restTimer'); if(!el) return;
+  el.textContent=String(Math.floor(restRemaining/60)).padStart(2,'0')+':'+String(restRemaining%60).padStart(2,'0');
+}
+function startRestTimer(seconds){
+  clearInterval(restTimerId); restRemaining=Math.max(0,Math.round(seconds)); restPaused=false; paintRestTimer();
+  restTimerId=setInterval(()=>{ if(restPaused) return; restRemaining=Math.max(0,restRemaining-1); paintRestTimer(); if(!restRemaining){clearInterval(restTimerId);restTimerId=null;} },1000);
+}
 
 function roundStep(x, step){ return Math.max(step, Math.round(x/step)*step); }
 function startKg(coef, step){ return coef? roundStep(coef, step) : null; }
@@ -701,17 +770,31 @@ function getKg(key, coef, step){
 }
 
 function proteinTarget(){
-  const c=state.goal==='bulk'?2.0:2.2;
+  const c=state.goal==='bulk'?2.0:2.2; // 保持在 1.6–2.2 g/kg 范围内
   return Math.round(state.weight*c);
 }
 
-// 每日营养目标（估算，仅参考）：增肌热量盈余、减脂缺口；蛋白增肌2.0/减脂2.2 g/kg
+function nutritionTrend(){
+  const entries=Object.entries(state.bodyWeights||{}).filter(([,v])=>Number(v)>0).sort((a,b)=>a[0].localeCompare(b[0]));
+  if(entries.length<14) return {delta:0,status:'晨重数据不足（至少14天）'};
+  const last=entries.slice(-14), dietDays=last.filter(([d])=>Array.isArray(state.diet[d])&&state.diet[d].length).length;
+  if(dietDays<10) return {delta:0,status:'实际饮食记录不足，不自动调整热量'};
+  const avg=a=>a.reduce((s,[,v])=>s+Number(v),0)/a.length;
+  const firstAvg=avg(last.slice(0,7)), secondAvg=avg(last.slice(7));
+  const weeklyPct=(secondAvg-firstAvg)/firstAvg*100;
+  if(weeklyPct<0.1) return {delta:125,status:'周增重低于0.1%，建议 +125 kcal'};
+  if(weeklyPct>0.25) return {delta:-125,status:'周增重高于0.25%，建议 -125 kcal'};
+  return {delta:0,status:'周增重0.1%–0.25%，保持热量'};
+}
+
+// 每日营养目标：蛋白质和脂肪先满足最低线，剩余热量分配给碳水。
 function dailyTargets(){
-  const w=state.weight;
-  if(state.goal==='bulk'){
-    return {cal:Math.round(w*33), p:Math.round(w*2.0), c:Math.round(w*4.0), f:Math.round(w*1.0)};
-  }
-  return {cal:Math.round(w*25), p:Math.round(w*2.2), c:Math.round(w*2.5), f:Math.round(w*0.8)};
+  const w=state.weight, trend=nutritionTrend();
+  const cal=Math.round((state.goal==='bulk'?w*33:w*25)+trend.delta);
+  const p=Math.round(w*(state.goal==='bulk'?2.0:2.2));
+  const f=Math.round(w*0.8);
+  const c=Math.max(0,Math.round((cal-p*4-f*9)/4));
+  return {cal,p,c,f,status:trend.status};
 }
 
 // 餐次热量分配比例：早30% / 午35% / 晚25% / 加餐10%
@@ -769,19 +852,14 @@ function planFor(dateStr){
 // 估算某训练日预计时长（分钟）：每组 = 次数×3秒动作时间 + 90秒组间休息
 function estimateDuration(day, skipSet, light){
   const items=PROGRAMS[day];
-  let sec=0;
+  let sec=600; // 通用热身、器械设置和短暂转场
   items.forEach(e=>{
     if(skipSet && skipSet.has(e.name)) return;
-    const setsMatch=e.sets.match(/(\d+)组/);
-    let sets=setsMatch?+setsMatch[1]:3;
+    sec += 150;
+    let sets=e.workSets||3;
     if(light) sets=Math.max(2,sets-1);
-    const repsMatch=e.sets.match(/(\d+)(?:-(\d+))?次/);
-    let reps=10;
-    if(repsMatch){
-      if(repsMatch[2]) reps=(+repsMatch[1]+ +repsMatch[2])/2;
-      else reps=+repsMatch[1];
-    }
-    sec += sets * (reps*3 + 90);
+    const reps=((e.minReps||8)+(e.maxReps||12))/2;
+    sec += (e.warmupSets||0)*(8*3+60) + sets*(reps*3+(e.rest||90));
   });
   return Math.max(1, Math.round(sec/60));
 }
@@ -851,38 +929,77 @@ function renderHome(){
   renderStatus();
 }
 
+function shiftPlanOneDayForRest(){
+  state.recoveryDeferred=state.recoveryDeferred||{};
+  const t=today();
+  if(state.recoveryDeferred[t]||planFor(t)!==curDay) return;
+  const e=new Date(state.planEpoch+'T00:00:00');
+  e.setDate(e.getDate()+1);
+  state.planEpoch=e.getFullYear()+'-'+String(e.getMonth()+1).padStart(2,'0')+'-'+String(e.getDate()).padStart(2,'0');
+  state.planOverrides=state.planOverrides||{};
+  state.planOverrides[t]='rest';
+  state.recoveryDeferred[t]=curDay;
+}
+
 function rxInfo(ex){
+  if(ex.workSets) return {sets:ex.workSets,min:ex.minReps,max:ex.maxReps,rir:ex.rir,rest:ex.rest};
   const s=ex.sets.match(/(\d+)组/);
   const r=ex.sets.match(/(\d+)(?:-(\d+))?次/);
   return {sets:s?+s[1]:3,min:r?+r[1]:8,max:r?+(r[2]||r[1]):12,rir:2};
 }
 
+function exerciseKey(day,index){ return PROGRAMS[day][index].id; }
+
+function ensureSessionSnapshot(date,day){
+  state.sessionSnapshots=state.sessionSnapshots||{};
+  const key=date+'_'+day;
+  if(!state.sessionSnapshots[key]){
+    state.sessionSnapshots[key]={
+      date,day,planVersion:PLAN_VERSION,recoveryState:statusAdvice(feedbackToday()).state,
+      exercises:PROGRAMS[day].map(e=>({id:e.id,name:e.name,equipmentId:e.equipmentId,equipmentStatus:e.equipmentStatus||'confirmed',sets:e.workSets,minReps:e.minReps,maxReps:e.maxReps,rir:e.rir,rest:e.rest}))
+    };
+  }
+}
+
 function logBucket(date,day,index,create){
+  const id=exerciseKey(day,index);
   if(create){
     if(!state.setLogs[date]) state.setLogs[date]={};
     if(!state.setLogs[date][day]) state.setLogs[date][day]={};
-    if(!state.setLogs[date][day][index]) state.setLogs[date][day][index]=[];
+    if(!state.setLogs[date][day][id]) state.setLogs[date][day][id]=[];
   }
-  return state.setLogs[date]&&state.setLogs[date][day]&&state.setLogs[date][day][index]||[];
+  return state.setLogs[date]&&state.setLogs[date][day]&&state.setLogs[date][day][id]||[];
 }
 
 function previousLog(day,index){
-  const dates=Object.keys(state.setLogs||{}).filter(d=>d<today()&&state.setLogs[d]&&state.setLogs[d][day]&&state.setLogs[d][day][index]).sort().reverse();
-  return dates.length?{date:dates[0],sets:state.setLogs[dates[0]][day][index]}:null;
+  const id=exerciseKey(day,index);
+  const dates=Object.keys(state.setLogs||{}).filter(d=>d<today()&&state.setLogs[d]&&state.setLogs[d][day]&&state.setLogs[d][day][id]).sort().reverse();
+  return dates.length?{date:dates[0],sets:state.setLogs[dates[0]][day][id]}:null;
+}
+
+function recentLogs(day,index,limit){
+  const id=exerciseKey(day,index);
+  return Object.keys(state.setLogs||{}).filter(d=>d<today()&&state.setLogs[d]?.[day]?.[id]).sort().reverse().slice(0,limit).map(date=>({date,sets:state.setLogs[date][day][id]}));
 }
 
 function fmtSets(rows){
-  const good=(rows||[]).filter(x=>Number(x.reps)>0);
+  const good=(rows||[]).filter(x=>(x.setType||'working')==='working'&&Number(x.reps)>0);
   if(!good.length) return '暂无记录';
   return good.map(x=>(x.kg?x.kg+'kg × ':'')+x.reps+'次'+(x.rir!==''&&x.rir!=null?' · RIR '+x.rir:'')).join(' / ');
 }
 
-function progression(ex,prev){
+function progression(ex,prev,day,index){
+  if(!ex.autoProgress) return '此动作不自动加重';
+  if(state.progressionFreeze?.[ex.id]) return '已冻结自动加重：先处理疼痛记录';
   if(!prev||!prev.sets.length) return '首次记录：选择能保留约2次余力的重量';
-  const rx=rxInfo(ex), rows=prev.sets.filter(x=>Number(x.reps)>0);
-  if(rows.length>=rx.sets&&rows.every(x=>Number(x.reps)>=rx.max&&Number(x.rir)>=rx.rir)){
+  const rx=rxInfo(ex), rows=prev.sets.filter(x=>(x.setType||'working')==='working'&&Number(x.reps)>0);
+  const safe=rows.every(x=>!x.pain&&x.formOk!==false);
+  if(rows.length>=rx.sets&&safe&&rows.every(x=>Number(x.reps)>=rx.max&&Number(x.rir)>=rx.rir)){
     return ex.coef?'达成上限：本次建议加 '+ex.step+'kg':'达成上限：提高动作难度或增加负重';
   }
+  const lastTwo=recentLogs(day,index,2);
+  const twiceBelow=lastTwo.length===2&&lastTwo.every(log=>log.sets.filter(x=>(x.setType||'working')==='working').some(x=>Number(x.reps)>0&&Number(x.reps)<rx.min));
+  if(twiceBelow) return ex.coef?'连续两次低于下限：建议减 '+ex.step+'kg':'连续两次低于下限：降低动作难度';
   return '本次保持重量，争取增加1次重复';
 }
 
@@ -925,7 +1042,8 @@ function detectInjuryFromText(text){
 
 function statusAdvice(fb){
   const heavy=fb.doms==='heavy';
-  return {light:fb.sleep==='lt6'||heavy, rest:heavy};
+  const pain=fb.injury&&fb.injury!=='none';
+  return {light:!pain&&(fb.sleep==='lt6'||heavy), rest:pain, state:pain?'rest':((fb.sleep==='lt6'||heavy)?'deload':'normal')};
 }
 
 function renderStatus(){
@@ -939,15 +1057,15 @@ function renderStatus(){
   if(otherInput.value!==(fb.injuryText||'')) otherInput.value=fb.injuryText||'';
   document.getElementById('statusSummary').textContent=fbSummaryText(fb);
   const hint=[];
-  if(!fb.sleep && fb.doms==='none') hint.push('填完睡眠与酸痛后，训练页会自动调整组数；选择不适部位会自动跳过相关动作。');
+  if(!fb.sleep && fb.doms==='none') hint.push('填完睡眠与酸痛后，训练页会自动判断正常、减量或停止。');
   if(fb.injury==='other'){
     const hit=detectInjuryFromText(fb.injuryText);
-    if(hit) hint.push('识别为'+INJURY_LABEL[hit]+'：'+INJURY_GUIDE[hit].alt);
-    else hint.push('已记录「'+(fb.injuryText||'其他部位')+'」不适：目前没有对应的自动跳过规则，训练时避开该部位发力，出现刺痛立刻停。');
+    if(hit) hint.push('识别为'+INJURY_LABEL[hit]+'：停止本次训练流程，并冻结相关动作的自动加重。');
+    else hint.push('已记录「'+(fb.injuryText||'其他部位')+'」不适：停止本次训练流程；不自动推荐替代动作。');
   }
-  else if(fb.injury && fb.injury!=='none') hint.push(INJURY_GUIDE[fb.injury].alt);
-  if(fb.sleep==='lt6') hint.push('睡眠不足：今日自动改为轻量减组，每个动作少做 1 组。');
-  if(fb.doms==='heavy') hint.push('练后酸痛重：建议延后训练；若仍要练，已自动减组并降低强度。');
+  else if(fb.injury && fb.injury!=='none') hint.push(INJURY_LABEL[fb.injury]+'：疼痛优先，停止训练流程，不自动安排替代动作。');
+  if(fb.sleep==='lt6'&&(!fb.injury||fb.injury==='none')) hint.push('睡眠不足：今日减量，4组改3组、3组改2组，重量默认不变，目标RIR 3。');
+  if(fb.doms==='heavy'&&(!fb.injury||fb.injury==='none')) hint.push('酸痛影响动作：今日减量；若热身后动作幅度仍受限，请休息。');
   document.getElementById('statusHint').textContent=hint.length?hint.join(' '):'状态正常：按计划训练，练前认真热身即可。';
 }
 
@@ -966,12 +1084,15 @@ function lightSetsStr(sets){
 
 function renderVolBanner(fb){
   const el=document.getElementById('volBanner');
-  if(fb.doms==='heavy'){
-    el.textContent='练后酸痛重：建议今天延后训练或只做轻活动；如仍要练，已自动改为轻量减组。';
+  if(fb.injury&&fb.injury!=='none'){
+    el.textContent='检测到异常疼痛/不适：训练流程已停止，不自动推荐替代动作。请结束训练并记录变化；若反复出现，寻求专业评估。';
     el.className='vol-banner warn';
     el.style.display='block';
+  }else if(fb.doms==='heavy'){
+    el.textContent='恢复不足：今日减量约30%，保留主动作与原重量，目标RIR调整为3。';
+    el.className='vol-banner warn'; el.style.display='block';
   }else if(fb.sleep==='lt6'){
-    el.textContent='睡眠不足：今日已自动改为轻量减组，每个动作少做 1 组。';
+    el.textContent='睡眠不足：今日减量约30%，4组改3组、3组改2组，重量默认不变。';
     el.className='vol-banner';
     el.style.display='block';
   }else{
@@ -986,19 +1107,21 @@ function renderTrain(){
   renderStatus();
   const adv=statusAdvice(fb);
   renderVolBanner(fb);
-  const ruleKey=fb.injury==='other'?detectInjuryFromText(fb.injuryText):fb.injury;
-  const guide=INJURY_GUIDE[ruleKey]||INJURY_GUIDE.none;
-  const skipNames=guide.skip[curDay]||[];
+  const skipNames=adv.rest?PROGRAMS[curDay].map(x=>x.name):[];
   const skipSet=new Set(skipNames);
   const prog=PROGRAMS[curDay];
+  const pendingSet=new Set(prog.filter(e=>(state.equipmentStatus?.[e.id]||e.equipmentStatus)==='notChecked').map(e=>e.id));
+  const timeSkipSet=new Set([...skipNames,...prog.filter(e=>pendingSet.has(e.id)).map(e=>e.name)]);
   const doneMap=(state.training[today()]&&state.training[today()][curDay])||{};
-  const active=prog.map((_,i)=>i).filter(i=>!skipSet.has(prog[i].name));
-  const doneCount=active.filter(i=>doneMap[i]).length;
+  const active=prog.map((_,i)=>i).filter(i=>!skipSet.has(prog[i].name)&&!pendingSet.has(prog[i].id));
+  const doneCount=active.filter(i=>doneMap[prog[i].id]).length;
   const total=active.length;
 
-  document.getElementById('trainTime').textContent='预计 '+estimateDuration(curDay,skipSet,adv.light)+' 分钟'+(adv.light?'（轻量）':'');
+  document.getElementById('trainTime').textContent='预计 '+estimateDuration(curDay,timeSkipSet,adv.light)+' 分钟'+(adv.light?'（减量）':'');
   document.getElementById('trainDone').textContent=total?('已完成 '+doneCount+'/'+total):'今日无可用动作';
   document.getElementById('trainProgress').style.width=(total?doneCount/total*100:0)+'%';
+  const activeSession=state.activeSession;
+  document.getElementById('resumeHint').textContent=activeSession&&activeSession.date===today()?('可恢复：'+activeSession.exerciseName+' · 第'+(activeSession.setIndex+1)+'行'):'记录正式组后自动计时';
 
   document.getElementById('exList').innerHTML=prog.map((e,i)=>{
     if(skipSet.has(e.name)){
@@ -1009,14 +1132,27 @@ function renderTrain(){
         </div>
       </div>`;
     }
-    const done=!!doneMap[i];
-    const key=curDay+'_'+i;
-    const kg=getKg(key,e.coef,e.step);
+    const equipmentStatus=state.equipmentStatus?.[e.id]||e.equipmentStatus||'confirmed';
+    if(equipmentStatus==='notChecked'){
+      return `<div class="ex" data-i="${i}"><div class="ex-main"><div class="info"><div class="name">${e.name}<span class="inj-tag">器械待确认</span></div><div class="sets">${e.sets} · 未确认前不开始此动作</div></div></div><div class="ex-detail" style="display:block"><div class="tip">请核对器械铭牌确实写有腿弯举 / Leg Curl，且转轴能对准膝关节。</div><button class="btn-secondary confirm-equipment" style="margin-top:8px">我已确认是腿弯举</button></div></div>`;
+    }
+    const done=!!doneMap[e.id];
+    const key=e.equipmentId;
+    let kg=getKg(key,e.coef,e.step);
     const rx=rxInfo(e);
     const prev=previousLog(curDay,i);
     const rows=logBucket(today(),curDay,i,false);
     const setCount=adv.light?Math.max(2,rx.sets-1):rx.sets;
-    const suggested=progression(e,prev);
+    const warmupCount=e.warmupSets||0;
+    const suggested=progression(e,prev,curDay,i);
+    if(e.coef&&prev){
+      state.appliedProgression=state.appliedProgression||{};
+      const token=e.id+'_'+prev.date;
+      if(!state.appliedProgression[token]&&(suggested.startsWith('达成上限')||suggested.startsWith('连续两次'))){
+        kg=Math.max(e.step,roundStep(kg+(suggested.startsWith('达成上限')?e.step:-e.step),e.step));
+        state.weights[e.equipmentId]=kg; state.appliedProgression[token]=true; save(state);
+      }
+    }
     const wt=e.coef
       ? `<div class="wt"><button class="wbtn" data-w="-1">−</button><span class="wval">${kg}kg</span><button class="wbtn" data-w="1">+</button></div>`
       : `<div class="wt"><span class="wval">自重</span></div>`;
@@ -1034,17 +1170,23 @@ function renderTrain(){
         <div class="thumb">${e.svg}</div>
         <div><span class="side-tag">${e.side}</span></div>
         <div class="tip">${e.tip}</div>
-        <div class="rx-line"><span class="rx-tag">目标 RIR ${rx.rir}</span><span class="rx-tag ${suggested.includes('加')?'up':''}">${suggested}</span></div>
+        <button class="btn-secondary stop-pain" style="margin-top:8px;color:var(--red)">出现异常疼痛：停止</button>
+        <div class="rx-line"><span class="rx-tag">正式组 RIR ${adv.light?3:rx.rir}</span><span class="rx-tag">休息 ${rx.rest}秒</span><span class="rx-tag ${suggested.includes('加')?'up':''}">${suggested}</span></div>
         <div class="last-log">上次：${prev?prev.date+' · '+fmtSets(prev.sets):'暂无记录'}</div>
         <div class="set-editor">
-          <div class="set-head"><span>组</span><span>重量kg</span><span>次数</span><span>RIR</span></div>
-          ${Array.from({length:setCount},(_,si)=>{
+          <div class="set-head"><span>类型</span><span>重量kg</span><span>次数</span><span>RIR</span></div>
+          ${Array.from({length:warmupCount+setCount},(_,si)=>{
+            const isWarmup=si<warmupCount, workIndex=si-warmupCount;
             const row=rows[si]||{};
-            const baseKg=row.kg!==undefined?row.kg:(prev&&prev.sets[si]&&prev.sets[si].kg!==undefined?prev.sets[si].kg:(kg||''));
-            return `<div class="set-row"><b>${si+1}</b>
-              <input class="set-input" data-field="kg" data-set="${si}" inputmode="decimal" type="number" step="${e.step||1}" value="${baseKg}">
+            const warmPct=({1:[0.6],2:[0.5,0.75],3:[0.4,0.6,0.8]}[warmupCount]||[])[si]||0.5;
+            const plannedKg=isWarmup&&kg?roundStep(kg*warmPct,e.step||1):(kg||'');
+            const prevWork=prev&&prev.sets.filter(x=>(x.setType||'working')==='working')[workIndex];
+            const baseKg=row.kg!==undefined?row.kg:(prevWork&&prevWork.kg!==undefined?prevWork.kg:plannedKg);
+            const type=isWarmup?'warmup':'working';
+            return `<div class="set-row"><b>${isWarmup?'热'+(si+1):'正'+(workIndex+1)}</b>
+              <input class="set-input" data-field="kg" data-set="${si}" data-set-type="${type}" inputmode="decimal" type="number" step="${e.step||1}" value="${baseKg}">
               <input class="set-input" data-field="reps" data-set="${si}" inputmode="numeric" type="number" min="0" value="${row.reps??''}" placeholder="${rx.min}-${rx.max}">
-              <input class="set-input" data-field="rir" data-set="${si}" inputmode="numeric" type="number" min="0" max="10" value="${row.rir??''}" placeholder="2">
+              <input class="set-input" data-field="rir" data-set="${si}" inputmode="numeric" type="number" min="0" max="10" value="${row.rir??''}" placeholder="${isWarmup?'—':(adv.light?3:rx.rir)}">
             </div>`;
           }).join('')}
         </div>
@@ -1060,9 +1202,10 @@ function renderTrainingHistory(){
   Object.keys(state.setLogs||{}).sort().reverse().forEach(date=>{
     Object.keys(state.setLogs[date]||{}).forEach(day=>{
       const names=[];
-      Object.keys(state.setLogs[date][day]||{}).forEach(i=>{
-        const logs=state.setLogs[date][day][i];
-        if(logs&&logs.some(x=>Number(x.reps)>0)&&PROGRAMS[day]&&PROGRAMS[day][i]) names.push(PROGRAMS[day][i].name);
+      Object.keys(state.setLogs[date][day]||{}).forEach(id=>{
+        const logs=state.setLogs[date][day][id];
+        const ex=(PROGRAMS[day]||[]).find(x=>x.id===id);
+        if(logs&&logs.some(x=>(x.setType||'working')==='working'&&Number(x.reps)>0)&&ex) names.push(ex.name);
       });
       if(names.length) rows.push(`<div class="history-row"><span class="history-date">${date}</span>${labels[day]||day} · ${names.join('、')}</div>`);
     });
@@ -1189,6 +1332,13 @@ document.getElementById('injuryOpts').addEventListener('click',e=>{
   const fb=feedbackToday();
   fb.injury=(fb.injury===b.dataset.v)?'none':b.dataset.v;
   if(fb.injury!=='other') fb.injuryText='';
+  if(fb.injury!=='none'){
+    state.painLogs=state.painLogs||[];
+    state.painLogs.push({date:today(),day:curDay,bodyPart:fb.injury,severity:null,stage:'status-check',note:'用户标记异常不适，训练流程停止'});
+    state.progressionFreeze=state.progressionFreeze||{};
+    PROGRAMS[curDay].forEach(x=>state.progressionFreeze[x.id]=true);
+    shiftPlanOneDayForRest();
+  }
   save(state); renderStatus(); renderTrain();
 });
 document.getElementById('injuryOtherInput').addEventListener('input',e=>{
@@ -1206,14 +1356,32 @@ document.getElementById('exList').addEventListener('click',e=>{
   if(e.target.closest('.set-input')) return;
   const wbtn=e.target.closest('.wbtn');
   const box=e.target.closest('.box');
+  const confirmEquipment=e.target.closest('.confirm-equipment');
+  const stopPain=e.target.closest('.stop-pain');
   const ex=e.target.closest('.ex'); if(!ex) return;
   if(ex.classList.contains('injured')) return;
-  const i=+ex.dataset.i, exo=PROGRAMS[curDay][i], coef=exo.coef, step=exo.step, key=curDay+'_'+i;
+  const i=+ex.dataset.i, exo=PROGRAMS[curDay][i], coef=exo.coef, step=exo.step, key=exo.equipmentId;
+
+  if(confirmEquipment){
+    state.equipmentStatus=state.equipmentStatus||{}; state.equipmentStatus[exo.id]='confirmed';
+    save(state); renderTrain(); return;
+  }
+  if(stopPain){
+    const severity=prompt('疼痛程度 0–10（可留空）','3');
+    const part=prompt('疼痛部位（例如肩、肘、腰、膝）','')||'未填写';
+    const rows=logBucket(today(),curDay,i,true), last=[...rows].reverse().find(x=>(x.setType||'working')==='working');
+    if(last) last.pain=true;
+    state.painLogs=state.painLogs||[];
+    state.painLogs.push({date:today(),day:curDay,exerciseId:exo.id,exerciseName:exo.name,bodyPart:part,severity:severity===''?null:Number(severity),stage:'working-set',note:'用户主动停止动作'});
+    state.progressionFreeze=state.progressionFreeze||{}; state.progressionFreeze[exo.id]=true;
+    const fb=feedbackToday(); fb.injury='other'; fb.injuryText=part+'（'+exo.name+'）';
+    shiftPlanOneDayForRest(); save(state); renderTrain(); return;
+  }
 
   if(wbtn){ // 手动 +/− 重量，按动作类型步长
     if(!coef) return;
     const cur=getKg(key,coef,step);
-    const next=Math.max(startKg(coef,step), roundStep(cur + (+wbtn.dataset.w)*step, step));
+    const next=Math.max(step, roundStep(cur + (+wbtn.dataset.w)*step, step));
     state.weights=state.weights||{}; state.weights[key]=next;
     save(state); renderTrain(); return;
   }
@@ -1222,7 +1390,7 @@ document.getElementById('exList').addEventListener('click',e=>{
     const t=today();
     if(!state.training[t]) state.training[t]={};
     if(!state.training[t][curDay]) state.training[t][curDay]={};
-    state.training[t][curDay][i]=!state.training[t][curDay][i];
+    state.training[t][curDay][exo.id]=!state.training[t][curDay][exo.id];
     save(state); renderTrain(); return;
   }
 
@@ -1236,20 +1404,28 @@ document.getElementById('exList').addEventListener('change',e=>{
   const input=e.target.closest('.set-input'); if(!input) return;
   const ex=input.closest('.ex'); if(!ex||ex.classList.contains('injured')) return;
   const i=+ex.dataset.i, si=+input.dataset.set, field=input.dataset.field;
+  ensureSessionSnapshot(today(),curDay);
   const rows=logBucket(today(),curDay,i,true);
-  while(rows.length<=si) rows.push({kg:'',reps:'',rir:''});
+  const exercise=PROGRAMS[curDay][i], type=si<(exercise.warmupSets||0)?'warmup':'working';
+  while(rows.length<=si) rows.push({kg:'',reps:'',rir:'',setType:'working',pain:false,formOk:true});
+  rows[si].setType=type;
   rows[si][field]=input.value===''?'':+input.value;
-  const exercise=PROGRAMS[curDay][i], rx=rxInfo(exercise);
+  const rx=rxInfo(exercise);
   const light=statusAdvice(feedbackToday()).light;
   const requiredSets=light?Math.max(2,rx.sets-1):rx.sets;
   if(field==='kg'&&exercise.coef&&input.value!==''){
-    state.weights[curDay+'_'+i]=+input.value;
+    state.weights[exercise.equipmentId]=+input.value;
   }
   if(!state.training[today()]) state.training[today()]={};
   if(!state.training[today()][curDay]) state.training[today()][curDay]={};
-  state.training[today()][curDay][i]=rows.filter(x=>Number(x.reps)>0).length>=requiredSets;
+  state.training[today()][curDay][exercise.id]=rows.filter(x=>(x.setType||'working')==='working'&&Number(x.reps)>0).length>=requiredSets;
+  state.activeSession={date:today(),day:curDay,exerciseId:exercise.id,exerciseName:exercise.name,setIndex:si,updatedAt:new Date().toISOString()};
+  if(field==='reps'&&type==='working'&&Number(input.value)>0) startRestTimer(exercise.rest||90);
   save(state); renderTrain();
 });
+
+document.getElementById('restPause').addEventListener('click',e=>{ restPaused=!restPaused; e.currentTarget.textContent=restPaused?'继续':'暂停'; });
+document.getElementById('restSkip').addEventListener('click',()=>{ clearInterval(restTimerId); restTimerId=null; restRemaining=0; paintRestTimer(); });
 
 // 训练日切换
 document.querySelectorAll('.daytab').forEach(t=>{
@@ -1278,11 +1454,38 @@ document.querySelectorAll('#goalSeg .opt').forEach(o=>{
 document.getElementById('saveBtn').addEventListener('click',()=>{
   const newWeight=+document.getElementById('inWeight').value||state.weight;
   state.weight=newWeight;
+  state.bodyWeights=state.bodyWeights||{};
+  state.bodyWeights[today()]=newWeight;
   state.target=+document.getElementById('inTarget').value||state.target;
   state.deadline=document.getElementById('inDeadline').value||state.deadline;
   state.planEpoch=document.getElementById('inPlanEpoch').value||today();
   save(state); render();
   document.querySelector('[data-page="home"]').click();
+});
+
+document.getElementById('exportBtn').addEventListener('click',()=>{
+  const payload={app:'fitness-app',exportedAt:new Date().toISOString(),schemaVersion:state.schemaVersion,data:state};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='fitness-app-backup-'+today()+'.json'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  document.getElementById('dataHint').textContent='备份已导出。';
+});
+document.getElementById('importBtn').addEventListener('click',()=>document.getElementById('importInput').click());
+document.getElementById('importInput').addEventListener('change',e=>{
+  const file=e.target.files&&e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const parsed=JSON.parse(reader.result), incoming=parsed&&parsed.data;
+      if(parsed.app!=='fitness-app'||!incoming||typeof incoming!=='object'||!incoming.training||!incoming.diet) throw new Error('invalid');
+      localStorage.setItem('fitnessState_before_import_'+new Date().toISOString().replace(/[:.]/g,'-'),JSON.stringify(state));
+      state=migrateState(incoming); save(state);
+      document.getElementById('dataHint').textContent='导入成功，数据已校验并恢复。';
+      render();
+    }catch(err){ document.getElementById('dataHint').textContent='导入失败：文件格式或版本无效，现有数据未改变。'; }
+    e.target.value='';
+  };
+  reader.readAsText(file);
 });
 
 // 餐次切换
