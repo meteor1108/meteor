@@ -1,4 +1,4 @@
-const CACHE = 'fitness-v6';
+const CACHE = 'fitness-v7';
 const ASSETS = ['./', './index.html', './bg.jpg', './icon-192.png', './icon-512.png', './manifest.json'];
 
 self.addEventListener('install', e => {
@@ -19,6 +19,12 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
+    fetch(e.request)
+      .then(response => {
+        const copy=response.clone();
+        caches.open(CACHE).then(cache => cache.put(e.request,copy));
+        return response;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
