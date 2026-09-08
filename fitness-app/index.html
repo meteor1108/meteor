@@ -212,6 +212,13 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .prep-list{margin:0;padding-left:18px}
 .prep-list li{font-size:13px;color:var(--text);line-height:1.65;margin-bottom:3px}
 .prep-note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+.supp-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--border)}
+.supp-row:first-of-type{border-top:0;padding-top:0}
+.supp-info{min-width:0}
+.supp-time{font-size:13px;font-weight:700;color:var(--orange);margin-bottom:3px}
+.supp-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.supp-check{flex:0 0 auto;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--muted);padding:7px 9px;font-size:12px;cursor:pointer}
+.supp-check.done{border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.12);color:var(--green)}
 
 /* 调整训练计划弹窗 */
 .modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center}
@@ -384,6 +391,26 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       </div>
       <div class="pbar"><i id="dietPbarFg"></i></div>
       <div class="pbar-lbl" id="dietPbarLbl">蛋白 0 / 0 g</div>
+    </div>
+
+    <h2>补剂时间表</h2>
+    <div class="card prep-card" id="supplementReminder">
+      <div class="prep-title">今日提醒 <span class="prep-sub" id="supplementDayType"></span></div>
+      <div class="supp-row">
+        <div class="supp-info">
+          <div class="supp-time">每天 13:00（午餐后）· 肌酸 3–5g</div>
+          <div class="supp-desc">训练日和休息日都吃；重点是每天持续使用，胃不舒服时不要空腹。</div>
+        </div>
+        <button class="supp-check" data-supp="creatine">未记录</button>
+      </div>
+      <div class="supp-row">
+        <div class="supp-info">
+          <div class="supp-time">训练结束后约 30 分钟 · 蛋白粉 1勺（30g）</div>
+          <div class="supp-desc">当天蛋白不足时使用；休息日或正餐已达到目标时可以不喝。</div>
+        </div>
+        <button class="supp-check" data-supp="protein">未记录</button>
+      </div>
+      <div class="prep-note">蛋白粉按 22.5g 蛋白/勺计入今日饮食；此处打卡只记录提醒，不会重复计算营养。</div>
     </div>
 
     <h2>选择餐次</h2>
@@ -664,33 +691,17 @@ const FOODS=[
   {name:'鸡蛋',unit:'1个',q:1,u:'个',cal:72,p:6.3,c:0.4,f:5,cat:'蛋白',meals:['breakfast','lunch','dinner','snack']},
   {name:'鸡胸肉',unit:'100g',q:100,u:'g',cal:133,p:31,c:0,f:1.2,cat:'蛋白',meals:['lunch','dinner']},
   {name:'鸡腿肉',unit:'100g',q:100,u:'g',cal:177,p:26,c:0,f:8,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'瘦牛肉',unit:'100g',q:100,u:'g',cal:180,p:26,c:0,f:8,cat:'蛋白',meals:['lunch','dinner']},
   {name:'猪里脊',unit:'100g',q:100,u:'g',cal:143,p:27,c:0,f:3.5,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'三文鱼',unit:'100g',q:100,u:'g',cal:208,p:20,c:0,f:13,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'金枪鱼',unit:'100g',q:100,u:'g',cal:132,p:28,c:0,f:1,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'虾',unit:'100g',q:100,u:'g',cal:99,p:24,c:0,f:0.3,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'北豆腐',unit:'100g',q:100,u:'g',cal:82,p:8,c:2.5,f:5,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'乳清蛋白粉',unit:'1勺',q:1,u:'勺',cal:120,p:24,c:3,f:1.5,cat:'蛋白',meals:['snack']},
+  {name:'乳清蛋白粉',unit:'1勺(30g)',q:1,u:'勺',cal:120,p:22.5,c:3,f:1.5,cat:'蛋白',meals:['snack']},
   {name:'牛奶',unit:'250ml',q:250,u:'ml',cal:135,p:8,c:12,f:8,cat:'蛋白',meals:['breakfast','snack']},
-  {name:'希腊酸奶',unit:'100g',q:100,u:'g',cal:97,p:9,c:4,f:5,cat:'蛋白',meals:['breakfast','snack']},
   {name:'米饭',unit:'100g(熟)',q:100,u:'g',cal:116,p:2.6,c:25.9,f:0.3,cat:'碳水',meals:['lunch','dinner']},
-  {name:'糙米',unit:'100g(熟)',q:100,u:'g',cal:112,p:2.6,c:23,f:0.9,cat:'碳水',meals:['lunch','dinner']},
-  {name:'燕麦',unit:'50g(干)',q:50,u:'g',cal:194,p:8.5,c:33,f:3.5,cat:'碳水',meals:['breakfast']},
-  {name:'全麦面包',unit:'1片',q:1,u:'片',cal:80,p:4,c:14,f:1,cat:'碳水',meals:['breakfast']},
-  {name:'面条',unit:'100g(熟)',q:100,u:'g',cal:110,p:4,c:22,f:0.5,cat:'碳水',meals:['lunch','dinner']},
-  {name:'土豆',unit:'100g',q:100,u:'g',cal:77,p:2,c:17,f:0.1,cat:'碳水',meals:['lunch','dinner']},
-  {name:'红薯',unit:'100g',q:100,u:'g',cal:86,p:1.6,c:20,f:0.1,cat:'碳水',meals:['lunch','dinner']},
-  {name:'玉米',unit:'100g',q:100,u:'g',cal:112,p:4,c:22,f:1.5,cat:'碳水',meals:['lunch','dinner']},
   {name:'香蕉',unit:'1根',q:1,u:'根',cal:105,p:1.3,c:27,f:0.4,cat:'碳水',meals:['breakfast','snack']},
-  {name:'混合坚果',unit:'30g',q:30,u:'g',cal:180,p:6,c:6,f:15,cat:'脂肪',meals:['snack']},
-  {name:'花生酱',unit:'2勺(32g)',q:2,u:'勺',cal:190,p:8,c:7,f:16,cat:'脂肪',meals:['breakfast','snack']},
-  {name:'牛油果',unit:'100g',q:100,u:'g',cal:160,p:2,c:9,f:15,cat:'脂肪',meals:['lunch','dinner']},
-  {name:'橄榄油',unit:'1勺(15ml)',q:1,u:'勺',cal:120,p:0,c:0,f:14,cat:'脂肪',meals:['lunch','dinner']},
   {name:'西兰花',unit:'100g',q:100,u:'g',cal:34,p:2.8,c:7,f:0.4,cat:'蔬果',meals:['lunch','dinner']},
-  {name:'菠菜',unit:'100g',q:100,u:'g',cal:23,p:2.9,c:3.6,f:0.4,cat:'蔬果',meals:['lunch','dinner']},
-  {name:'番茄',unit:'100g',q:100,u:'g',cal:18,p:0.9,c:3.9,f:0.2,cat:'蔬果',meals:['lunch','dinner']},
-  {name:'苹果',unit:'1个',q:1,u:'个',cal:95,p:0.5,c:25,f:0.3,cat:'蔬果',meals:['breakfast','snack']},
-  {name:'蓝莓',unit:'100g',q:100,u:'g',cal:57,p:0.7,c:14,f:0.3,cat:'蔬果',meals:['breakfast','snack']}
+  {name:'白菜',unit:'100g',q:100,u:'g',cal:21,p:1.7,c:3.1,f:0.2,cat:'蔬果',meals:['lunch','dinner']},
+  {name:'青菜',unit:'100g',q:100,u:'g',cal:15,p:1.5,c:1.6,f:0.3,cat:'蔬果',meals:['lunch','dinner']},
+  {name:'香菇青菜包',unit:'1个(约100g)',q:1,u:'个',cal:313,p:5.4,c:48.4,f:10.7,cat:'碳水',meals:['breakfast','snack']},
+  {name:'高蛋白面包',unit:'1份(50g)',q:1,u:'份',cal:132,p:7.8,c:20,f:1.3,cat:'碳水',meals:['breakfast','snack']},
+  {name:'咖喱鸡排饭',unit:'1份(约450g)',q:1,u:'份',cal:878,p:36.9,c:110.2,f:37.4,cat:'碳水',meals:['snack']}
 ];
 const FOOD_MAP=Object.fromEntries(FOODS.map(f=>[f.name,f]));
 const MEAL_ORDER=['breakfast','lunch','dinner','snack'];
@@ -736,7 +747,7 @@ function setFoodQty(name, meal, delta){
 const defaultState={
   schemaVersion:2, planVersion:PLAN_VERSION,
   profileVersion:PROFILE_VERSION, goal:'bulk', weight:65, target:69, deadline:'2027-06-30',
-  checkins:[], training:{}, setLogs:{}, diet:{}, weights:{}, bodyWeights:{}, bg:'', planEpoch:'', planOverrides:{}, feedback:{},
+  checkins:[], training:{}, setLogs:{}, diet:{}, supplements:{}, weights:{}, bodyWeights:{}, bg:'', planEpoch:'', planOverrides:{}, feedback:{},
   sessionSnapshots:{}, painLogs:[], progressionFreeze:{}, recoveryDeferred:{}, equipmentStatus:{legs_leg_curl:'notChecked'}, legacySetLogs:{}, legacyTraining:{}, migrationPending:false
 };
 
@@ -1292,6 +1303,15 @@ function renderDiet(){
   document.getElementById('dietPbarFg').style.width=(Math.min(1,t.p/target)*100)+'%';
   document.getElementById('dietPbarLbl').textContent='蛋白 '+Math.round(t.p)+' / '+target+' g';
 
+  const supp=(state.supplements&&state.supplements[today()])||{};
+  const dayPlan=planFor(today());
+  document.getElementById('supplementDayType').textContent=dayPlan==='rest'?'休息日 · 肌酸照常':'训练日';
+  document.querySelectorAll('#supplementReminder .supp-check').forEach(btn=>{
+    const done=!!supp[btn.dataset.supp];
+    btn.classList.toggle('done',done);
+    btn.textContent=done?'✓ 已完成':'未记录';
+  });
+
   document.querySelectorAll('#foodTabs .food-tab').forEach(tab=>tab.classList.toggle('on',tab.dataset.cat===curFoodCat));
   document.querySelectorAll('#mealTabs .food-tab').forEach(tab=>tab.classList.toggle('on',tab.dataset.meal===curMeal));
   document.getElementById('curMealLbl').textContent=MEAL_LABEL[curMeal];
@@ -1551,6 +1571,16 @@ document.getElementById('dietLog').addEventListener('click',e=>{
   const btn=e.target.closest('.logitem-del'); if(!btn) return;
   setFoodQty(btn.dataset.name, btn.dataset.meal, -1);
   save(state); render();
+});
+
+// 补剂提醒只记录完成状态；蛋白粉的营养需在“加餐”中另行加入，避免重复计算。
+document.getElementById('supplementReminder').addEventListener('click',e=>{
+  const btn=e.target.closest('.supp-check'); if(!btn) return;
+  const t=today();
+  if(!state.supplements) state.supplements={};
+  if(!state.supplements[t]) state.supplements[t]={};
+  state.supplements[t][btn.dataset.supp]=!state.supplements[t][btn.dataset.supp];
+  save(state); renderDiet();
 });
 
 // 日历：切换月份
