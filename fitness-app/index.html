@@ -484,7 +484,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <button class="btn-secondary" id="importBtn">导入JSON</button>
       <input type="file" id="importInput" accept="application/json,.json" style="display:none">
     </div>
-    <div class="bg-hint" id="dataHint">计划版本：ppl-hypertrophy-v2 · 导入异常文件不会覆盖现有数据</div>
+    <div class="bg-hint" id="dataHint">计划版本：谭成义三分化·个人适配版 · 导入异常文件不会覆盖现有数据</div>
   </section>
 
   <nav class="tabbar">
@@ -559,41 +559,40 @@ const LEGACY_PROGRAMS={
   ]
 };
 
-// v2 增肌计划：动作顺序按“技术要求最高/负荷最大 → 辅助 → 孤立”排列。
-// 所有重量都是保守起点；首次实际训练记录会覆盖起点。器械重量不会跨器械共用。
-const PLAN_VERSION='ppl-hypertrophy-v2';
-const PROFILE_VERSION='fy-65kg-hypertrophy-v1';
+// 谭成义联名三分化的个人适配版：保留推/拉/腿动作逻辑，将单次正式组控制在 12–13 组。
+// 所有重量都是 65kg、有训练基础用户的保守试重；首次实际训练记录会覆盖起点。
+const PLAN_VERSION='tanchengyi-ppl-adapted-v1';
+const PROFILE_VERSION='fy-65kg-tanchengyi-adapted-v1';
 const INITIAL_WEIGHTS={
-  barbell_bench:40,incline_dumbbell:12.5,shoulder_press:10,dumbbell_lateral_raise:5,cable_pressdown:20,
-  chest_supported_row:15,seated_cable_row:30,reverse_pec_deck:20,dumbbell_curl:7.5,
+  barbell_bench:40,incline_dumbbell:12.5,lying_triceps_extension:15,cable_y_raise:5,
+  single_arm_cable_pulldown:10,single_arm_machine_row:20,open_elbow_cable_row:25,cable_curl:15,
   barbell_squat:40,barbell_rdl:40,dumbbell_bulgarian:7.5,leg_curl_not_checked:20,dumbbell_calf_raise:15
 };
 const PROGRAMS={
   push:[
-    {id:'push_barbell_bench',name:'杠铃卧推',sets:'4组 × 6-8次',workSets:4,minReps:6,maxReps:8,rir:2,rest:180,muscle:'胸·三头',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_bench',priority:1,warmupSets:2,autoProgress:true,side:'杠铃总重 · 建议有保护杆或保护人',tip:'眼睛位于杠铃下方，肩胛后收下沉，双脚踩稳；杠铃落在胸骨下段，前臂接近垂直，推起时保持肩胛稳定。',svg:LEGACY_PROGRAMS.push[0].svg},
+    {id:'push_barbell_bench',name:'杠铃卧推',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:180,muscle:'胸·三头',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_bench',priority:1,warmupSets:3,autoProgress:true,side:'杠铃总重 · 建议有保护杆或保护人',tip:'先做空杆及递增热身；肩胛后收下沉、双脚踩稳，杠铃落在胸骨下段。三组都达到12次且保持RIR 2，下次才加2.5kg。',svg:LEGACY_PROGRAMS.push[0].svg},
     {id:'push_incline_db',name:'上斜哑铃卧推',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:120,muscle:'上胸·三头',coef:12.5,step:2.5,wtag:'单只',equipmentId:'incline_dumbbell',priority:2,warmupSets:1,autoProgress:true,side:'双手各一只 · 凳角约20–30°',tip:'肩胛贴凳，手腕叠在肘上方；下放至上胸两侧的无痛深度，避免凳角过高变成肩推。',svg:LEGACY_PROGRAMS.push[1].svg},
-    {id:'push_shoulder_press',name:'哑铃或器械肩推',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:120,muscle:'肩·三头',coef:10,step:2.5,wtag:'单只/配重',equipmentId:'shoulder_press',priority:2,warmupSets:1,autoProgress:true,side:'优先选择肩部无痛的哑铃或器械',tip:'背部贴靠垫，前臂保持接近垂直；推至肘接近伸直即可，不耸肩、不用腰部过度反弓。',svg:LEGACY_PROGRAMS.push[3].svg},
-    {id:'push_lateral_raise',name:'哑铃侧平举',sets:'3组 × 12-20次',workSets:3,minReps:12,maxReps:20,rir:2,rest:75,muscle:'肩中束',coef:5,step:2.5,wtag:'单只',equipmentId:'dumbbell_lateral_raise',priority:3,warmupSets:0,autoProgress:true,side:'双手各一只 · 重量为单只哑铃',tip:'微屈肘，在身体略前方抬至肩高以内；肩膀远离耳朵，控制下落，不借力甩动。',svg:LEGACY_PROGRAMS.push[2].svg},
-    {id:'push_cable_pressdown',name:'绳索下压',sets:'3组 × 10-15次',workSets:3,minReps:10,maxReps:15,rir:2,rest:75,muscle:'三头',coef:20,step:5,wtag:'配重',equipmentId:'cable_pressdown',priority:3,warmupSets:0,autoProgress:true,side:'双手握绳 · 记录器械配重',tip:'上臂固定在身体两侧，伸肘至接近锁定，回程保持控制；躯干不要前后摆动。',svg:LEGACY_PROGRAMS.push[4].svg}
+    {id:'push_dips',name:'双杠臂屈伸',sets:'2组 × 8-12次',workSets:2,minReps:8,maxReps:12,rir:2,rest:120,muscle:'胸·三头',coef:0,step:0,wtag:'自重/辅助',equipmentId:'dip_station',priority:2,warmupSets:0,autoProgress:false,side:'自重65kg或辅助 · 只做无痛幅度',tip:'肩膀远离耳朵，身体略前倾并保持稳定；不足8次时使用辅助，不摆动凑次数。',svg:LEGACY_PROGRAMS.push[3].svg},
+    {id:'push_lying_triceps_extension',name:'仰卧臂屈伸',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:90,muscle:'肱三头',coef:15,step:2.5,wtag:'总重',equipmentId:'lying_triceps_extension',priority:3,warmupSets:0,autoProgress:true,side:'曲杆或哑铃 · 记录总重',tip:'上臂尽量稳定，屈肘把重量降到头部后方的无痛位置；伸肘完成，不让肩膀代偿。',svg:LEGACY_PROGRAMS.push[4].svg},
+    {id:'push_cable_y_raise',name:'钢线Y字侧平举',sets:'3组 × 12-15次',workSets:3,minReps:12,maxReps:15,rir:3,rest:75,muscle:'肩中束',coef:5,step:2.5,wtag:'每侧配重',equipmentId:'cable_y_raise',priority:3,warmupSets:0,autoProgress:true,side:'左右各一根钢线 · 记录单侧配重',tip:'使用轻重量，手臂在身体略前方沿Y字轨迹抬起；不耸肩、不甩动。适配版暂不使用10+5休息暂停。',svg:LEGACY_PROGRAMS.push[2].svg}
   ],
   pull:[
     {id:'pull_pullup',name:'引体向上',sets:'3组 × 6-10次',workSets:3,minReps:6,maxReps:10,rir:2,rest:150,muscle:'背阔·肱二头',coef:0,step:0,wtag:'自重/辅助',equipmentId:'pullup_station',priority:1,warmupSets:1,autoProgress:true,side:'自重65kg或辅助 · 握距略宽于肩',tip:'先让肩胛下沉，再把胸口拉向杠；避免摆腿和耸肩。低于6次时记录辅助重量，不用动作变形凑次数。',svg:LEGACY_PROGRAMS.pull[0].svg},
-    {id:'pull_chest_supported_row',name:'胸托哑铃或器械划船',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:120,muscle:'中背·背阔',coef:15,step:2.5,wtag:'单只/配重',equipmentId:'chest_supported_row',priority:1,warmupSets:1,autoProgress:true,side:'胸口贴靠垫 · 明确记录哑铃或器械',tip:'胸部保持贴垫，肘向后下方拉，顶峰夹背；不要抬胸借力或耸肩。',svg:LEGACY_PROGRAMS.pull[1].svg},
-    {id:'pull_cable_row',name:'坐姿绳索划船',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:90,muscle:'背',coef:30,step:5,wtag:'配重',equipmentId:'seated_cable_row',priority:2,warmupSets:0,autoProgress:true,side:'双手握把 · 记录器械配重',tip:'脊柱保持中立，肘向后拉至腹部；回程让肩胛自然前伸，但不靠躯干大幅摆动。',svg:LEGACY_PROGRAMS.pull[2].svg},
-    {id:'pull_reverse_fly',name:'反向蝴蝶机',sets:'2组 × 12-20次',workSets:2,minReps:12,maxReps:20,rir:2,rest:75,muscle:'后三角·上背',coef:20,step:5,wtag:'配重',equipmentId:'reverse_pec_deck',priority:3,warmupSets:0,autoProgress:true,side:'胸口贴靠垫 · 握把与肩同高或略低',tip:'保持肘部轻微弯曲，用后束带动手臂向外打开；不要耸肩或过度挺腰。',svg:LEGACY_PROGRAMS.push[1].svg},
-    {id:'pull_db_curl',name:'哑铃弯举',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:75,muscle:'肱二头',coef:7.5,step:2.5,wtag:'单只',equipmentId:'dumbbell_curl',priority:3,warmupSets:0,autoProgress:true,side:'双手各一只 · 重量为单只哑铃',tip:'上臂固定，手腕保持中立，完整屈肘后控制下放；不要用腰部摆动。',svg:LEGACY_PROGRAMS.pull[3].svg}
+    {id:'pull_single_arm_cable_pulldown',name:'单手钢线下拉',sets:'3组 × 每侧10-12次',workSets:3,minReps:10,maxReps:12,rir:2,rest:90,muscle:'背阔',coef:10,step:2.5,wtag:'单侧配重',equipmentId:'single_arm_cable_pulldown',priority:1,warmupSets:1,autoProgress:true,side:'单手握把 · 左右分别完成',tip:'躯干保持稳定，先让肩胛下沉，再把肘拉向髋部；不转体甩动。适配版不做10+5力竭组。',svg:LEGACY_PROGRAMS.pull[1].svg},
+    {id:'pull_single_arm_machine_row',name:'单手器械划船',sets:'3组 × 每侧8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:105,muscle:'背阔·中背',coef:20,step:5,wtag:'单侧配重',equipmentId:'single_arm_machine_row',priority:2,warmupSets:0,autoProgress:true,side:'胸口贴靠垫 · 左右分别完成',tip:'骨盆和胸廓保持稳定，肘向后下方拉；不靠转体增加动作幅度。',svg:LEGACY_PROGRAMS.pull[1].svg},
+    {id:'pull_open_elbow_cable_row',name:'开肘钢线划船',sets:'2组 × 12-15次',workSets:2,minReps:12,maxReps:15,rir:3,rest:90,muscle:'上背·后三角',coef:25,step:5,wtag:'配重',equipmentId:'open_elbow_cable_row',priority:3,warmupSets:0,autoProgress:true,side:'双手握把 · 肘部向外打开',tip:'胸廓稳定，肘沿略高于躯干的方向向后拉；肩膀远离耳朵，不用腰部后仰借力。',svg:LEGACY_PROGRAMS.pull[2].svg},
+    {id:'pull_cable_curl',name:'钢线弯举',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:75,muscle:'肱二头',coef:15,step:5,wtag:'配重',equipmentId:'cable_curl',priority:3,warmupSets:0,autoProgress:true,side:'双手握把 · 记录器械配重',tip:'上臂固定，完整屈肘后控制下放；不使用腰部摆动。',svg:LEGACY_PROGRAMS.pull[3].svg}
   ],
   legs:[
-    {id:'legs_back_squat',name:'杠铃深蹲',sets:'4组 × 6-8次',workSets:4,minReps:6,maxReps:8,rir:2,rest:180,muscle:'股四头·臀',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_squat',priority:1,warmupSets:3,autoProgress:true,side:'杠铃总重 · 使用深蹲架保护杆',tip:'脚掌三点着地，膝盖与脚尖同向，躯干保持稳定；下蹲至能维持骨盆和腰背位置的深度，再沿脚掌中部站起。',svg:LEGACY_PROGRAMS.legs[0].svg},
+    {id:'legs_back_squat',name:'杠铃深蹲',sets:'3组 × 8-10次',workSets:3,minReps:8,maxReps:10,rir:2,rest:180,muscle:'股四头·臀',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_squat',priority:1,warmupSets:3,autoProgress:true,side:'杠铃总重 · 使用深蹲架保护杆',tip:'适配版把深蹲放在第一位。脚掌三点着地，膝盖与脚尖同向；三组都达到10次且保持RIR 2，下次才加2.5kg。',svg:LEGACY_PROGRAMS.legs[0].svg},
     {id:'legs_barbell_rdl',name:'杠铃罗马尼亚硬拉',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:150,muscle:'腘绳·臀',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_rdl',priority:1,warmupSets:1,autoProgress:true,side:'杠铃总重 · 杠铃贴腿移动',tip:'膝微屈并固定，髋部向后推，保持脊柱中立；在腿后侧充分拉伸且腰背不变形的位置返回。',svg:LEGACY_PROGRAMS.legs[1].svg},
     {id:'legs_bulgarian_split_squat',name:'保加利亚分腿蹲',sets:'2组 × 每腿8-12次',workSets:2,minReps:8,maxReps:12,rir:2,rest:120,muscle:'股四头·臀',coef:7.5,step:2.5,wtag:'单只',equipmentId:'dumbbell_bulgarian',priority:2,warmupSets:0,autoProgress:true,side:'双手各一只 · 每腿分别完成',tip:'前脚站稳，后脚轻放凳面；下蹲时前膝与脚尖同向，重心主要留在前脚。',svg:LEGACY_PROGRAMS.legs[2].svg},
-    {id:'legs_leg_curl',name:'腿弯举',sets:'3组 × 10-15次',workSets:3,minReps:10,maxReps:15,rir:2,rest:90,muscle:'腘绳肌',coef:20,step:5,wtag:'配重',equipmentId:'leg_curl_not_checked',equipmentStatus:'notChecked',priority:2,warmupSets:0,autoProgress:true,side:'器械待确认 · 首次使用前核对是否为腿弯举',tip:'调整转轴对准膝关节，固定骨盆；屈膝到舒适范围后控制回程，不要快速弹回。',svg:LEGACY_PROGRAMS.legs[4].svg},
-    {id:'legs_calf_raise',name:'站姿提踵',sets:'3组 × 10-15次',workSets:3,minReps:10,maxReps:15,rir:2,rest:75,muscle:'小腿',coef:15,step:2.5,wtag:'单只',equipmentId:'dumbbell_calf_raise',priority:3,warmupSets:0,autoProgress:true,side:'双手各一只 · 重量为单只哑铃',tip:'前脚掌踩稳，脚跟在可控范围充分下放再抬高；顶点停顿，不用膝关节弹动。',svg:LEGACY_PROGRAMS.legs[3].svg},
-    {id:'legs_core',name:'核心训练（可选）',sets:'2组 × 8-12次',workSets:2,minReps:8,maxReps:12,rir:3,rest:60,muscle:'核心',coef:0,step:0,wtag:'自重',equipmentId:'bodyweight_core',priority:4,warmupSets:0,autoProgress:false,optional:true,side:'时间允许时进行 · 最多6分钟',tip:'选择能保持腰椎稳定的死虫式或平板支撑；一旦腰背代偿或疼痛立即停止。',svg:LEGACY_PROGRAMS.legs[4].svg}
+    {id:'legs_leg_curl',name:'腿弯举',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:90,muscle:'腘绳肌',coef:20,step:5,wtag:'配重',equipmentId:'leg_curl_not_checked',equipmentStatus:'notChecked',priority:2,warmupSets:0,autoProgress:true,side:'器械待确认 · 首次使用前核对是否为腿弯举',tip:'调整转轴对准膝关节，固定骨盆；屈膝到舒适范围后控制回程，不要快速弹回。',svg:LEGACY_PROGRAMS.legs[4].svg},
+    {id:'legs_calf_raise',name:'站姿提踵',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:75,muscle:'小腿',coef:15,step:2.5,wtag:'单只',equipmentId:'dumbbell_calf_raise',priority:3,warmupSets:0,autoProgress:true,side:'双手各一只 · 重量为单只哑铃',tip:'前脚掌踩稳，脚跟在可控范围充分下放再抬高；顶点停顿，不用膝关节弹动。',svg:LEGACY_PROGRAMS.legs[3].svg}
   ]
 };
 
-// 与 v2 动作一一对应的示意图。橙色是身体，灰色是器械；仅用于提示姿势方向。
+// 动作示意图。橙色是身体，灰色是器械；仅用于提示姿势方向。
 const EXERCISE_SVGS={
   push_barbell_bench:S(L(18,112,102,112,G)+L(28,112,28,140,G)+L(92,112,92,140,G)+D(84,88,7)+L(76,92,44,100)+L(44,100,28,114)+L(55,96,48,70)+L(72,92,70,70)+L(34,66,86,66,G)+L(48,70,34,66)+L(70,70,86,66)),
   push_incline_db:S(L(28,118,82,72,G)+L(28,118,28,140,G)+D(78,62,7)+L(72,70,52,90)+L(52,90,34,118)+L(65,78,48,58)+L(80,70,68,48)+L(44,52,52,64,G)+L(64,44,72,56,G)),
@@ -788,7 +787,11 @@ function save(s){
 let state=load();
 if(!state.setLogs) state.setLogs={};
 if(!state.planEpoch) state.planEpoch=today();
-if(!state.planVersion) state.planVersion=PLAN_VERSION;
+if(state.planVersion!==PLAN_VERSION){
+  try{ localStorage.setItem('fitnessState_backup_before_'+PLAN_VERSION+'_'+new Date().toISOString().replace(/[:.]/g,'-'),JSON.stringify(state)); }catch(e){}
+  state.planVersion=PLAN_VERSION;
+  state.planEpoch=today();
+}
 if(state.profileVersion!==PROFILE_VERSION){
   state.goal='bulk'; state.weight=65; state.target=69; state.deadline='2027-06-30';
   state.weights=Object.assign({},INITIAL_WEIGHTS,state.weights||{});
