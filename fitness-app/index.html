@@ -121,6 +121,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .ex .thumb svg{width:150px;height:auto;max-height:190px}
 .ex .guide-photo{width:100%;border-radius:12px;background-repeat:no-repeat;background-size:100% auto;background-color:#15171b;border:1px solid var(--border)}
 .ex .guide-photo.push{aspect-ratio:2.25/1}
+.ex .guide-photo.single{aspect-ratio:1.5/1;background-size:cover}
 .ex .guide-photo.pull,.ex .guide-photo.legs{aspect-ratio:3.75/1}
 .ex .guide-note{font-size:11px;color:var(--muted);text-align:center;margin-top:5px}
 .ex .side-tag{display:inline-block;font-size:11px;font-weight:600;color:var(--orange);background:rgba(255,107,53,.12);padding:3px 9px;border-radius:7px;margin:8px 0 6px}
@@ -488,7 +489,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <button class="btn-secondary" id="importBtn">导入JSON</button>
       <input type="file" id="importInput" accept="application/json,.json" style="display:none">
     </div>
-    <div class="bg-hint" id="dataHint">计划版本：谭成义三分化·个人适配版 · 导入异常文件不会覆盖现有数据</div>
+    <div class="bg-hint" id="dataHint">计划版本：学校版 v1 · 初版可回退 · 导入异常文件不会覆盖现有数据</div>
   </section>
 
   <nav class="tabbar">
@@ -565,20 +566,20 @@ const LEGACY_PROGRAMS={
 
 // 谭成义联名三分化的个人适配版：保留推/拉/腿动作逻辑，将单次正式组控制在 12–13 组。
 // 所有重量都是 65kg、有训练基础用户的保守试重；首次实际训练记录会覆盖起点。
-const PLAN_VERSION='tanchengyi-ppl-adapted-v1';
-const PROFILE_VERSION='fy-65kg-tanchengyi-adapted-v1';
+const PLAN_VERSION='school-ppl-v1';
+const PROFILE_VERSION='fy-65kg-school-v1';
 const INITIAL_WEIGHTS={
-  barbell_bench:40,incline_dumbbell:12.5,lying_triceps_extension:15,cable_y_raise:5,
+  barbell_bench:40,incline_dumbbell:12.5,single_arm_overhead_triceps:5,single_arm_cable_y_raise_school:2.5,
   single_arm_cable_pulldown:10,single_arm_machine_row:20,open_elbow_cable_row:25,cable_curl:15,
-  barbell_squat:40,barbell_rdl:40,dumbbell_bulgarian:7.5,leg_curl_not_checked:20,dumbbell_calf_raise:15
+  barbell_squat:40,barbell_rdl:40,dumbbell_bulgarian:7.5,seated_leg_curl:20,dumbbell_calf_raise:15
 };
 const PROGRAMS={
   push:[
     {id:'push_barbell_bench',name:'杠铃卧推',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:180,muscle:'胸·三头',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_bench',priority:1,warmupSets:3,autoProgress:true,side:'杠铃总重 · 建议有保护杆或保护人',tip:'先做空杆及递增热身；肩胛后收下沉、双脚踩稳，杠铃落在胸骨下段。三组都达到12次且保持RIR 2，下次才加2.5kg。',svg:LEGACY_PROGRAMS.push[0].svg},
     {id:'push_incline_db',name:'上斜哑铃卧推',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:120,muscle:'上胸·三头',coef:12.5,step:2.5,wtag:'单只',equipmentId:'incline_dumbbell',priority:2,warmupSets:1,autoProgress:true,side:'双手各一只 · 凳角约20–30°',tip:'肩胛贴凳，手腕叠在肘上方；下放至上胸两侧的无痛深度，避免凳角过高变成肩推。',svg:LEGACY_PROGRAMS.push[1].svg},
     {id:'push_dips',name:'双杠臂屈伸',sets:'2组 × 8-12次',workSets:2,minReps:8,maxReps:12,rir:2,rest:120,muscle:'胸·三头',coef:0,step:0,wtag:'自重/辅助',equipmentId:'dip_station',priority:2,warmupSets:0,autoProgress:false,side:'自重65kg或辅助 · 只做无痛幅度',tip:'肩膀远离耳朵，身体略前倾并保持稳定；不足8次时使用辅助，不摆动凑次数。',svg:LEGACY_PROGRAMS.push[3].svg},
-    {id:'push_lying_triceps_extension',name:'仰卧臂屈伸',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:90,muscle:'肱三头',coef:15,step:2.5,wtag:'总重',equipmentId:'lying_triceps_extension',priority:3,warmupSets:0,autoProgress:true,side:'曲杆或哑铃 · 记录总重',tip:'上臂尽量稳定，屈肘把重量降到头部后方的无痛位置；伸肘完成，不让肩膀代偿。',svg:LEGACY_PROGRAMS.push[4].svg},
-    {id:'push_cable_y_raise',name:'钢线Y字侧平举',sets:'3组 × 12-15次',workSets:3,minReps:12,maxReps:15,rir:3,rest:75,muscle:'肩中束',coef:5,step:2.5,wtag:'每侧配重',equipmentId:'cable_y_raise',priority:3,warmupSets:0,autoProgress:true,side:'左右各一根钢线 · 记录单侧配重',tip:'使用轻重量，手臂在身体略前方沿Y字轨迹抬起；不耸肩、不甩动。适配版暂不使用10+5休息暂停。',svg:LEGACY_PROGRAMS.push[2].svg}
+    {id:'push_single_arm_overhead_triceps',name:'单手过顶钢线臂屈伸',sets:'2组 × 每侧10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:75,muscle:'肱三头',coef:5,step:2.5,wtag:'单侧配重',equipmentId:'single_arm_overhead_triceps',priority:3,warmupSets:0,autoProgress:true,side:'低位滑轮在身后 · 左右分别完成',tip:'前后站稳并收紧腹部，大臂靠近头部固定；从头后屈肘位置伸直手臂，不反弓腰、不让肘部向外漂。',svg:LEGACY_PROGRAMS.push[4].svg},
+    {id:'push_single_arm_cable_y_raise',name:'单手钢线Y字侧平举',sets:'3组 × 每侧12-15次',workSets:3,minReps:12,maxReps:15,rir:3,rest:75,muscle:'肩中束',coef:2.5,step:2.5,wtag:'单侧配重',equipmentId:'single_arm_cable_y_raise_school',priority:3,warmupSets:0,autoProgress:true,side:'滑轮调至下胸高度 · 对侧脚朝斜前方',tip:'非训练手扶住龙门架，训练手从胸前开始；肩膀下沉、手臂微屈，由肘部带动向外斜上方展开成Y形。这里的“甩肘”指主动引导轨迹，不使用惯性。',svg:LEGACY_PROGRAMS.push[2].svg}
   ],
   pull:[
     {id:'pull_pullup',name:'引体向上',sets:'3组 × 6-10次',workSets:3,minReps:6,maxReps:10,rir:2,rest:150,muscle:'背阔·肱二头',coef:0,step:0,wtag:'自重/辅助',equipmentId:'pullup_station',priority:1,warmupSets:1,autoProgress:true,side:'自重65kg或辅助 · 握距略宽于肩',tip:'先让肩胛下沉，再把胸口拉向杠；避免摆腿和耸肩。低于6次时记录辅助重量，不用动作变形凑次数。',svg:LEGACY_PROGRAMS.pull[0].svg},
@@ -591,7 +592,7 @@ const PROGRAMS={
     {id:'legs_back_squat',name:'杠铃深蹲',sets:'3组 × 8-10次',workSets:3,minReps:8,maxReps:10,rir:2,rest:180,muscle:'股四头·臀',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_squat',priority:1,warmupSets:3,autoProgress:true,side:'杠铃总重 · 使用深蹲架保护杆',tip:'适配版把深蹲放在第一位。脚掌三点着地，膝盖与脚尖同向；三组都达到10次且保持RIR 2，下次才加2.5kg。',svg:LEGACY_PROGRAMS.legs[0].svg},
     {id:'legs_barbell_rdl',name:'杠铃罗马尼亚硬拉',sets:'3组 × 8-12次',workSets:3,minReps:8,maxReps:12,rir:2,rest:150,muscle:'腘绳·臀',coef:40,step:2.5,wtag:'总重',equipmentId:'barbell_rdl',priority:1,warmupSets:1,autoProgress:true,side:'杠铃总重 · 杠铃贴腿移动',tip:'膝微屈并固定，髋部向后推，保持脊柱中立；在腿后侧充分拉伸且腰背不变形的位置返回。',svg:LEGACY_PROGRAMS.legs[1].svg},
     {id:'legs_bulgarian_split_squat',name:'保加利亚分腿蹲',sets:'2组 × 每腿8-12次',workSets:2,minReps:8,maxReps:12,rir:2,rest:120,muscle:'股四头·臀',coef:7.5,step:2.5,wtag:'单只',equipmentId:'dumbbell_bulgarian',priority:2,warmupSets:0,autoProgress:true,side:'双手各一只 · 每腿分别完成',tip:'前脚站稳，后脚轻放凳面；下蹲时前膝与脚尖同向，重心主要留在前脚。',svg:LEGACY_PROGRAMS.legs[2].svg},
-    {id:'legs_leg_curl',name:'腿弯举',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:90,muscle:'腘绳肌',coef:20,step:5,wtag:'配重',equipmentId:'leg_curl_not_checked',equipmentStatus:'notChecked',priority:2,warmupSets:0,autoProgress:true,side:'器械待确认 · 首次使用前核对是否为腿弯举',tip:'调整转轴对准膝关节，固定骨盆；屈膝到舒适范围后控制回程，不要快速弹回。',svg:LEGACY_PROGRAMS.legs[4].svg},
+    {id:'legs_seated_leg_curl',name:'坐姿腿弯举',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:90,muscle:'腘绳肌',coef:20,step:5,wtag:'配重',equipmentId:'seated_leg_curl',equipmentStatus:'confirmed',priority:2,warmupSets:1,autoProgress:true,side:'坐姿腿弯举机 · 记录器械配重',tip:'调整转轴对准膝关节，压腿垫固定大腿，滚垫位于脚踝上方；屈膝至可控范围，随后缓慢回程，骨盆不要离开靠垫。',svg:LEGACY_PROGRAMS.legs[4].svg},
     {id:'legs_calf_raise',name:'站姿提踵',sets:'2组 × 10-15次',workSets:2,minReps:10,maxReps:15,rir:2,rest:75,muscle:'小腿',coef:15,step:2.5,wtag:'单只',equipmentId:'dumbbell_calf_raise',priority:3,warmupSets:0,autoProgress:true,side:'双手各一只 · 重量为单只哑铃',tip:'前脚掌踩稳，脚跟在可控范围充分下放再抬高；顶点停顿，不用膝关节弹动。',svg:LEGACY_PROGRAMS.legs[3].svg}
   ]
 };
@@ -619,9 +620,11 @@ Object.values(PROGRAMS).flat().forEach(e=>{ if(EXERCISE_SVGS[e.id]) e.svg=EXERCI
 
 // 原创动作实例图：同一训练日共用一张高清图，通过背景位置显示对应动作面板。
 const EXERCISE_GUIDES={
+  push_barbell_bench:{day:'push',file:'assets/exercise-guides/push-school-v1.png',pos:0},
+  push_incline_db:{day:'push',file:'assets/exercise-guides/push-school-v1.png',pos:50},
   push_dips:{day:'push',file:'assets/exercise-guides/push-guide-v1.png',pos:0},
-  push_lying_triceps_extension:{day:'push',file:'assets/exercise-guides/push-guide-v1.png',pos:50},
-  push_cable_y_raise:{day:'push',file:'assets/exercise-guides/push-guide-v1.png',pos:100},
+  push_single_arm_overhead_triceps:{day:'single',file:'assets/exercise-guides/triceps-overhead-school-v1.png',pos:50},
+  push_single_arm_cable_y_raise:{day:'push',file:'assets/exercise-guides/push-school-v1.png',pos:100},
   pull_pullup:{day:'pull',file:'assets/exercise-guides/pull-guide-v1.png',pos:0},
   pull_single_arm_cable_pulldown:{day:'pull',file:'assets/exercise-guides/pull-guide-v1.png',pos:25},
   pull_single_arm_machine_row:{day:'pull',file:'assets/exercise-guides/pull-guide-v1.png',pos:50},
@@ -630,7 +633,7 @@ const EXERCISE_GUIDES={
   legs_back_squat:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:0},
   legs_barbell_rdl:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:25},
   legs_bulgarian_split_squat:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:50},
-  legs_leg_curl:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:75},
+  legs_seated_leg_curl:{day:'legs',file:'assets/exercise-guides/leg-curl-options-school-v1.png',pos:0},
   legs_calf_raise:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:100}
 };
 
@@ -774,7 +777,7 @@ const defaultState={
   schemaVersion:2, planVersion:PLAN_VERSION,
   profileVersion:PROFILE_VERSION, goal:'bulk', weight:65, target:69, deadline:'2027-06-30',
   checkins:[], training:{}, setLogs:{}, diet:{}, supplements:{}, weights:{}, bodyWeights:{}, bg:'', planEpoch:'', planOverrides:{}, feedback:{},
-  sessionSnapshots:{}, painLogs:[], progressionFreeze:{}, recoveryDeferred:{}, equipmentStatus:{legs_leg_curl:'notChecked'}, legacySetLogs:{}, legacyTraining:{}, migrationPending:false
+  sessionSnapshots:{}, painLogs:[], progressionFreeze:{}, recoveryDeferred:{}, equipmentStatus:{legs_seated_leg_curl:'confirmed'}, legacySetLogs:{}, legacyTraining:{}, migrationPending:false
 };
 
 function freshState(){ return JSON.parse(JSON.stringify(defaultState)); }
@@ -1287,7 +1290,9 @@ function renderTrainingHistory(){
       Object.keys(state.setLogs[date][day]||{}).forEach(id=>{
         const logs=state.setLogs[date][day][id];
         const ex=(PROGRAMS[day]||[]).find(x=>x.id===id);
-        if(logs&&logs.some(x=>(x.setType||'working')==='working'&&Number(x.reps)>0)&&ex) names.push(ex.name);
+        const snapshot=state.sessionSnapshots&&state.sessionSnapshots[date+'_'+day];
+        const snapEx=snapshot&&Array.isArray(snapshot.exercises)?snapshot.exercises.find(x=>x.id===id):null;
+        if(logs&&logs.some(x=>(x.setType||'working')==='working'&&Number(x.reps)>0)) names.push(ex?.name||snapEx?.name||id);
       });
       if(names.length) rows.push(`<div class="history-row"><span class="history-date">${date}</span>${labels[day]||day} · ${names.join('、')}</div>`);
     });
