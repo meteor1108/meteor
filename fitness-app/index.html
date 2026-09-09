@@ -117,8 +117,12 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .ex.done .box{background:var(--green);border-color:var(--green);color:#0b0e14}
 .ex-detail{display:none;padding:2px 14px 14px;border-top:1px solid var(--border)}
 .ex.open .ex-detail{display:block}
-.ex .thumb{display:flex;justify-content:center;padding:10px 0 2px}
+.ex .thumb{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 2px}
 .ex .thumb svg{width:150px;height:auto;max-height:190px}
+.ex .guide-photo{width:100%;border-radius:12px;background-repeat:no-repeat;background-size:100% auto;background-color:#15171b;border:1px solid var(--border)}
+.ex .guide-photo.push{aspect-ratio:2.25/1}
+.ex .guide-photo.pull,.ex .guide-photo.legs{aspect-ratio:3.75/1}
+.ex .guide-note{font-size:11px;color:var(--muted);text-align:center;margin-top:5px}
 .ex .side-tag{display:inline-block;font-size:11px;font-weight:600;color:var(--orange);background:rgba(255,107,53,.12);padding:3px 9px;border-radius:7px;margin:8px 0 6px}
 .ex .tip{font-size:13px;color:var(--text);line-height:1.65}
 .rx-line{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 4px}
@@ -612,6 +616,23 @@ const EXERCISE_SVGS={
   legs_core:S(L(18,126,104,126,G)+D(34,108,7)+L(42,108,62,102)+L(62,102,80,116)+L(54,104,48,78)+L(48,78,36,64)+L(62,102,76,80)+L(76,80,90,70)+L(44,106,34,88)+L(70,108,86,92))
 };
 Object.values(PROGRAMS).flat().forEach(e=>{ if(EXERCISE_SVGS[e.id]) e.svg=EXERCISE_SVGS[e.id]; });
+
+// 原创动作实例图：同一训练日共用一张高清图，通过背景位置显示对应动作面板。
+const EXERCISE_GUIDES={
+  push_dips:{day:'push',file:'assets/exercise-guides/push-guide-v1.png',pos:0},
+  push_lying_triceps_extension:{day:'push',file:'assets/exercise-guides/push-guide-v1.png',pos:50},
+  push_cable_y_raise:{day:'push',file:'assets/exercise-guides/push-guide-v1.png',pos:100},
+  pull_pullup:{day:'pull',file:'assets/exercise-guides/pull-guide-v1.png',pos:0},
+  pull_single_arm_cable_pulldown:{day:'pull',file:'assets/exercise-guides/pull-guide-v1.png',pos:25},
+  pull_single_arm_machine_row:{day:'pull',file:'assets/exercise-guides/pull-guide-v1.png',pos:50},
+  pull_open_elbow_cable_row:{day:'pull',file:'assets/exercise-guides/pull-guide-v1.png',pos:75},
+  pull_cable_curl:{day:'pull',file:'assets/exercise-guides/pull-guide-v1.png',pos:100},
+  legs_back_squat:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:0},
+  legs_barbell_rdl:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:25},
+  legs_bulgarian_split_squat:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:50},
+  legs_leg_curl:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:75},
+  legs_calf_raise:{day:'legs',file:'assets/exercise-guides/legs-guide-v1.png',pos:100}
+};
 
 // 热身与放松（按推/拉/腿日分别给）
 const WARMUP={
@@ -1214,6 +1235,10 @@ function renderTrain(){
       ? `<div class="wt"><button class="wbtn" data-w="-1">−</button><span class="wval">${kg}kg</span><button class="wbtn" data-w="1">+</button></div>`
       : `<div class="wt"><span class="wval">自重</span></div>`;
     const wtag=e.wtag?`<span class="wtag">${e.wtag}</span>`:'';
+    const guide=EXERCISE_GUIDES[e.id];
+    const visual=guide
+      ? `<div class="guide-photo ${guide.day}" role="img" aria-label="${e.name}起始与结束姿势实例" style="background-image:url('${guide.file}');background-position:center ${guide.pos}%"></div><div class="guide-note">左侧起始 · 右侧结束 · 图片仅作姿势方向参考</div>`
+      : e.svg;
     const setsHtml=adv.light
       ? `<div class="sets"><span class="light-tag">轻量</span>${lightSetsStr(e.sets)} · ${e.muscle}</div>`
       : `<div class="sets">${e.sets} · ${e.muscle}</div>`;
@@ -1224,7 +1249,7 @@ function renderTrain(){
         <span class="box">✓</span>
       </div>
       <div class="ex-detail">
-        <div class="thumb">${e.svg}</div>
+        <div class="thumb">${visual}</div>
         <div><span class="side-tag">${e.side}</span></div>
         <div class="tip">${e.tip}</div>
         <button class="btn-secondary stop-pain" style="margin-top:8px;color:var(--red)">出现异常疼痛：停止</button>
