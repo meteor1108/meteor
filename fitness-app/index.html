@@ -131,8 +131,12 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .rx-tag.up{background:rgba(74,222,128,.13);color:var(--green)}
 .last-log{font-size:12px;color:var(--muted);line-height:1.5;margin:7px 0}
 .set-editor{margin-top:10px;border-top:1px solid var(--border);padding-top:8px}
-.set-head,.set-row{display:grid;grid-template-columns:30px 1fr 1fr 1fr;gap:6px;align-items:center;text-align:center}
+.set-head,.set-row{display:grid;grid-template-columns:30px minmax(58px,1fr) minmax(48px,.8fr) minmax(42px,.7fr) 58px;gap:6px;align-items:center;text-align:center}
 .set-head{font-size:10px;color:var(--muted);margin-bottom:5px}
+.set-row{padding:4px 0;border-radius:9px}
+.set-row.completed{background:rgba(74,222,128,.07)}
+.set-complete{height:34px;border:1px solid var(--orange);border-radius:9px;background:rgba(255,107,53,.12);color:var(--orange);font-size:12px;font-weight:700;cursor:pointer}
+.set-row.completed .set-complete{border-color:var(--green);background:var(--green);color:#0b0e14}
 .set-row{margin-bottom:6px;font-size:12px}
 .set-input{width:100%;min-width:0;padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-align:center;font-size:13px}
 .history-row{padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
@@ -366,7 +370,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
     <div class="card prep-card" id="restCard">
       <div class="prep-title"><span>⏱ 组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
       <div style="display:flex;align-items:center;gap:10px"><b id="restTimer" style="font-size:28px;color:var(--orange)">00:00</b><button class="btn-secondary" id="restAdd">+30秒</button><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div>
-      <div class="prep-note" style="margin-top:9px">用法：完成正式组 → 填写次数并离开输入框 → 自动按该动作休息时间倒计时。主动作通常120–180秒，辅助动作60–90秒；呼吸仍急促或动作准备未完成时，可多休息30–60秒。</div>
+      <div class="prep-note" style="margin-top:9px">用法：重量、次数和RIR已按上次表现自动填好。每组做完只点“完成”即可保存并开始倒计时；实际表现不同再修改数值。主动作通常120–180秒，辅助动作60–90秒。</div>
     </div>
     <div class="card prep-card">
       <div class="prep-title"><span>🔥 训练前热身</span><span class="prep-sub" id="warmTime">约 5 分钟</span></div>
@@ -1068,6 +1072,20 @@ function fmtSets(rows){
   return good.map(x=>(x.kg?x.kg+'kg × ':'')+x.reps+'次'+(x.rir!==''&&x.rir!=null?' · RIR '+x.rir:'')).join(' / ');
 }
 
+function workingRows(log){
+  return log&&Array.isArray(log.sets)?log.sets.filter(x=>(x.setType||'working')==='working'&&Number(x.reps)>0):[];
+}
+
+// 将上次真实表现转换成本次默认目标。正常训练只需逐组点击“完成”，出现偏差时再改数字。
+function suggestedSetTarget(ex,prev,workIndex,plannedKg,targetRir){
+  const rx=rxInfo(ex), old=workingRows(prev), prior=old[workIndex]||old[old.length-1];
+  if(!prior) return {kg:plannedKg,reps:rx.min,rir:targetRir};
+  const oldKg=Number(prior.kg)||0, nextKg=Number(plannedKg)||0;
+  if(oldKg&&nextKg&&oldKg!==nextKg) return {kg:plannedKg,reps:rx.min,rir:targetRir};
+  const priorReps=Number(prior.reps)||rx.min;
+  return {kg:plannedKg,reps:Math.min(rx.max,Math.max(rx.min,priorReps+1)),rir:targetRir};
+}
+
 function progression(ex,prev,day,index){
   if(!ex.autoProgress) return '此动作不自动加重';
   if(state.progressionFreeze?.[ex.id]) return '已冻结自动加重：先处理疼痛记录';
@@ -1257,21 +1275,26 @@ function renderTrain(){
         <div class="tip">${e.tip}</div>
         <button class="btn-secondary stop-pain" style="margin-top:8px;color:var(--red)">出现异常疼痛：停止</button>
         <div class="rx-line"><span class="rx-tag">正式组 RIR ${targetRir}${prev?'':'（首次校准）'}</span><span class="rx-tag">休息 ${rx.rest}秒</span><span class="rx-tag ${suggested.includes('加')?'up':''}">${suggested}</span></div>
-        <div class="last-log">上次：${prev?prev.date+' · '+fmtSets(prev.sets):'暂无记录'}</div>
+        <div class="last-log">上次：${prev?prev.date+' · '+fmtSets(prev.sets):'暂无记录'}<br>本次默认值已自动生成；做完一组直接点“完成”。</div>
         <div class="set-editor">
-          <div class="set-head"><span>类型</span><span>重量kg</span><span>次数</span><span>RIR</span></div>
+          <div class="set-head"><span>类型</span><span>重量kg</span><span>次数</span><span>RIR</span><span>记录</span></div>
           ${Array.from({length:warmupCount+setCount},(_,si)=>{
             const isWarmup=si<warmupCount, workIndex=si-warmupCount;
             const row=rows[si]||{};
             const warmPct=({1:[0.6],2:[0.5,0.75],3:[0.4,0.6,0.8]}[warmupCount]||[])[si]||0.5;
             const plannedKg=isWarmup&&kg?roundStep(kg*warmPct,e.step||1):(kg||'');
-            const prevWork=prev&&prev.sets.filter(x=>(x.setType||'working')==='working')[workIndex];
-            const baseKg=row.kg!==undefined?row.kg:(prevWork&&prevWork.kg!==undefined?prevWork.kg:plannedKg);
             const type=isWarmup?'warmup':'working';
-            return `<div class="set-row"><b>${isWarmup?'热'+(si+1):'正'+(workIndex+1)}</b>
+            const warmReps=({1:[10],2:[10,5],3:[10,5,3]}[warmupCount]||[])[si]||8;
+            const target=isWarmup?{kg:plannedKg,reps:warmReps,rir:''}:suggestedSetTarget(e,prev,workIndex,kg,targetRir);
+            const baseKg=row.kg!==undefined&&row.kg!==''?row.kg:target.kg;
+            const baseReps=row.reps!==undefined&&row.reps!==''?row.reps:target.reps;
+            const baseRir=row.rir!==undefined&&row.rir!==''?row.rir:target.rir;
+            const completed=Number(row.reps)>0;
+            return `<div class="set-row ${completed?'completed':''}"><b>${isWarmup?'热'+(si+1):'正'+(workIndex+1)}</b>
               <input class="set-input" data-field="kg" data-set="${si}" data-set-type="${type}" inputmode="decimal" type="number" step="${e.step||1}" value="${baseKg}">
-              <input class="set-input" data-field="reps" data-set="${si}" inputmode="numeric" type="number" min="0" value="${row.reps??''}" placeholder="${rx.min}-${rx.max}">
-              <input class="set-input" data-field="rir" data-set="${si}" inputmode="numeric" type="number" min="0" max="10" value="${row.rir??''}" placeholder="${isWarmup?'—':targetRir}">
+              <input class="set-input" data-field="reps" data-set="${si}" inputmode="numeric" type="number" min="0" value="${baseReps}">
+              <input class="set-input" data-field="rir" data-set="${si}" inputmode="numeric" type="number" min="0" max="10" value="${baseRir}" placeholder="${isWarmup?'—':targetRir}">
+              <button class="set-complete" data-set="${si}" data-set-type="${type}">${completed?'✓ 已完成':'完成'}</button>
             </div>`;
           }).join('')}
         </div>
@@ -1460,11 +1483,40 @@ document.getElementById('exList').addEventListener('click',e=>{
   if(e.target.closest('.set-input')) return;
   const wbtn=e.target.closest('.wbtn');
   const box=e.target.closest('.box');
+  const setComplete=e.target.closest('.set-complete');
   const confirmEquipment=e.target.closest('.confirm-equipment');
   const stopPain=e.target.closest('.stop-pain');
   const ex=e.target.closest('.ex'); if(!ex) return;
   if(ex.classList.contains('injured')) return;
   const i=+ex.dataset.i, exo=PROGRAMS[curDay][i], coef=exo.coef, step=exo.step, key=exo.equipmentId;
+
+  if(setComplete){
+    const si=+setComplete.dataset.set, type=setComplete.dataset.setType||'working';
+    ensureSessionSnapshot(today(),curDay);
+    const rows=logBucket(today(),curDay,i,true);
+    while(rows.length<=si) rows.push({kg:'',reps:'',rir:'',setType:'working',pain:false,formOk:true});
+    const row=rows[si];
+    if(Number(row.reps)>0){
+      row.reps=''; row.rir=''; delete row.completedAt;
+    }else{
+      const setRow=setComplete.closest('.set-row');
+      const read=field=>setRow.querySelector(`[data-field="${field}"]`)?.value??'';
+      row.kg=read('kg')===''?'':Number(read('kg'));
+      row.reps=read('reps')===''?'':Number(read('reps'));
+      row.rir=read('rir')===''?'':Number(read('rir'));
+      row.setType=type; row.pain=false; row.formOk=true; row.completedAt=new Date().toISOString();
+      if(coef&&row.kg!=='') state.weights[key]=row.kg;
+      if(type==='working'&&Number(row.reps)>0) startRestTimer(exo.rest||90);
+      else if(type==='warmup'&&Number(row.reps)>0) startRestTimer(60);
+    }
+    const rx=rxInfo(exo), light=statusAdvice(feedbackToday()).light;
+    const requiredSets=light?Math.max(2,rx.sets-1):rx.sets;
+    if(!state.training[today()]) state.training[today()]={};
+    if(!state.training[today()][curDay]) state.training[today()][curDay]={};
+    state.training[today()][curDay][exo.id]=rows.filter(x=>(x.setType||'working')==='working'&&Number(x.reps)>0).length>=requiredSets;
+    state.activeSession={date:today(),day:curDay,exerciseId:exo.id,exerciseName:exo.name,setIndex:si,updatedAt:new Date().toISOString()};
+    save(state); renderTrain(); return;
+  }
 
   if(confirmEquipment){
     state.equipmentStatus=state.equipmentStatus||{}; state.equipmentStatus[exo.id]='confirmed';
@@ -1514,6 +1566,14 @@ document.getElementById('exList').addEventListener('change',e=>{
   while(rows.length<=si) rows.push({kg:'',reps:'',rir:'',setType:'working',pain:false,formOk:true});
   rows[si].setType=type;
   rows[si][field]=input.value===''?'':+input.value;
+  if(field==='reps'&&Number(input.value)>0){
+    const setRow=input.closest('.set-row');
+    const kgInput=setRow.querySelector('[data-field="kg"]');
+    const rirInput=setRow.querySelector('[data-field="rir"]');
+    if(rows[si].kg===''&&kgInput?.value!=='') rows[si].kg=Number(kgInput.value);
+    if(type==='working'&&rows[si].rir===''&&rirInput?.value!=='') rows[si].rir=Number(rirInput.value);
+    rows[si].completedAt=new Date().toISOString();
+  }
   const rx=rxInfo(exercise);
   const light=statusAdvice(feedbackToday()).light;
   const requiredSets=light?Math.max(2,rx.sets-1):rx.sets;
