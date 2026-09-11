@@ -147,6 +147,20 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
 .field input,.field select{width:100%;padding:12px;border-radius:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:15px}
+.weight-card{margin:4px 0 16px}
+.weight-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.weight-title{font-size:15px;font-weight:700}
+.weight-count{font-size:12px;color:var(--orange);font-weight:700;white-space:nowrap}
+.weight-chart{width:100%;height:128px;display:block;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.weight-avgs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.weight-stat{background:var(--surface);border-radius:10px;padding:10px;text-align:center}
+.weight-stat span{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+.weight-stat b{font-size:17px;color:var(--orange)}
+.weight-status{margin-top:10px;padding:10px 11px;border-radius:10px;background:rgba(96,165,250,.10);color:var(--blue);font-size:12px;line-height:1.55}
+.weight-history{margin-top:10px;max-height:210px;overflow:auto}
+.weight-history-row{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:8px 2px;border-bottom:1px solid var(--border);font-size:12px}
+.weight-history-row span:last-child{min-width:55px;text-align:right;color:var(--muted)}
+.save-status{min-height:20px;margin-top:8px;text-align:center;color:var(--green);font-size:12px}
 .seg{display:flex;gap:8px}
 .seg .opt{flex:1;padding:12px;text-align:center;border-radius:12px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-weight:600;cursor:pointer}
 .seg .opt.on{color:#0b0e14}
@@ -406,6 +420,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <div class="pbar-lbl" id="dietCarbLbl">碳水 0 / 0 g</div>
       <div class="pbar"><i id="dietFatBar"></i></div>
       <div class="pbar-lbl" id="dietFatLbl">脂肪 0 / 0 g</div>
+      <div class="weight-status" id="dietTrendStatus"></div>
     </div>
 
     <h2>补剂时间表</h2>
@@ -465,6 +480,10 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <label>当前体重 (kg)</label>
       <input type="number" id="inWeight" inputmode="decimal">
     </div>
+    <div class="card weight-card">
+      <div class="weight-top"><div><div class="weight-title">⚖️ 14天晨重趋势</div><div class="sub" style="margin-top:4px">每天晨起、如厕后、进食前记录</div></div><div class="weight-count" id="weightCount">0/14天</div></div>
+      <div id="weightTrendPanel"></div>
+    </div>
     <div class="field">
       <label>目标体重 (kg)</label>
       <input type="number" id="inTarget" inputmode="decimal">
@@ -488,6 +507,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <div class="bg-hint" id="bgHint">未设置背景，当前使用默认氛围光斑</div>
     </div>
     <button class="save-btn" id="saveBtn">保存</button>
+    <div class="save-status" id="saveStatus"></div>
     <div class="bg-actions" style="margin-top:10px">
       <button class="btn-secondary" id="exportBtn">导出JSON备份</button>
       <button class="btn-secondary" id="importBtn">导入JSON</button>
@@ -858,17 +878,35 @@ function proteinTarget(){
   return Math.round(state.weight*c);
 }
 
-function nutritionTrend(){
+function weightTrendData(){
   const entries=Object.entries(state.bodyWeights||{}).filter(([,v])=>Number(v)>0).sort((a,b)=>a[0].localeCompare(b[0]));
-  if(entries.length<14) return {delta:0,status:'晨重数据不足（至少14天）'};
-  const last=entries.slice(-14), dietDays=last.filter(([d])=>Array.isArray(state.diet[d])&&state.diet[d].length).length;
-  if(dietDays<10) return {delta:0,status:'实际饮食记录不足，不自动调整热量'};
-  const avg=a=>a.reduce((s,[,v])=>s+Number(v),0)/a.length;
-  const firstAvg=avg(last.slice(0,7)), secondAvg=avg(last.slice(7));
-  const weeklyPct=(secondAvg-firstAvg)/firstAvg*100;
-  if(weeklyPct<0.1) return {delta:125,status:'周增重低于0.1%，建议 +125 kcal'};
-  if(weeklyPct>0.25) return {delta:-125,status:'周增重高于0.25%，建议 -125 kcal'};
-  return {delta:0,status:'周增重0.1%–0.25%，保持热量'};
+  const last=entries.slice(-14), daysRemaining=Math.max(0,14-last.length);
+  const avg=a=>a.length?a.reduce((s,[,v])=>s+Number(v),0)/a.length:null;
+  const firstAvg=last.length>=7?avg(last.slice(0,7)):null;
+  const secondAvg=last.length>=14?avg(last.slice(7,14)):null;
+  const weeklyPct=firstAvg&&secondAvg!==null?(secondAvg-firstAvg)/firstAvg*100:null;
+  const dietDays=last.filter(([d])=>Array.isArray(state.diet[d])&&state.diet[d].length).length;
+  const spanDays=last.length>=2?Math.round((new Date(last[last.length-1][0]+'T00:00:00')-new Date(last[0][0]+'T00:00:00'))/86400000):0;
+  const intervalOk=last.length<14||spanDays<=20;
+  let delta=0, status='', effectiveDate='';
+  if(daysRemaining){
+    status=`还需 ${daysRemaining} 天有效晨重；当前只展示趋势，不调整热量。`;
+  }else if(!intervalOk){
+    status='14次记录跨度超过21天，间隔过大；继续每日记录，暂不调整热量。';
+  }else if(dietDays<10){
+    status=`晨重已满14天，但同期饮食仅记录 ${dietDays}/10 天；暂不自动调整热量。`;
+  }else{
+    effectiveDate=last[last.length-1][0];
+    if(weeklyPct<0.1){ delta=125; status='后7日增重低于0.1%：每日热量目标增加125 kcal。'; }
+    else if(weeklyPct>0.25){ delta=-125; status='后7日增重高于0.25%：每日热量目标减少125 kcal。'; }
+    else status='后7日增重处于0.1%–0.25%：每日热量目标保持不变。';
+  }
+  return {entries,last,daysRemaining,firstAvg,secondAvg,weeklyPct,dietDays,spanDays,intervalOk,delta,status,effectiveDate};
+}
+
+function nutritionTrend(){
+  const t=weightTrendData();
+  return {delta:t.delta,status:t.status,effectiveDate:t.effectiveDate};
 }
 
 // 每日营养目标：蛋白质和脂肪先满足最低线，剩余热量分配给碳水。
@@ -1329,6 +1367,48 @@ function renderMe(){
   document.getElementById('inTarget').value=state.target;
   document.getElementById('inDeadline').value=state.deadline;
   document.getElementById('inPlanEpoch').value=state.planEpoch||today();
+  renderWeightTrend();
+}
+
+function renderWeightTrend(){
+  const data=weightTrendData(), rows=data.last, panel=document.getElementById('weightTrendPanel');
+  document.getElementById('weightCount').textContent=Math.min(14,rows.length)+'/14天';
+  if(!rows.length){
+    panel.innerHTML='<div class="weight-status">今天保存第一条晨重后，这里会显示14天折线、每日变化和两组7日平均值。</div>';
+    return;
+  }
+  const vals=rows.map(([,v])=>Number(v)), w=320, h=128, px=18, py=18;
+  let lo=Math.min(...vals), hi=Math.max(...vals);
+  if(hi-lo<0.6){ const mid=(hi+lo)/2; lo=mid-0.3; hi=mid+0.3; }
+  else { lo-=0.2; hi+=0.2; }
+  const x=i=>rows.length===1?w/2:px+i*(w-px*2)/(rows.length-1);
+  const y=v=>py+(hi-v)*(h-py*2)/(hi-lo);
+  const points=rows.map(([,v],i)=>x(i).toFixed(1)+','+y(Number(v)).toFixed(1)).join(' ');
+  const dots=rows.map(([d,v],i)=>`<circle cx="${x(i)}" cy="${y(Number(v))}" r="3.2" fill="#ff6b35"><title>${d} · ${Number(v).toFixed(1)}kg</title></circle>`).join('');
+  const avgLine=(avg,start,end,color)=>avg===null?'':`<line x1="${x(start)}" y1="${y(avg)}" x2="${x(end)}" y2="${y(avg)}" stroke="${color}" stroke-width="2" stroke-dasharray="5 4"/>`;
+  const firstEnd=Math.min(6,rows.length-1), secondStart=Math.min(7,rows.length-1);
+  const chart=`<svg class="weight-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="最近14天晨重折线">
+    <line x1="${px}" y1="${h-py}" x2="${w-px}" y2="${h-py}" stroke="#2a2f3a"/>
+    ${avgLine(data.firstAvg,0,firstEnd,'#60a5fa')}${rows.length>=14?avgLine(data.secondAvg,secondStart,13,'#4ade80'):''}
+    <polyline points="${points}" fill="none" stroke="#ff6b35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}
+    <text x="${px}" y="14" fill="#8a94a6" font-size="9">${hi.toFixed(1)}kg</text>
+    <text x="${px}" y="${h-4}" fill="#8a94a6" font-size="9">${rows[0][0].slice(5)}</text>
+    <text x="${w-px}" y="${h-4}" fill="#8a94a6" text-anchor="end" font-size="9">${rows[rows.length-1][0].slice(5)}</text>
+  </svg>`;
+  const firstText=data.firstAvg===null?'数据不足':data.firstAvg.toFixed(2)+' kg';
+  const secondText=data.secondAvg===null?'数据不足':data.secondAvg.toFixed(2)+' kg';
+  const change=data.weeklyPct===null?'尚不能计算':`${data.weeklyPct>=0?'+':''}${data.weeklyPct.toFixed(2)}%`;
+  const effective=data.effectiveDate?`<br>生效日期：${data.effectiveDate}；已自动计入饮食页热量、碳水目标。`:'';
+  const history=rows.map(([d,v],i)=>{
+    const prev=i?Number(rows[i-1][1]):null, diff=prev===null?null:Number(v)-prev;
+    const diffText=diff===null?'首条':`${diff>=0?'+':''}${diff.toFixed(1)} kg`;
+    return `<div class="weight-history-row"><span>${d}</span><b>${Number(v).toFixed(1)} kg</b><span>${diffText}</span></div>`;
+  }).reverse().join('');
+  panel.innerHTML=chart+
+    `<div class="weight-avgs"><div class="weight-stat"><span>前7日平均</span><b>${firstText}</b></div><div class="weight-stat"><span>后7日平均</span><b>${secondText}</b></div></div>`+
+    `<div class="weight-status">平均变化：${change}<br>${data.status}${effective}<br>同期饮食记录：${data.dietDays}/10天</div>`+
+    `<div class="weight-history">${history}</div>`;
 }
 
 // 渲染当前餐次的营养目标卡（已摄入 / 目标，可多可少）
@@ -1372,6 +1452,8 @@ function renderDiet(){
     document.getElementById('diet'+key+'Bar').style.width=(Math.min(1,current/target)*100)+'%';
     document.getElementById('diet'+key+'Lbl').textContent=label+' '+Math.round(current)+' / '+target+' '+unit;
   });
+  const trend=weightTrendData();
+  document.getElementById('dietTrendStatus').innerHTML='体重趋势：'+trend.status+(trend.effectiveDate?'<br>本轮目标自 '+trend.effectiveDate+' 起生效。':'');
 
   const supp=(state.supplements&&state.supplements[today()])||{};
   const dayPlan=planFor(today());
@@ -1617,7 +1699,13 @@ document.querySelectorAll('#goalSeg .opt').forEach(o=>{
 
 // 保存
 document.getElementById('saveBtn').addEventListener('click',()=>{
-  const newWeight=+document.getElementById('inWeight').value||state.weight;
+  const inputWeight=Number(document.getElementById('inWeight').value);
+  if(!Number.isFinite(inputWeight)||inputWeight<20||inputWeight>300){
+    document.getElementById('saveStatus').style.color='var(--red)';
+    document.getElementById('saveStatus').textContent='请输入20–300 kg之间的有效体重';
+    return;
+  }
+  const newWeight=Math.round(inputWeight*10)/10;
   state.weight=newWeight;
   state.bodyWeights=state.bodyWeights||{};
   state.bodyWeights[today()]=newWeight;
@@ -1625,7 +1713,9 @@ document.getElementById('saveBtn').addEventListener('click',()=>{
   state.deadline=document.getElementById('inDeadline').value||state.deadline;
   state.planEpoch=document.getElementById('inPlanEpoch').value||today();
   save(state); render();
-  document.querySelector('[data-page="home"]').click();
+  const status=document.getElementById('saveStatus');
+  status.style.color='var(--green)';
+  status.textContent=`✓ ${today()} 晨重 ${newWeight.toFixed(1)} kg 已保存`;
 });
 
 document.getElementById('exportBtn').addEventListener('click',()=>{
