@@ -47,36 +47,48 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 
 /* 顶部 */
 .topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 0}
+.topbar h1{color:#1d1d1f}
 .badge{font-size:12px;padding:4px 10px;border-radius:20px;font-weight:600}
 .badge.bulk{background:rgba(74,222,128,.15);color:var(--green)}
 .badge.cut{background:rgba(96,165,250,.15);color:var(--blue)}
 
-/* 首页：两个正方形 */
-.top-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.sq{aspect-ratio:1;background:rgba(28,34,46,.5);border:1px solid var(--border);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.sq.clickable{cursor:pointer}
-.sq .sq-big{font-size:52px;font-weight:800;line-height:1;color:var(--orange)}
-.sq .sq-ico{font-size:40px;line-height:1}
-.sq .sq-lbl{font-size:13px;color:var(--muted)}
-
-/* 首页：大长方形 */
-.big-card{background:rgba(28,34,46,.5);border:1px solid var(--border);border-radius:18px;height:280px;overflow:hidden;display:flex;flex-direction:column;margin-bottom:14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.half{flex:1;padding:14px 16px;display:flex;flex-direction:column;justify-content:center}
-.half+.half{border-top:1px solid var(--border)}
-.half-title{font-size:12px;color:var(--muted);margin-bottom:8px}
-.half-body{font-size:15px}
-.food-empty{color:var(--muted);font-size:14px}
-.nutri-line{font-size:15px;margin-bottom:10px}
-.nutri-line b{font-size:20px;color:var(--orange)}
-.pbar{height:8px;background:var(--surface);border-radius:4px;overflow:hidden}
+/* 首页：上方留白，信息收纳到下方 */
+#page-home.active{display:flex;flex-direction:column}
+.home-spacer{flex:1;min-height:clamp(130px,24vh,240px)}
+.home-stack{flex-shrink:0;display:flex;flex-direction:column;gap:12px;transform:translateY(-12px)}
+.home-panel{background:rgba(246,246,248,.82);border:1px solid rgba(255,255,255,.72);border-radius:22px;color:#1d1d1f;box-shadow:0 18px 52px rgba(0,0,0,.16);backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%)}
+.home-nutrition{width:100%;padding:14px 16px}
+.home-panel-title{font-size:12px;font-weight:650;color:#6e6e73;margin-bottom:7px}
+.nutri-line{display:flex;align-items:baseline;gap:4px;font-size:13px;margin-bottom:8px;color:#6e6e73}
+.nutri-line b{font-size:22px;color:#1d1d1f}
+.pbar{height:7px;background:rgba(29,29,31,.1);border-radius:999px;overflow:hidden}
 .pbar i{display:block;height:100%;width:0;background:var(--orange);transition:width .3s}
-
-/* 打卡 */
-.checkin-btn{width:100%;padding:16px;border:none;border-radius:16px;font-size:17px;font-weight:700;cursor:pointer;color:#0b0e14;background:var(--orange)}
-.checkin-btn.done{background:var(--green)}
-.streak{display:flex;justify-content:space-around;margin-top:16px;text-align:center}
-.streak .n{font-size:24px;font-weight:800}
-.streak .t{font-size:12px;color:var(--muted)}
+.home-bottom-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:12px}
+.home-goal{min-height:142px;padding:18px;display:flex;flex-direction:column;justify-content:flex-end}
+.home-goal .sq-big{font-size:52px;font-weight:780;line-height:.95;letter-spacing:-.04em;color:#1d1d1f}
+.home-goal .sq-lbl{font-size:12px;color:#6e6e73;margin-top:8px}
+.home-checkin{min-height:142px;padding:12px;display:flex;flex-direction:column;justify-content:space-between}
+.checkin-btn{width:100%;padding:13px 8px;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;background:#1d1d1f}
+.checkin-btn.done{background:#248a3d}
+.streak{display:flex;justify-content:space-around;text-align:center;padding:10px 2px 2px}
+.streak .n{font-size:22px;font-weight:760;color:#1d1d1f}
+.streak .t{font-size:11px;color:#6e6e73;margin-top:3px}
+.home-reveal{opacity:0;filter:blur(18px);transform:translateY(10px) scale(.985)}
+#page-home.home-entered .home-nutrition{animation:homeReveal .78s cubic-bezier(.22,1,.36,1) .08s forwards}
+#page-home.home-entered .home-goal{animation:homeReveal .78s cubic-bezier(.22,1,.36,1) .22s forwards}
+@keyframes homeReveal{to{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}}
+@media (max-width:380px){
+  .home-bottom-grid{grid-template-columns:1fr 1.15fr;gap:9px}
+  .home-goal{padding:15px}
+  .home-goal .sq-big{font-size:46px}
+  .home-checkin{padding:10px}
+  .checkin-btn{font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){
+  .home-reveal{opacity:1;filter:none;transform:none}
+  #page-home.home-entered .home-nutrition,#page-home.home-entered .home-goal{animation:none}
+}
+.food-empty{color:var(--muted);font-size:14px}
 
 /* 训练页 */
 .daytabs{display:flex;gap:8px;margin-bottom:16px}
@@ -260,15 +272,45 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .tab .ico{font-size:22px;display:block;margin-bottom:2px}
 .tab.on{color:var(--orange)}
 
-/* 启动屏：纯背景 + 进入按钮 */
-.splash{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:13vh;background-image:linear-gradient(rgba(11,14,20,.35),rgba(11,14,20,.35)),url('bg.jpg');background-size:cover;background-position:center;transition:opacity .45s ease}
-.splash.hide{opacity:0;pointer-events:none}
-.splash-enter{padding:16px 60px;border:none;border-radius:999px;background:var(--orange);color:#0b0e14;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 6px 24px rgba(255,107,53,.35)}
-.splash-enter:active{transform:scale(.96)}
+/* 启动屏：今日计划 + 进入按钮 */
+.splash{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:14px;padding:24px 16px max(60px,env(safe-area-inset-bottom));background-image:linear-gradient(180deg,rgba(255,255,255,.02) 35%,rgba(0,0,0,.34) 100%),url('bg.jpg');background-size:cover;background-position:center;transition:opacity .45s ease,visibility .45s ease;overflow:hidden}
+.splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.splash-plan{width:100%;max-width:430px;padding:22px 22px 18px;border:1px solid rgba(255,255,255,.72);border-radius:28px;background:rgba(246,246,248,.82);color:#1d1d1f;box-shadow:0 22px 70px rgba(0,0,0,.2);backdrop-filter:blur(28px) saturate(145%);-webkit-backdrop-filter:blur(28px) saturate(145%);opacity:0;transform:translateY(22px) scale(.985);animation:splashPlanIn .72s cubic-bezier(.22,1,.36,1) .08s forwards}
+.splash-kicker{font-size:13px;font-weight:600;letter-spacing:.04em;color:#6e6e73}
+.splash-day{margin-top:4px;font-size:48px;font-weight:750;line-height:1.08;letter-spacing:-.045em}
+.splash-exercises{margin-top:16px;border-top:1px solid rgba(29,29,31,.12)}
+.splash-exercise{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid rgba(29,29,31,.1);font-size:15px;font-weight:520;line-height:1.25;opacity:0;transform:translateY(8px);animation:splashItemIn .45s ease forwards}
+.splash-exercise:last-child{border-bottom:0;padding-bottom:2px}
+.splash-meta{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.splash-prescription{color:#6e6e73;font-size:12px;font-weight:600;white-space:nowrap}
+.splash-weight{padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.splash-weight{background:#1d1d1f;color:#fff}
+.splash-empty{padding:12px 0 2px;color:#6e6e73;font-size:14px}
+.splash-enter{width:100%;max-width:430px;padding:16px 60px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:#1d1d1f;color:#fff;font-size:17px;font-weight:650;cursor:pointer;box-shadow:0 10px 34px rgba(0,0,0,.28);opacity:0;transform:translateY(16px);animation:splashButtonIn .58s cubic-bezier(.22,1,.36,1) .3s forwards;transition:transform .18s ease,background .18s ease}
+.splash-enter:active{transform:scale(.97);background:#000}
+@keyframes splashPlanIn{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes splashItemIn{to{opacity:1;transform:translateY(0)}}
+@keyframes splashButtonIn{to{opacity:1;transform:translateY(0)}}
+@media (max-height:700px){
+  .splash{padding-top:16px;padding-bottom:max(42px,env(safe-area-inset-bottom));gap:10px}
+  .splash-plan{padding:18px 20px 14px;max-height:calc(100vh - 104px);overflow-y:auto}
+  .splash-day{font-size:40px}
+  .splash-exercises{margin-top:12px}
+  .splash-exercise{padding:7px 0;font-size:14px}
+  .splash-enter{padding-top:14px;padding-bottom:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .splash-plan,.splash-exercise,.splash-enter{animation:none;opacity:1;transform:none}
+}
 </style>
 </head>
 <body>
 <div class="splash" id="splash">
+  <section class="splash-plan" aria-labelledby="splashPlanTitle">
+    <div class="splash-kicker" id="splashPlanTitle">今日健身计划</div>
+    <div class="splash-day" id="splashDay">推</div>
+    <div class="splash-exercises" id="splashExercises"></div>
+  </section>
   <button class="splash-enter" id="splashEnter">进入</button>
 </div>
 <div class="bg-glow"></div>
@@ -281,35 +323,27 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 
   <!-- 首页 -->
   <section class="page active" id="page-home">
-    <div class="top-grid">
-      <div class="sq">
-        <div class="sq-big" id="countdownDays">--</div>
-        <div class="sq-lbl">距离目标 (天)</div>
+    <div class="home-spacer" aria-hidden="true"></div>
+    <div class="home-stack">
+      <div class="home-panel home-nutrition home-reveal">
+        <div class="home-panel-title">营养摄入</div>
+        <div class="nutri-line">蛋白质 <b id="proteinIntake">0</b> / <span id="proteinTarget">0</span> g</div>
+        <div class="pbar"><i id="pbarFg"></i></div>
       </div>
-      <div class="sq clickable" id="navBox">
-        <div class="sq-ico">📍</div>
-        <div class="sq-lbl">去健身房</div>
-      </div>
-    </div>
 
-    <div class="big-card">
-      <div class="half">
-        <div class="half-title">吃了什么</div>
-        <div class="half-body" id="todayFood"><span class="food-empty">今日还未记录饮食</span></div>
-      </div>
-      <div class="half">
-        <div class="half-title">摄入了多少</div>
-        <div class="half-body">
-          <div class="nutri-line">蛋白质 <b id="proteinIntake">0</b> / <span id="proteinTarget">0</span> g</div>
-          <div class="pbar"><i id="pbarFg"></i></div>
+      <div class="home-bottom-grid">
+        <div class="home-panel home-goal home-reveal">
+          <div class="sq-big" id="countdownDays">--</div>
+          <div class="sq-lbl">距离目标（天）</div>
+        </div>
+        <div class="home-panel home-checkin">
+          <button class="checkin-btn" id="checkinBtn">完成今日训练</button>
+          <div class="streak">
+            <div><div class="n" id="streakDays">0</div><div class="t">连续打卡</div></div>
+            <div><div class="n" id="totalDays">0</div><div class="t">累计打卡</div></div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <button class="checkin-btn" id="checkinBtn">完成今日训练打卡</button>
-    <div class="streak">
-      <div><div class="n" id="streakDays">0</div><div class="t">连续打卡</div></div>
-      <div><div class="n" id="totalDays">0</div><div class="t">累计打卡</div></div>
     </div>
   </section>
 
@@ -971,6 +1005,22 @@ function planFor(dateStr){
   return CYCLE[((diff%4)+4)%4];
 }
 
+// 启动屏只展示今日训练名称和动作名称，与日历计划保持一致。
+function renderSplashPlan(){
+  const day=planFor(today());
+  const dayLabel={push:'推',pull:'拉',legs:'腿',rest:'休息'}[day]||'休息';
+  document.getElementById('splashDay').textContent=dayLabel;
+      const exercises=PROGRAMS[day]||[];
+  document.getElementById('splashExercises').innerHTML=exercises.length
+    ? exercises.map((exercise,index)=>{
+        const kg=getKg(exercise.equipmentId,exercise.coef,exercise.step);
+        const weight=kg==null?'自重':kg+'kg'+(exercise.wtag==='单只'?'/只':exercise.wtag==='单侧配重'?'/侧':'');
+        const prescription=exercise.sets.replace(/-/g, '–');
+        return '<div class="splash-exercise" style="animation-delay:'+(0.18+index*0.055)+'s"><span>'+exercise.name+'</span><span class="splash-meta"><span class="splash-prescription">'+prescription+'</span><span class="splash-weight">'+weight+'</span></span></div>';
+      }).join('')
+    : '<div class="splash-empty">今天不安排训练动作</div>';
+}
+
 // 估算某训练日预计时长（分钟）：每组 = 次数×3秒动作时间 + 90秒组间休息
 function estimateDuration(day, skipSet, light){
   const items=PROGRAMS[day];
@@ -1026,24 +1076,9 @@ function renderHome(){
   document.getElementById('proteinIntake').textContent=Math.round(t.p);
   document.getElementById('pbarFg').style.width=(Math.min(1,t.p/target)*100)+'%';
 
-  const items=state.diet[today()];
-  const foodEl=document.getElementById('todayFood');
-  if(Array.isArray(items)&&items.length){
-    const groups=MEAL_ORDER.map(meal=>{
-      const list=items.filter(x=>(x.meal||'breakfast')===meal);
-      if(!list.length) return '';
-      const names=list.map(x=>{ const f=FOOD_MAP[x.name]; return f?(x.name+' '+fmtQty(f,x.qty)):x.name; }).join('、');
-      return '<div style="font-size:13px;margin-bottom:4px"><b>'+MEAL_LABEL[meal]+'</b> '+names+'</div>';
-    }).join('');
-    foodEl.innerHTML=groups+
-      '<div class="sub" style="margin-top:6px">共 '+Math.round(t.cal)+' kcal · 蛋白 '+Math.round(t.p)+'g · 碳水 '+Math.round(t.c)+'g · 脂肪 '+Math.round(t.f)+'g</div>';
-  }else{
-    foodEl.innerHTML='<span class="food-empty">今日还未记录饮食</span>';
-  }
-
   const done=state.checkins.includes(today());
   const btn=document.getElementById('checkinBtn');
-  btn.textContent=done?'✓ 今日已完成训练':'完成今日训练打卡';
+  btn.textContent=done?'✓ 今日已完成':'完成今日训练';
   btn.className='checkin-btn'+(done?' done':'');
 
   document.getElementById('streakDays').textContent=streak();
@@ -1679,11 +1714,6 @@ document.querySelectorAll('.daytab').forEach(t=>{
   t.addEventListener('click',()=>{ curDay=t.dataset.day; openIdx=null; renderTrain(); });
 });
 
-// 导航去健身房
-document.getElementById('navBox').addEventListener('click',()=>{
-  window.open('https://uri.amap.com/search?keyword=健身房','_blank');
-});
-
 // Tab 切换
 document.querySelectorAll('.tab').forEach(t=>{
   t.addEventListener('click',()=>{
@@ -1846,10 +1876,12 @@ document.getElementById('bgClearBtn').addEventListener('click',()=>{
 });
 
 applyBg();
+renderSplashPlan();
 render();
 
 // 启动屏：点击「进入」才进入 app
 document.getElementById('splashEnter').addEventListener('click',()=>{
+  document.getElementById('page-home').classList.add('home-entered');
   document.getElementById('splash').classList.add('hide');
 });
 
