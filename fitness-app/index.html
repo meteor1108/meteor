@@ -70,13 +70,17 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .home-checkin{min-height:142px;padding:12px;display:flex;flex-direction:column;justify-content:space-between}
 .checkin-btn{width:100%;padding:13px 8px;border:none;border-radius:14px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;background:#1d1d1f}
 .checkin-btn.done{background:#248a3d}
+.checkin-btn.checkin-pop{animation:checkinPop .46s cubic-bezier(.22,1,.36,1)}
 .streak{display:flex;justify-content:space-around;text-align:center;padding:10px 2px 2px}
 .streak .n{font-size:22px;font-weight:760;color:#1d1d1f}
+.streak .n.checkin-number-pop{animation:numberPop .62s cubic-bezier(.22,1,.36,1)}
 .streak .t{font-size:11px;color:#6e6e73;margin-top:3px}
 .home-reveal{opacity:0;filter:blur(18px);transform:translateY(10px) scale(.985)}
 #page-home.home-entered .home-nutrition{animation:homeReveal .78s cubic-bezier(.22,1,.36,1) .08s forwards}
 #page-home.home-entered .home-goal{animation:homeReveal .78s cubic-bezier(.22,1,.36,1) .22s forwards}
 @keyframes homeReveal{to{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}}
+@keyframes checkinPop{0%{transform:scale(1)}45%{transform:scale(1.045)}100%{transform:scale(1)}}
+@keyframes numberPop{0%{transform:scale(.82);opacity:.45}65%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
 @media (max-width:380px){
   .home-bottom-grid{grid-template-columns:1fr 1.15fr;gap:9px}
   .home-goal{padding:15px}
@@ -87,6 +91,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 @media (prefers-reduced-motion:reduce){
   .home-reveal{opacity:1;filter:none;transform:none}
   #page-home.home-entered .home-nutrition,#page-home.home-entered .home-goal{animation:none}
+  .checkin-btn.checkin-pop,.streak .n.checkin-number-pop{animation:none}
 }
 .food-empty{color:var(--muted);font-size:14px}
 
@@ -891,6 +896,7 @@ let calYear=new Date().getFullYear(); // 日历查看的年份
 let calMonth=new Date().getMonth(); // 日历查看的月份（0-11）
 let restTimerId=null, restPaused=false, restRemaining=0;
 let nutritionAnimationId=null;
+const checkinCounterAnimations={};
 
 function paintRestTimer(){
   const el=document.getElementById('restTimer'); if(!el) return;
@@ -1121,6 +1127,28 @@ function animateHomeNutrition(){
     }
   }
   nutritionAnimationId=requestAnimationFrame(step);
+}
+
+function animateCheckinCounter(id,from,to){
+  if(checkinCounterAnimations[id]) cancelAnimationFrame(checkinCounterAnimations[id]);
+  const el=document.getElementById(id);
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    el.textContent=to;
+    return;
+  }
+  const started=performance.now(), duration=620;
+  function step(now){
+    const progress=Math.min(1,(now-started)/duration);
+    const eased=1-Math.pow(1-progress,3);
+    el.textContent=Math.round(from+(to-from)*eased);
+    if(progress<1){
+      checkinCounterAnimations[id]=requestAnimationFrame(step);
+    }else{
+      el.textContent=to;
+      delete checkinCounterAnimations[id];
+    }
+  }
+  checkinCounterAnimations[id]=requestAnimationFrame(step);
 }
 
 function shiftPlanOneDayForRest(){
@@ -1593,9 +1621,24 @@ function render(){ renderHome(); renderCal(); renderTrain(); renderMe(); renderD
 // 打卡
 document.getElementById('checkinBtn').addEventListener('click',()=>{
   const t=today();
+  const beforeStreak=streak();
+  const beforeTotal=state.checkins.length;
   if(state.checkins.includes(t)){ state.checkins=state.checkins.filter(d=>d!==t); }
   else{ state.checkins.push(t); }
   save(state); renderHome();
+  const btn=document.getElementById('checkinBtn');
+  btn.classList.remove('checkin-pop');
+  void btn.offsetWidth;
+  btn.classList.add('checkin-pop');
+  const afterStreak=streak();
+  animateCheckinCounter('streakDays',beforeStreak,afterStreak);
+  animateCheckinCounter('totalDays',beforeTotal,state.checkins.length);
+  document.getElementById('streakDays').classList.add('checkin-number-pop');
+  document.getElementById('totalDays').classList.add('checkin-number-pop');
+  setTimeout(()=>{
+    document.getElementById('streakDays').classList.remove('checkin-number-pop');
+    document.getElementById('totalDays').classList.remove('checkin-number-pop');
+  },700);
 });
 
 // 今日状态：展开/收起 + 三问选择
