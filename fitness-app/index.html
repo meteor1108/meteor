@@ -276,20 +276,21 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .splash{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:14px;padding:24px 16px max(60px,env(safe-area-inset-bottom));background-image:linear-gradient(180deg,rgba(255,255,255,.02) 35%,rgba(0,0,0,.34) 100%),url('bg.jpg');background-size:cover;background-position:center;transition:opacity .45s ease,visibility .45s ease;overflow:hidden}
 .splash.hide{opacity:0;visibility:hidden;pointer-events:none}
 .splash-plan{width:100%;max-width:430px;padding:22px 22px 18px;border:1px solid rgba(255,255,255,.72);border-radius:28px;background:rgba(246,246,248,.82);color:#1d1d1f;box-shadow:0 22px 70px rgba(0,0,0,.2);backdrop-filter:blur(28px) saturate(145%);-webkit-backdrop-filter:blur(28px) saturate(145%);opacity:0;transform:translateY(22px) scale(.985);animation:splashPlanIn .72s cubic-bezier(.22,1,.36,1) .08s forwards}
-.splash-kicker{font-size:13px;font-weight:600;letter-spacing:.04em;color:#6e6e73}
-.splash-day{margin-top:4px;font-size:48px;font-weight:750;line-height:1.08;letter-spacing:-.045em}
+.splash-kicker{font-size:13px;font-weight:600;letter-spacing:.04em;color:#6e6e73;opacity:0;filter:blur(8px);transform:translateY(6px);animation:splashTextIn .5s ease .18s forwards}
+.splash-day{margin-top:4px;font-size:48px;font-weight:750;line-height:1.08;letter-spacing:-.045em;opacity:0;filter:blur(12px);transform:translateY(8px);animation:splashTextIn .58s cubic-bezier(.22,1,.36,1) .25s forwards}
 .splash-exercises{margin-top:16px;border-top:1px solid rgba(29,29,31,.12)}
-.splash-exercise{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid rgba(29,29,31,.1);font-size:15px;font-weight:520;line-height:1.25;opacity:0;transform:translateY(8px);animation:splashItemIn .45s ease forwards}
+.splash-exercise{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px solid rgba(29,29,31,.1);font-size:15px;font-weight:520;line-height:1.25;opacity:0;filter:blur(8px);transform:translateY(8px);animation:splashItemIn .5s ease forwards}
 .splash-exercise:last-child{border-bottom:0;padding-bottom:2px}
 .splash-meta{display:flex;align-items:center;gap:5px;flex-shrink:0}
 .splash-prescription{color:#6e6e73;font-size:12px;font-weight:600;white-space:nowrap}
 .splash-weight{padding:4px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
 .splash-weight{background:#1d1d1f;color:#fff}
 .splash-empty{padding:12px 0 2px;color:#6e6e73;font-size:14px}
-.splash-enter{width:100%;max-width:430px;padding:16px 60px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:#1d1d1f;color:#fff;font-size:17px;font-weight:650;cursor:pointer;box-shadow:0 10px 34px rgba(0,0,0,.28);opacity:0;transform:translateY(16px);animation:splashButtonIn .58s cubic-bezier(.22,1,.36,1) .3s forwards;transition:transform .18s ease,background .18s ease}
+.splash-enter{width:100%;max-width:430px;padding:16px 60px;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:#1d1d1f;color:#fff;font-size:17px;font-weight:650;cursor:pointer;box-shadow:0 10px 34px rgba(0,0,0,.28);opacity:0;transform:translateY(16px);animation:splashButtonIn .58s cubic-bezier(.22,1,.36,1) .72s forwards;transition:transform .18s ease,background .18s ease}
 .splash-enter:active{transform:scale(.97);background:#000}
 @keyframes splashPlanIn{to{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes splashItemIn{to{opacity:1;transform:translateY(0)}}
+@keyframes splashTextIn{to{opacity:1;filter:blur(0);transform:translateY(0)}}
+@keyframes splashItemIn{to{opacity:1;filter:blur(0);transform:translateY(0)}}
 @keyframes splashButtonIn{to{opacity:1;transform:translateY(0)}}
 @media (max-height:700px){
   .splash{padding-top:16px;padding-bottom:max(42px,env(safe-area-inset-bottom));gap:10px}
@@ -300,7 +301,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
   .splash-enter{padding-top:14px;padding-bottom:14px}
 }
 @media (prefers-reduced-motion:reduce){
-  .splash-plan,.splash-exercise,.splash-enter{animation:none;opacity:1;transform:none}
+  .splash-plan,.splash-kicker,.splash-day,.splash-exercise,.splash-enter{animation:none;opacity:1;filter:none;transform:none}
 }
 </style>
 </head>
@@ -889,6 +890,7 @@ let curMeal='breakfast'; // 当前餐次（早/午/晚/加餐）
 let calYear=new Date().getFullYear(); // 日历查看的年份
 let calMonth=new Date().getMonth(); // 日历查看的月份（0-11）
 let restTimerId=null, restPaused=false, restRemaining=0;
+let nutritionAnimationId=null;
 
 function paintRestTimer(){
   const el=document.getElementById('restTimer'); if(!el) return;
@@ -1016,7 +1018,7 @@ function renderSplashPlan(){
         const kg=getKg(exercise.equipmentId,exercise.coef,exercise.step);
         const weight=kg==null?'自重':kg+'kg'+(exercise.wtag==='单只'?'/只':exercise.wtag==='单侧配重'?'/侧':'');
         const prescription=exercise.sets.replace(/-/g, '–');
-        return '<div class="splash-exercise" style="animation-delay:'+(0.18+index*0.055)+'s"><span>'+exercise.name+'</span><span class="splash-meta"><span class="splash-prescription">'+prescription+'</span><span class="splash-weight">'+weight+'</span></span></div>';
+        return '<div class="splash-exercise" style="animation-delay:'+(0.36+index*0.07)+'s"><span>'+exercise.name+'</span><span class="splash-meta"><span class="splash-prescription">'+prescription+'</span><span class="splash-weight">'+weight+'</span></span></div>';
       }).join('')
     : '<div class="splash-empty">今天不安排训练动作</div>';
 }
@@ -1084,6 +1086,41 @@ function renderHome(){
   document.getElementById('streakDays').textContent=streak();
   document.getElementById('totalDays').textContent=state.checkins.length;
   renderStatus();
+}
+
+// 点击「进入」后，营养数字从 0 递增，进度条同步填充。
+function animateHomeNutrition(){
+  if(nutritionAnimationId) cancelAnimationFrame(nutritionAnimationId);
+  const intakeEl=document.getElementById('proteinIntake');
+  const barEl=document.getElementById('pbarFg');
+  const intake=Math.round(dietTotals(today()).p);
+  const target=proteinTarget();
+  const finalWidth=Math.min(1,intake/target)*100;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    intakeEl.textContent=intake;
+    barEl.style.width=finalWidth+'%';
+    return;
+  }
+  intakeEl.textContent='0';
+  barEl.style.transition='none';
+  barEl.style.width='0%';
+  const duration=900;
+  const started=performance.now();
+  function step(now){
+    const progress=Math.min(1,(now-started)/duration);
+    const eased=1-Math.pow(1-progress,3);
+    intakeEl.textContent=Math.round(intake*eased);
+    barEl.style.width=(finalWidth*eased)+'%';
+    if(progress<1){
+      nutritionAnimationId=requestAnimationFrame(step);
+    }else{
+      intakeEl.textContent=intake;
+      barEl.style.width=finalWidth+'%';
+      barEl.style.transition='width .3s';
+      nutritionAnimationId=null;
+    }
+  }
+  nutritionAnimationId=requestAnimationFrame(step);
 }
 
 function shiftPlanOneDayForRest(){
@@ -1882,6 +1919,7 @@ render();
 // 启动屏：点击「进入」才进入 app
 document.getElementById('splashEnter').addEventListener('click',()=>{
   document.getElementById('page-home').classList.add('home-entered');
+  animateHomeNutrition();
   document.getElementById('splash').classList.add('hide');
 });
 
