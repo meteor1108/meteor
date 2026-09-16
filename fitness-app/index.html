@@ -13,7 +13,7 @@
 :root{
   --bg:#0b0e14; --surface:#151a23; --card:#1c222e; --border:#262e3d;
   --text:#e8ecf2; --muted:#8a94a6; --orange:#ff6b35; --green:#4ade80;
-  --blue:#60a5fa; --red:#f87171;
+  --blue:#60a5fa; --red:#f87171; --spring:cubic-bezier(.22,1,.36,1);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
@@ -101,44 +101,50 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .food-empty{color:var(--muted);font-size:14px}
 
 /* 训练页 */
-.daytabs{display:flex;gap:8px;margin-bottom:16px}
-.daytab{flex:1;padding:12px 0;text-align:center;border-radius:12px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-weight:600;cursor:pointer}
-.daytab.on{color:#0b0e14;background:var(--orange);border-color:var(--orange)}
+.today-plan{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid var(--border)}
+.today-plan span{color:var(--muted);font-size:13px}
+.today-plan strong{font-size:22px;color:var(--orange)}
+.rest-day-card{padding:28px 18px;text-align:center}
+.rest-day-card[hidden],.training-body[hidden]{display:none}
+.rest-day-card strong{display:block;font-size:24px;margin-bottom:8px}
+.rest-day-card span{color:var(--muted);font-size:14px}
 .progress-bar{height:6px;background:var(--surface);border-radius:3px;overflow:hidden;margin-bottom:14px}
 .progress-bar i{display:block;height:100%;background:var(--green);transition:width .2s}
 .train-meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:8px}
 
 /* 训练页日历（练三休一循环） */
-.cal{background:rgba(28,34,46,.5);border:1px solid var(--border);border-radius:16px;padding:12px;margin-bottom:14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.cal-nav{width:30px;height:30px;border:none;border-radius:8px;background:var(--surface);color:var(--text);font-size:18px;line-height:1;cursor:pointer}
-.cal-title{font-size:15px;font-weight:700}
-.cal-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11px;color:var(--muted);margin-bottom:4px}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-cell{border-radius:10px;padding:6px 2px;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid transparent}
+.cal{background:rgba(28,34,46,.5);border:1px solid var(--border);border-radius:14px;padding:8px 10px;margin-bottom:10px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.cal-nav{width:30px;height:30px;border:none;border-radius:8px;background:var(--surface);color:var(--text);font-size:17px;line-height:1;cursor:pointer}
+.cal-title{font-size:14px;font-weight:700}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:10px;color:var(--muted);margin-bottom:2px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-cell{border-radius:8px;padding:3px 1px;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid transparent}
 .cal-cell.empty{background:none;cursor:default}
-.cal-d{font-size:13px;font-weight:600}
-.cal-tag{font-size:10px;font-weight:700;margin-top:2px;color:var(--muted)}
+.cal-d{font-size:12px;font-weight:600}
+.cal-tag{font-size:9px;font-weight:700;margin-top:1px;color:var(--muted)}
 .cal-cell.push .cal-tag{color:var(--orange)}
 .cal-cell.pull .cal-tag{color:var(--green)}
 .cal-cell.legs .cal-tag{color:var(--blue)}
 .cal-cell.rest .cal-tag{color:var(--muted)}
 .cal-cell.today{border-color:var(--orange);background:rgba(255,107,53,.14)}
 
-.ex{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:9px;overflow:hidden}
+.ex{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:7px;overflow:hidden;transition:border-color .24s ease,background-color .24s ease,opacity .24s ease}
 .ex.done{opacity:.55}
-.ex-main{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer}
+.ex-main{display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer}
 .ex .info{flex:1;min-width:0}
-.ex .name{font-size:15px;font-weight:600}
+.ex .name{font-size:14px;font-weight:650}
 .ex .wtag{font-size:10px;font-weight:600;color:var(--muted);margin-left:4px}
-.ex .sets{font-size:12px;color:var(--muted);margin-top:3px}
+.ex .sets{font-size:11px;color:var(--muted);margin-top:2px}
 .wt{display:flex;align-items:center;gap:4px;flex-shrink:0}
-.wbtn{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:16px;line-height:1;cursor:pointer}
-.wval{min-width:46px;text-align:center;font-size:15px;font-weight:700;color:var(--orange)}
-.box{width:26px;height:26px;border-radius:8px;border:2px solid var(--muted);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;color:transparent;cursor:pointer}
+.wbtn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:16px;line-height:1;cursor:pointer}
+.wval{min-width:40px;text-align:center;font-size:14px;font-weight:700;color:var(--orange)}
+.box{width:40px;height:40px;padding:0;appearance:none;border-radius:11px;border:2px solid var(--muted);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;color:transparent;cursor:pointer}
 .ex.done .box{background:var(--green);border-color:var(--green);color:#0b0e14}
-.ex-detail{display:none;padding:2px 14px 14px;border-top:1px solid var(--border)}
-.ex.open .ex-detail{display:block}
+.ex-detail{display:grid;grid-template-rows:0fr;opacity:0;filter:blur(5px);transform:translateY(-5px);border-top:0 solid transparent;transition:grid-template-rows .42s var(--spring),opacity .22s ease,filter .25s ease,transform .42s var(--spring),border-color .3s ease}
+.ex-detail-inner{min-height:0;overflow:hidden;padding:0 12px}
+.ex.open .ex-detail{grid-template-rows:1fr;opacity:1;filter:none;transform:none;border-top:1px solid var(--border)}
+.ex.open .ex-detail-inner{padding-bottom:12px}
 .ex .thumb{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 2px}
 .ex .thumb svg{width:150px;height:auto;max-height:190px}
 .ex .guide-photo{width:100%;border-radius:12px;background-repeat:no-repeat;background-size:100% auto;background-color:#15171b;border:1px solid var(--border)}
@@ -153,14 +159,14 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .rx-tag.up{background:rgba(74,222,128,.13);color:var(--green)}
 .last-log{font-size:12px;color:var(--muted);line-height:1.5;margin:7px 0}
 .set-editor{margin-top:10px;border-top:1px solid var(--border);padding-top:8px}
-.set-head,.set-row{display:grid;grid-template-columns:30px minmax(58px,1fr) minmax(48px,.8fr) minmax(42px,.7fr) 58px;gap:6px;align-items:center;text-align:center}
+.set-head,.set-row{display:grid;grid-template-columns:52px 28px minmax(50px,1fr) minmax(42px,.8fr) minmax(36px,.7fr);gap:4px;align-items:center;text-align:center}
 .set-head{font-size:10px;color:var(--muted);margin-bottom:5px}
 .set-row{padding:4px 0;border-radius:9px}
 .set-row.completed{background:rgba(74,222,128,.07)}
-.set-complete{height:34px;border:1px solid var(--orange);border-radius:9px;background:rgba(255,107,53,.12);color:var(--orange);font-size:12px;font-weight:700;cursor:pointer}
+.set-complete{height:36px;border:1px solid var(--orange);border-radius:9px;background:rgba(255,107,53,.12);color:var(--orange);font-size:11px;font-weight:700;cursor:pointer}
 .set-row.completed .set-complete{border-color:var(--green);background:var(--green);color:#0b0e14}
-.set-row{margin-bottom:6px;font-size:12px}
-.set-input{width:100%;min-width:0;padding:8px 4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-align:center;font-size:13px}
+.set-row{margin-bottom:4px;font-size:11px}
+.set-input{width:100%;min-width:0;padding:7px 3px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);text-align:center;font-size:12px}
 .history-row{padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
 .history-row:last-child{border-bottom:0}
 .history-date{color:var(--orange);font-weight:700;margin-right:6px}
@@ -194,34 +200,92 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .btn-secondary.warn{color:var(--red);border-color:rgba(248,113,113,.4)}
 .bg-hint{font-size:12px;color:var(--muted);margin-top:8px}
 
-/* 饮食页 */
-.nutri-macros{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.macro{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center}
-.macro .m-n{font-size:18px;font-weight:800;color:var(--orange)}
-.macro .m-t{font-size:11px;color:var(--muted);margin-top:3px}
+/* 饮食页：iOS 式信息层级，保留原有数据与记录逻辑 */
+#page-diet{--diet-blue:#0a84ff;--diet-green:#30d158;--diet-cyan:#64d2ff;--diet-yellow:#ffd60a;font-variant-numeric:tabular-nums}
+.diet-head{display:flex;align-items:flex-end;justify-content:space-between;margin:2px 2px 12px}
+.diet-head h2{margin:2px 0 0;font-size:28px;line-height:1.05;letter-spacing:-.04em}
+.diet-eyebrow{font-size:12px;color:var(--muted)}
+.diet-day-badge{padding:7px 11px;border-radius:999px;background:rgba(10,132,255,.16);color:#74b5ff;font-size:12px;font-weight:700}
+.diet-summary,.meal-target-card,.supplement-shell{background:rgba(28,28,30,.72);border:1px solid rgba(255,255,255,.08);border-radius:22px;box-shadow:0 14px 40px rgba(0,0,0,.18);backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%)}
+.diet-summary{padding:17px;margin-bottom:12px}
+.diet-calorie-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.diet-calorie-label{font-size:12px;color:var(--muted);margin-bottom:4px}
+.diet-calorie strong{display:block;font-size:36px;line-height:1;letter-spacing:-.045em}
+.diet-calorie small{font-size:13px;color:var(--muted);letter-spacing:0}
+.diet-calorie-top .pbar-lbl{max-width:150px;text-align:right;margin:0}
+.diet-calorie>.pbar{height:8px;margin-top:12px}
+#page-diet .pbar{background:rgba(255,255,255,.08)}
+.nutri-macros{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 0}
+.macro{background:rgba(255,255,255,.055);border:0;border-radius:14px;padding:10px;text-align:left}
+.macro-top{display:flex;align-items:baseline;justify-content:space-between;gap:4px}
+.macro .m-n{font-size:18px;font-weight:800;color:var(--text)}
+.macro .m-t{font-size:10px;color:var(--muted)}
+.macro .pbar{height:4px;margin-top:7px}
+.macro.protein .pbar i{background:var(--diet-green)}
+.macro.carb .pbar i{background:var(--diet-cyan)}
+.macro.fat .pbar i{background:var(--diet-yellow)}
+.macro .pbar-lbl{font-size:9px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pbar-lbl{font-size:12px;color:var(--muted);margin-top:6px}
-.food-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
-.food-tab{flex:1;min-width:56px;padding:9px 0;text-align:center;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--muted);font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap}
-.food-tab.on{color:#0b0e14;background:var(--orange);border-color:var(--orange)}
-.foodrow{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
-.foodrow.on{border-color:var(--orange)}
-.foodrow-info{flex:1;min-width:0}
-.foodrow-name{font-size:15px;font-weight:600}
+.diet-trend{margin-top:12px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px}
+.diet-trend summary,.supplement-shell>summary,.rest-help summary{list-style:none;cursor:pointer;color:var(--muted);font-size:12px;font-weight:650}
+.diet-trend summary::-webkit-details-marker,.supplement-shell>summary::-webkit-details-marker,.rest-help summary::-webkit-details-marker{display:none}
+.diet-trend summary::after,.supplement-shell>summary::after,.rest-help summary::after{content:'＋';float:right;transition:transform .28s var(--spring)}
+.diet-trend[open] summary::after,.supplement-shell[open]>summary::after,.rest-help[open] summary::after{transform:rotate(45deg)}
+#page-diet .weight-status{margin-top:9px}
+.meal-switch{position:sticky;top:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:4px;margin-bottom:12px;border-radius:14px;background:rgba(44,44,46,.84);box-shadow:0 8px 24px rgba(0,0,0,.18);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.food-tabs{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none}
+.food-tabs::-webkit-scrollbar{display:none}
+.food-tab{flex:1;min-width:56px;padding:9px 0;text-align:center;border-radius:10px;background:var(--card);border:1px solid var(--border);color:var(--muted);font:inherit;font-weight:650;font-size:13px;cursor:pointer;white-space:nowrap}
+.meal-switch .food-tab{min-width:0;min-height:40px;padding:0;border:0;border-radius:10px;background:transparent}
+.meal-switch .food-tab.on{color:#111;background:#f5f5f7;box-shadow:0 2px 9px rgba(0,0,0,.2)}
+.food-filter .food-tab{flex:0 0 auto;min-width:auto;padding:8px 13px;border-radius:999px}
+.food-filter .food-tab.on{color:#fff;background:var(--diet-blue);border-color:var(--diet-blue)}
+.diet-section-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:18px 2px 10px}
+.diet-section-title h2{margin:0;font-size:17px}
+.diet-section-title span{font-size:12px;color:var(--muted)}
+.meal-target-card{padding:15px;margin-bottom:14px}
+.meal-target-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.meal-target-head strong{font-size:15px}
+.meal-target-head span{font-size:10px;color:var(--muted)}
+.meal-recommend{padding:10px 11px;border-radius:13px;background:rgba(10,132,255,.1);color:#9ccaff;font-size:12px;line-height:1.55}
+.meal-target-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:10px}
+.meal-target-grid span{display:flex;justify-content:space-between;gap:6px;padding:8px 9px;border-radius:11px;background:rgba(255,255,255,.045);color:var(--muted);font-size:10px}
+.meal-target-grid b{color:var(--text);font-size:11px}
+.foodrow{display:block;background:rgba(28,28,30,.72);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:13px 14px;margin-bottom:8px;transition:transform .18s ease,border-color .25s ease,background .25s ease}
+.foodrow.on{border-color:rgba(10,132,255,.7);background:rgba(18,43,68,.9)}
+.foodrow-info{min-width:0}
+.foodrow-name{font-size:15px;font-weight:650}
 .foodrow-unit{font-size:11px;color:var(--muted);font-weight:400;margin-left:4px}
-.foodrow-sub{font-size:12px;color:var(--muted);margin-top:3px}
-.stepper{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.sbtn{width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:17px;line-height:1;cursor:pointer}
-.sval{min-width:52px;text-align:center;font-size:14px;font-weight:700;color:var(--orange)}
+.foodrow-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.45}
+.stepper{display:grid;grid-template-columns:44px 44px 1fr;align-items:center;gap:8px;margin-top:11px}
+.sbtn{width:44px;height:44px;border-radius:13px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);font-size:21px;line-height:1;cursor:pointer}
+.sbtn[data-d="1"]{background:var(--diet-blue);border-color:var(--diet-blue);color:#fff}
+.sval{min-width:0;text-align:right;font-size:16px;font-weight:750;color:#8bc4ff}
 .mealgroup{margin-bottom:14px}
-.mealgroup-title{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
-.logitem{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 12px;margin-bottom:7px}
+.mealgroup-title{font-size:12px;font-weight:700;color:var(--muted);margin:0 2px 7px}
+.logitem{display:flex;align-items:center;gap:10px;background:rgba(28,28,30,.68);border:1px solid rgba(255,255,255,.07);border-radius:15px;padding:10px 11px;margin-bottom:7px}
 .logitem-info{flex:1;min-width:0}
 .logitem-name{font-size:14px;font-weight:600}
-.logitem-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.logitem-del{width:30px;height:30px;border:none;border-radius:9px;background:var(--surface);color:var(--orange);font-size:18px;line-height:1;cursor:pointer;flex-shrink:0;font-weight:700}
+.logitem-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.logitem-del{width:44px;height:44px;border:none;border-radius:12px;background:rgba(255,255,255,.06);color:#ff9f7b;font-size:20px;line-height:1;cursor:pointer;flex-shrink:0;font-weight:700}
+.supplement-shell{padding:0 15px;margin-top:18px;overflow:hidden}
+.supplement-shell>summary{padding:15px 0;color:var(--text);font-size:14px}
+.supplement-shell[open]>summary{border-bottom:1px solid rgba(255,255,255,.08)}
+#supplementReminder{padding:2px 0 10px}
+.diet-reveal{opacity:0;filter:blur(12px);transform:translateY(9px);animation:dietReveal .55s var(--spring) forwards}
+.diet-head.diet-reveal{animation-delay:.04s}.diet-summary.diet-reveal{animation-delay:.1s}.meal-switch.diet-reveal{animation-delay:.16s}
+.diet-refresh{animation:dietRefresh .28s var(--spring)}
+.food-feedback-add{animation:foodAdded .48s var(--spring)}
+.food-feedback-remove{animation:foodRemoved .4s var(--spring)}
+.qty-pop{animation:qtyPop .34s var(--spring)}
+@keyframes dietReveal{to{opacity:1;filter:blur(0);transform:none}}
+@keyframes dietRefresh{0%{opacity:.45;filter:blur(6px);transform:translateY(4px)}100%{opacity:1;filter:none;transform:none}}
+@keyframes foodAdded{45%{transform:scale(.985);border-color:var(--diet-blue)}}
+@keyframes foodRemoved{45%{transform:scale(.985);border-color:rgba(255,159,123,.65)}}
+@keyframes qtyPop{50%{transform:scale(1.18);color:#fff}}
 
 /* 今日状态反馈卡 */
-.fb-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:15px;font-weight:700}
+.fb-head{display:flex;justify-content:space-between;align-items:center;margin:0;font-size:15px;font-weight:700}
 .fb-row{margin-bottom:12px}
 .fb-label{font-size:12px;color:var(--muted);margin-bottom:6px}
 .fb-opts{display:flex;gap:6px;flex-wrap:wrap}
@@ -233,11 +297,12 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .status-hint{margin-top:4px;font-size:12px;line-height:1.55;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:8px 10px}
 
 /* 今日状态入口（训练页顶部，折叠卡片） */
-.fb-toggle{cursor:pointer;user-select:none}
+.fb-toggle{width:100%;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer;user-select:none}
 .fb-summary{flex:1;min-width:0;text-align:right;padding:0 8px;font-size:12px;font-weight:400;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fb-arrow{font-size:12px;color:var(--muted);transition:transform .2s}
-.fb-body{display:none;margin-top:6px}
-.fb-entry.open .fb-body{display:block}
+.fb-arrow{font-size:12px;color:var(--muted);transition:transform .38s var(--spring)}
+.fb-body{display:grid;grid-template-rows:0fr;opacity:0;filter:blur(6px);transform:translateY(-6px) scale(.99);margin-top:0;transition:grid-template-rows .42s var(--spring),opacity .24s ease,filter .24s ease,transform .42s var(--spring),margin-top .42s var(--spring)}
+.fb-body-inner{min-height:0;overflow:hidden}
+.fb-entry.open .fb-body{grid-template-rows:1fr;opacity:1;filter:none;transform:none;margin-top:8px}
 .fb-entry.open .fb-arrow{transform:rotate(180deg)}
 .fb-note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:6px}
 
@@ -257,13 +322,36 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .prep-list{margin:0;padding-left:18px}
 .prep-list li{font-size:13px;color:var(--text);line-height:1.65;margin-bottom:3px}
 .prep-note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+#restCard{padding:10px 12px;margin-bottom:9px}
+#restCard .prep-title{margin-bottom:6px}
+.rest-timer-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rest-time{font-size:24px;color:var(--orange);font-variant-numeric:tabular-nums}
+.rest-actions{display:flex;gap:5px}
+.rest-actions .btn-secondary{flex:none;min-width:44px;min-height:38px;padding:7px 8px;border-radius:9px;font-size:11px}
+.rest-help{margin-top:6px}
+.rest-help .prep-note{margin:7px 0 1px;font-size:11px}
 .supp-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--border)}
 .supp-row:first-of-type{border-top:0;padding-top:0}
 .supp-info{min-width:0}
 .supp-time{font-size:13px;font-weight:700;color:var(--orange);margin-bottom:3px}
 .supp-desc{font-size:12px;color:var(--muted);line-height:1.5}
 .supp-check{flex:0 0 auto;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--muted);padding:7px 9px;font-size:12px;cursor:pointer}
+.supp-check{min-width:72px;min-height:44px}
 .supp-check.done{border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.12);color:var(--green)}
+
+/* 可触控反馈：视觉尺寸紧凑，但高频按钮保留约 44px 点击区 */
+:where(.fb-chip,.cal-nav,.cal-cell,.wbtn,.box,.set-complete,#restCard .btn-secondary,.food-tab,.sbtn,.logitem-del,.supp-check){touch-action:manipulation;transition:transform .16s ease,background-color .22s ease,border-color .22s ease,color .22s ease,box-shadow .22s ease}
+:where(.fb-chip,.cal-nav,.cal-cell,.wbtn,.box,.set-complete,#restCard .btn-secondary,.food-tab,.sbtn,.logitem-del,.supp-check):active{transform:scale(.92)}
+:where(.fb-toggle,.fb-chip,.cal-nav,.wbtn,.box,.set-complete,#restCard .btn-secondary,.food-tab,.sbtn,.logitem-del,.supp-check):focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.confirm-feedback{animation:confirmFeedback .44s var(--spring)}
+.weight-feedback{animation:weightFeedback .38s var(--spring)}
+.timer-pop{animation:timerPop .38s var(--spring)}
+.action-toast{position:fixed;z-index:80;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));max-width:calc(100vw - 32px);padding:10px 15px;border-radius:999px;background:rgba(245,245,247,.94);color:#1d1d1f;font-size:13px;font-weight:650;box-shadow:0 10px 32px rgba(0,0,0,.34);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);opacity:0;transform:translate(-50%,10px) scale(.96);pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.action-toast.show{animation:actionToast 1.45s var(--spring)}
+@keyframes confirmFeedback{0%{transform:scale(.84)}58%{transform:scale(1.08);box-shadow:0 0 0 7px rgba(74,222,128,.12)}100%{transform:scale(1);box-shadow:none}}
+@keyframes weightFeedback{50%{transform:scale(1.08);color:#fff}}
+@keyframes timerPop{50%{transform:scale(1.08);color:#fff}}
+@keyframes actionToast{0%{opacity:0;transform:translate(-50%,10px) scale(.96)}16%,80%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-5px) scale(.98)}}
 
 /* 调整训练计划弹窗 */
 .modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center}
@@ -312,6 +400,17 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 }
 @media (prefers-reduced-motion:reduce){
   .splash-plan,.splash-kicker,.splash-day,.splash-exercise,.splash-enter{animation:none;opacity:1;filter:none;transform:none}
+  .diet-reveal,.diet-refresh,.food-feedback-add,.food-feedback-remove,.qty-pop,.confirm-feedback,.weight-feedback,.timer-pop{animation:none;opacity:1;filter:none;transform:none}
+  .action-toast.show{animation:none;opacity:1;transform:translateX(-50%)}
+  .fb-body,.fb-arrow,.ex-detail,:where(.fb-chip,.cal-nav,.cal-cell,.wbtn,.box,.set-complete,#restCard .btn-secondary,.food-tab,.sbtn,.logitem-del,.supp-check){transition:none}
+}
+@media (max-width:360px){
+  .page{padding-left:12px;padding-right:12px}
+  .set-head,.set-row{grid-template-columns:50px 26px minmax(46px,1fr) minmax(40px,.8fr) minmax(34px,.7fr);gap:3px}
+  .rest-actions .btn-secondary{min-width:40px;padding-left:6px;padding-right:6px}
+  .diet-summary{padding:15px 13px}
+  .macro{padding:9px 7px}
+  .macro .m-n{font-size:16px}
 }
 </style>
 </head>
@@ -329,8 +428,9 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 <div class="app">
   <div class="topbar">
     <h1>健身助手</h1>
-    <span id="goalBadge" class="badge bulk">增肌</span>
+    <span id="goalBadge" class="badge bulk">增肌减脂</span>
   </div>
+  <div class="action-toast" id="actionToast" role="status" aria-live="polite"></div>
 
   <!-- 首页 -->
   <section class="page active" id="page-home">
@@ -361,12 +461,13 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
   <!-- 训练 -->
   <section class="page" id="page-train">
     <div class="card fb-entry" id="statusEntry">
-      <div class="fb-head fb-toggle" id="statusHead">
+      <button type="button" class="fb-head fb-toggle" id="statusHead" aria-expanded="false" aria-controls="fbBody">
         <span>📋 今日状态</span>
         <span class="fb-summary" id="statusSummary">未填写 · 点此展开</span>
         <span class="fb-arrow" id="statusArrow">▾</span>
-      </div>
+      </button>
       <div class="fb-body" id="fbBody">
+        <div class="fb-body-inner">
         <div class="fb-row">
           <div class="fb-label">昨晚睡眠</div>
           <div class="fb-opts" id="sleepOpts">
@@ -404,6 +505,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
           <div class="fb-note">轻＝活动开后缓解、不影响动作；重＝影响发力或好几天不消</div>
         </div>
         <div class="status-hint" id="statusHint"></div>
+        </div>
       </div>
     </div>
     <div class="cal">
@@ -415,111 +517,110 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
       <div class="cal-grid" id="calGrid"></div>
     </div>
-    <div class="daytabs">
-      <div class="daytab" data-day="push">推</div>
-      <div class="daytab" data-day="pull">拉</div>
-      <div class="daytab" data-day="legs">腿</div>
+    <div class="today-plan">
+      <span>今日训练计划</span>
+      <strong id="todayPlanName">--</strong>
     </div>
-    <div class="vol-banner" id="volBanner"></div>
-    <div class="train-meta">
-      <span id="trainTime">预计 -- 分钟</span>
-      <span id="trainDone">已完成 0/6</span>
+    <div class="card rest-day-card" id="restDayCard" hidden>
+      <strong>今日休息</strong>
+      <span>恢复体力，下一训练日继续。</span>
     </div>
-    <div class="progress-bar"><i id="trainProgress" style="width:0%"></i></div>
-    <div class="card prep-card" id="restCard">
-      <div class="prep-title"><span>⏱ 组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
-      <div style="display:flex;align-items:center;gap:10px"><b id="restTimer" style="font-size:28px;color:var(--orange)">00:00</b><button class="btn-secondary" id="restAdd">+30秒</button><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div>
-      <div class="prep-note" style="margin-top:9px">用法：重量、次数和RIR已按上次表现自动填好。每组做完只点“完成”即可保存并开始倒计时；实际表现不同再修改数值。主动作通常120–180秒，辅助动作60–90秒。</div>
-    </div>
-    <div class="card prep-card">
-      <div class="prep-title"><span>🔥 训练前热身</span><span class="prep-sub" id="warmTime">约 5 分钟</span></div>
-      <ul class="prep-list" id="warmList"></ul>
-      <div class="prep-note">图例：橙色＝身体姿势，灰色＝杠铃、哑铃、训练凳或器械。图例只提示动作方向，实际以动作要点和无痛幅度为准。</div>
-    </div>
-    <div id="exList"></div>
-    <div class="card prep-card">
-      <div class="prep-title"><span>📈 最近训练</span><span class="prep-sub">自动保存在本机</span></div>
-      <div id="trainingHistory"></div>
-    </div>
-    <div class="card prep-card">
-      <div class="prep-title"><span>🧘 训练后放松</span><span class="prep-sub">约 5 分钟</span></div>
-      <ul class="prep-list" id="coolList"></ul>
-      <div class="prep-note">拉伸到「微紧」即可，不要拉到刺痛；有伤的部位不强拉。</div>
+    <div class="training-body" id="trainingBody">
+      <div class="vol-banner" id="volBanner"></div>
+      <div class="train-meta">
+        <span id="trainTime">预计 -- 分钟</span>
+        <span id="trainDone">已完成 0/6</span>
+      </div>
+      <div class="progress-bar"><i id="trainProgress" style="width:0%"></i></div>
+      <div class="card prep-card" id="restCard">
+        <div class="prep-title"><span>⏱ 组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
+        <div class="rest-timer-row"><b class="rest-time" id="restTimer">00:00</b><div class="rest-actions"><button class="btn-secondary" id="restAdd">+30</button><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div></div>
+        <details class="rest-help"><summary>使用说明</summary><div class="prep-note">完成每组会自动保存并开始计时；实际表现不同再修改数值。主动作通常休息120–180秒，辅助动作60–90秒。</div></details>
+      </div>
+      <div class="card prep-card">
+        <div class="prep-title"><span>🔥 训练前热身</span><span class="prep-sub" id="warmTime">约 5 分钟</span></div>
+        <ul class="prep-list" id="warmList"></ul>
+        <div class="prep-note">图例：橙色＝身体姿势，灰色＝杠铃、哑铃、训练凳或器械。图例只提示动作方向，实际以动作要点和无痛幅度为准。</div>
+      </div>
+      <div id="exList"></div>
+      <div class="card prep-card">
+        <div class="prep-title"><span>📈 最近训练</span><span class="prep-sub">自动保存在本机</span></div>
+        <div id="trainingHistory"></div>
+      </div>
+      <div class="card prep-card">
+        <div class="prep-title"><span>🧘 训练后放松</span><span class="prep-sub">约 5 分钟</span></div>
+        <ul class="prep-list" id="coolList"></ul>
+        <div class="prep-note">拉伸到「微紧」即可，不要拉到刺痛；有伤的部位不强拉。</div>
+      </div>
     </div>
   </section>
 
   <!-- 饮食 -->
   <section class="page" id="page-diet">
-    <div class="card">
+    <header class="diet-head diet-reveal">
+      <div><div class="diet-eyebrow">今日饮食</div><h2>增肌减脂</h2></div>
+      <span class="diet-day-badge" id="dietDayBadge">训练日</span>
+    </header>
+
+    <section class="diet-summary diet-reveal">
+      <div class="diet-calorie">
+        <div class="diet-calorie-top">
+          <div><div class="diet-calorie-label">已摄入</div><strong><span id="dCal">0</span><small> kcal</small></strong></div>
+          <div class="pbar-lbl" id="dietCalLbl">热量 0 / 0 kcal</div>
+        </div>
+        <div class="pbar"><i id="dietCalBar"></i></div>
+      </div>
       <div class="nutri-macros">
-        <div class="macro"><div class="m-n" id="dCal">0</div><div class="m-t">热量 kcal</div></div>
-        <div class="macro"><div class="m-n" id="dPro">0</div><div class="m-t">蛋白 g</div></div>
-        <div class="macro"><div class="m-n" id="dCarb">0</div><div class="m-t">碳水 g</div></div>
-        <div class="macro"><div class="m-n" id="dFat">0</div><div class="m-t">脂肪 g</div></div>
+        <div class="macro protein"><div class="macro-top"><span class="m-t">蛋白</span><span class="m-n" id="dPro">0</span></div><div class="pbar"><i id="dietProteinBar"></i></div><div class="pbar-lbl" id="dietProteinLbl">0 / 0 g</div></div>
+        <div class="macro carb"><div class="macro-top"><span class="m-t">碳水</span><span class="m-n" id="dCarb">0</span></div><div class="pbar"><i id="dietCarbBar"></i></div><div class="pbar-lbl" id="dietCarbLbl">0 / 0 g</div></div>
+        <div class="macro fat"><div class="macro-top"><span class="m-t">脂肪</span><span class="m-n" id="dFat">0</span></div><div class="pbar"><i id="dietFatBar"></i></div><div class="pbar-lbl" id="dietFatLbl">0 / 0 g</div></div>
       </div>
-      <div class="pbar"><i id="dietCalBar"></i></div>
-      <div class="pbar-lbl" id="dietCalLbl">热量 0 / 0 kcal</div>
-      <div class="pbar"><i id="dietProteinBar"></i></div>
-      <div class="pbar-lbl" id="dietProteinLbl">蛋白质 0 / 0 g</div>
-      <div class="pbar"><i id="dietCarbBar"></i></div>
-      <div class="pbar-lbl" id="dietCarbLbl">碳水 0 / 0 g</div>
-      <div class="pbar"><i id="dietFatBar"></i></div>
-      <div class="pbar-lbl" id="dietFatLbl">脂肪 0 / 0 g</div>
-      <div class="weight-status" id="dietTrendStatus"></div>
-    </div>
+      <details class="diet-trend"><summary>查看目标依据</summary><div class="weight-status" id="dietTrendStatus"></div></details>
+    </section>
 
-    <h2>补剂时间表</h2>
-    <div class="card prep-card" id="supplementReminder">
-      <div class="prep-title">今日提醒 <span class="prep-sub" id="supplementDayType"></span></div>
-      <div class="supp-row">
-        <div class="supp-info">
-          <div class="supp-time">每天 13:00（午餐后）· 肌酸 3–5g</div>
-          <div class="supp-desc">训练日和休息日都吃；重点是每天持续使用，胃不舒服时不要空腹。</div>
-        </div>
-        <button class="supp-check" data-supp="creatine">未记录</button>
-      </div>
-      <div class="supp-row">
-        <div class="supp-info">
-          <div class="supp-time">训练结束后约 30 分钟 · 蛋白粉 1勺（30g）</div>
-          <div class="supp-desc">当天蛋白不足时使用；休息日或正餐已达到目标时可以不喝。</div>
-        </div>
-        <button class="supp-check" data-supp="protein">未记录</button>
-      </div>
-      <div class="prep-note">蛋白粉按 22.5g 蛋白/勺计入今日饮食；此处打卡只记录提醒，不会重复计算营养。</div>
-    </div>
+    <nav class="meal-switch diet-reveal" id="mealTabs" aria-label="选择餐次">
+      <button type="button" class="food-tab on" data-meal="breakfast">早餐</button>
+      <button type="button" class="food-tab" data-meal="lunch">午餐</button>
+      <button type="button" class="food-tab" data-meal="dinner">晚餐</button>
+      <button type="button" class="food-tab" data-meal="snack">加餐</button>
+    </nav>
 
-    <h2>选择餐次</h2>
-    <div class="food-tabs" id="mealTabs">
-      <div class="food-tab on" data-meal="breakfast">早餐</div>
-      <div class="food-tab" data-meal="lunch">午餐</div>
-      <div class="food-tab" data-meal="dinner">晚餐</div>
-      <div class="food-tab" data-meal="snack">加餐</div>
-    </div>
+    <section class="meal-target-card" id="mealTargetCard"></section>
 
-    <div class="card" id="mealTargetCard"></div>
-
-    <h2>自选食物 · 加入<span id="curMealLbl" style="color:var(--orange)">早餐</span></h2>
-    <div class="food-tabs" id="foodTabs">
-      <div class="food-tab on" data-cat="全部">全部</div>
-      <div class="food-tab" data-cat="蛋白">蛋白</div>
-      <div class="food-tab" data-cat="碳水">碳水</div>
-      <div class="food-tab" data-cat="脂肪">脂肪</div>
-      <div class="food-tab" data-cat="蔬果">蔬果</div>
+    <div class="diet-section-title"><h2>添加食物</h2><span>加入<span id="curMealLbl">早餐</span></span></div>
+    <div class="food-tabs food-filter" id="foodTabs">
+      <button type="button" class="food-tab on" data-cat="全部">全部</button>
+      <button type="button" class="food-tab" data-cat="蛋白">蛋白</button>
+      <button type="button" class="food-tab" data-cat="碳水">碳水</button>
+      <button type="button" class="food-tab" data-cat="脂肪">脂肪</button>
+      <button type="button" class="food-tab" data-cat="蔬果">蔬果</button>
     </div>
     <div id="foodList"></div>
 
-    <h2>今日记录（按餐次）</h2>
+    <div class="diet-section-title"><h2>今日记录</h2><span>按餐次汇总</span></div>
     <div id="dietLog"></div>
+
+    <details class="supplement-shell">
+      <summary>补剂提醒 <span class="prep-sub" id="supplementDayType"></span></summary>
+      <div id="supplementReminder">
+        <div class="supp-row">
+          <div class="supp-info"><div class="supp-time">午餐后 · 肌酸 3–5g</div><div class="supp-desc">训练日和休息日都吃；胃不舒服时不要空腹。</div></div>
+          <button type="button" class="supp-check" data-supp="creatine">未记录</button>
+        </div>
+        <div class="supp-row">
+          <div class="supp-info"><div class="supp-time">训练后 · 蛋白粉 1勺（30g）</div><div class="supp-desc">当天蛋白不足时使用；达到目标可不喝。</div></div>
+          <button type="button" class="supp-check" data-supp="protein">未记录</button>
+        </div>
+        <div class="prep-note">这里仅记录提醒；营养需在“加餐”中加入，避免重复计算。</div>
+      </div>
+    </details>
   </section>
 
   <!-- 我的 -->
   <section class="page" id="page-me">
     <div class="field">
       <label>训练目标</label>
-      <div class="seg" id="goalSeg">
-        <div class="opt bulk" data-goal="bulk">增肌</div>
-        <div class="opt cut" data-goal="cut">减脂</div>
-      </div>
+      <div class="card"><b style="color:var(--orange)">增肌减脂</b><div class="sub" style="margin-top:6px">体重基本稳定或只小幅增加，以力量表现、腰围和14天晨重共同判断。</div></div>
     </div>
     <div class="field">
       <label>当前体重 (kg)</label>
@@ -634,9 +735,10 @@ const LEGACY_PROGRAMS={
 };
 
 // 谭成义联名三分化的个人适配版：保留推/拉/腿动作逻辑，将单次正式组控制在 12–13 组。
-// 所有重量都是 65kg、有训练基础用户的保守试重；首次实际训练记录会覆盖起点。
+// 所有重量都是 66kg、有训练基础用户的保守试重；首次实际训练记录会覆盖起点。
 const PLAN_VERSION='school-ppl-v1';
-const PROFILE_VERSION='fy-65kg-school-v1';
+const PROFILE_VERSION='fy-66kg-recomp-v2';
+const USER_PROFILE={sex:'male',age:19,height:178,activityFactor:1.45};
 const INITIAL_WEIGHTS={
   barbell_bench:40,incline_dumbbell:12.5,single_arm_overhead_triceps:5,single_arm_cable_y_raise_school:2.5,
   single_arm_cable_pulldown:10,single_arm_machine_row:20,open_elbow_cable_row:25,cable_curl:15,
@@ -786,22 +888,52 @@ INJURY_GUIDE.elbow=INJURY_GUIDE.elbowPit;
 // 食物营养库：cal=热量kcal / p=蛋白g / c=碳水g / f=脂肪g（均为「每份」营养）；q=每份基准量, u=单位（用于显示实际量）
 // meals: 适合的餐次（breakfast/lunch/dinner/snack），切餐次时只显示该餐可吃的食物
 const FOODS=[
-  {name:'鸡蛋',unit:'1个',q:1,u:'个',cal:72,p:6.3,c:0.4,f:5,cat:'蛋白',meals:['breakfast','lunch','dinner','snack']},
-  {name:'鸡胸肉',unit:'100g',q:100,u:'g',cal:133,p:31,c:0,f:1.2,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'鸡腿肉',unit:'100g',q:100,u:'g',cal:177,p:26,c:0,f:8,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'猪里脊',unit:'100g',q:100,u:'g',cal:143,p:27,c:0,f:3.5,cat:'蛋白',meals:['lunch','dinner']},
-  {name:'乳清蛋白粉',unit:'1勺(30g)',q:1,u:'勺',cal:120,p:22.5,c:3,f:1.5,cat:'蛋白',meals:['snack']},
-  {name:'牛奶',unit:'250ml',q:250,u:'ml',cal:135,p:8,c:12,f:8,cat:'蛋白',meals:['breakfast','snack']},
-  {name:'米饭',unit:'100g(熟)',q:100,u:'g',cal:116,p:2.6,c:25.9,f:0.3,cat:'碳水',meals:['lunch','dinner']},
-  {name:'香蕉',unit:'1根',q:1,u:'根',cal:105,p:1.3,c:27,f:0.4,cat:'碳水',meals:['breakfast','snack']},
-  {name:'西兰花',unit:'100g',q:100,u:'g',cal:34,p:2.8,c:7,f:0.4,cat:'蔬果',meals:['lunch','dinner']},
-  {name:'白菜',unit:'100g',q:100,u:'g',cal:21,p:1.7,c:3.1,f:0.2,cat:'蔬果',meals:['lunch','dinner']},
-  {name:'青菜',unit:'100g',q:100,u:'g',cal:15,p:1.5,c:1.6,f:0.3,cat:'蔬果',meals:['lunch','dinner']},
-  {name:'香菇青菜包',unit:'1个(约100g)',q:1,u:'个',cal:313,p:5.4,c:48.4,f:10.7,cat:'碳水',meals:['breakfast','snack']},
-  {name:'高蛋白面包',unit:'1份(50g)',q:1,u:'份',cal:132,p:7.8,c:20,f:1.3,cat:'碳水',meals:['breakfast','snack']},
-  {name:'咖喱鸡排饭',unit:'1份(约450g)',q:1,u:'份',cal:878,p:36.9,c:110.2,f:37.4,cat:'碳水',meals:['snack']}
+  {name:'燕麦',unit:'100g',q:100,u:'g',cal:377,p:12.6,c:58,f:8,cat:'碳水',meals:['breakfast'],note:'按你提供的1578kJ换算'},
+  {name:'香蕉',unit:'1根',q:1,u:'根',cal:105,p:1.3,c:27,f:0.4,cat:'碳水',meals:['breakfast']},
+  {name:'高蛋白面包',unit:'1份(50g)',q:1,u:'份',cal:132,p:7.8,c:20,f:1.3,cat:'碳水',meals:['breakfast']},
+  {name:'乳清蛋白粉',unit:'1勺(30g)',q:1,u:'勺',cal:120,p:22.5,c:3,f:1.5,cat:'蛋白',meals:['breakfast','snack']},
+  {name:'霸王茶姬·伯牙绝弦（中杯）',unit:'1中杯',q:1,u:'杯',cal:130,p:2.8,c:6.7,f:10.3,cat:'脂肪',meals:['breakfast','snack'],note:'标准冰/不另加糖；品牌营养计算器'},
+  {name:'霸王茶姬·伯牙绝弦（大杯）',unit:'1大杯',q:1,u:'杯',cal:151,p:3.2,c:7.8,f:12,cat:'脂肪',meals:['breakfast','snack'],note:'标准冰/不另加糖；按中杯与杯量比例估算'},
+  {name:'古茗·椰香拿铁（中杯）',unit:'1中杯',q:1,u:'杯',cal:180,p:3,c:24,f:8,cat:'脂肪',meals:['breakfast','snack'],note:'Good轻椰拿铁；官网仅披露能量低20%，数值为估算'},
+  {name:'古茗·椰香拿铁（大杯）',unit:'1大杯',q:1,u:'杯',cal:220,p:3.7,c:29.3,f:9.8,cat:'脂肪',meals:['breakfast','snack'],note:'Good轻椰拿铁；按杯量比例估算'},
+  {name:'瑞幸·生椰拿铁（大杯）',unit:'1大杯(约450ml)',q:1,u:'杯',cal:179,p:3,c:23,f:8.3,cat:'脂肪',meals:['breakfast','snack'],note:'冰/不另加糖；热量官网，宏量为估算'},
+  {name:'瑞幸·生椰拿铁（超大杯）',unit:'1超大杯(约596ml)',q:1,u:'杯',cal:237,p:4,c:30.5,f:11,cat:'脂肪',meals:['breakfast','snack'],note:'冰/不另加糖；按官网大杯与杯量比例估算'},
+  {name:'瑞幸·小黄油拿铁（大杯）',unit:'1大杯(约450ml)',q:1,u:'杯',cal:250,p:6,c:28,f:12.7,cat:'脂肪',meals:['breakfast','snack'],note:'冰/不另加糖；热量官网，宏量为估算'},
+  {name:'瑞幸·小黄油拿铁（超大杯）',unit:'1超大杯(约596ml)',q:1,u:'杯',cal:331,p:7.9,c:37.1,f:16.8,cat:'脂肪',meals:['breakfast','snack'],note:'冰/不另加糖；按官网大杯与杯量比例估算'},
+  {name:'水煮蛋',unit:'1个',q:1,u:'个',cal:72,p:6.3,c:0.4,f:5,cat:'蛋白',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'鸡胸肉',unit:'100g',q:100,u:'g',cal:165,p:31,c:0,f:3.6,cat:'蛋白',meals:['lunch','dinner'],note:'照片食物；餐厅用油未计'},
+  {name:'三文鱼',unit:'1片(约20g)',q:1,u:'片',cal:42,p:4.1,c:0,f:2.7,cat:'蛋白',meals:['lunch','dinner']},
+  {name:'紫薯泥',unit:'100g',q:100,u:'g',cal:120,p:1.6,c:27,f:0.2,cat:'碳水',meals:['lunch','dinner'],note:'照片食物；按少糖估算'},
+  {name:'土豆块',unit:'100g',q:100,u:'g',cal:90,p:2,c:20,f:0.2,cat:'碳水',meals:['lunch','dinner'],note:'照片食物；用油另计'},
+  {name:'熟意面',unit:'100g',q:100,u:'g',cal:158,p:5.8,c:30.9,f:0.9,cat:'碳水',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'熟荞麦面',unit:'100g',q:100,u:'g',cal:99,p:5.1,c:21.4,f:0.1,cat:'碳水',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'玉米粒',unit:'100g',q:100,u:'g',cal:96,p:3.4,c:21,f:1.5,cat:'碳水',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'南瓜',unit:'100g',q:100,u:'g',cal:45,p:1.4,c:10,f:0.1,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'西兰花',unit:'100g',q:100,u:'g',cal:34,p:2.8,c:7,f:0.4,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'胡萝卜',unit:'100g',q:100,u:'g',cal:41,p:0.9,c:9.6,f:0.2,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'生菜',unit:'100g',q:100,u:'g',cal:15,p:1.4,c:2.9,f:0.2,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'黄瓜',unit:'100g',q:100,u:'g',cal:15,p:0.7,c:3.6,f:0.1,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'紫甘蓝',unit:'100g',q:100,u:'g',cal:31,p:1.4,c:7.4,f:0.2,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'菠菜',unit:'100g',q:100,u:'g',cal:23,p:2.9,c:3.6,f:0.4,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'木耳',unit:'100g',q:100,u:'g',cal:25,p:1.5,c:6.8,f:0.2,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'蘑菇',unit:'100g',q:100,u:'g',cal:28,p:3.6,c:5.3,f:0.3,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'莲藕',unit:'100g',q:100,u:'g',cal:74,p:2.6,c:17.2,f:0.1,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'四季豆',unit:'100g',q:100,u:'g',cal:35,p:1.9,c:7.9,f:0.3,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'咖喱鸡排饭',unit:'1份(约450g)',q:1,u:'份',cal:878,p:36.9,c:110.2,f:37.4,cat:'碳水',meals:['lunch','dinner'],note:'餐厅份量估算'},
+  {name:'沙县去皮鸡腿饭',unit:'1份',q:1,u:'份',cal:690,p:42,c:92,f:16,cat:'碳水',meals:['lunch','dinner'],note:'去皮、少汁估算'}
 ];
-const FOOD_MAP=Object.fromEntries(FOODS.map(f=>[f.name,f]));
+// 旧版食物不再出现在可选列表，但继续用于读取和删除历史记录，避免用户已有数据丢失。
+const LEGACY_FOODS=[
+  {name:'鸡蛋',unit:'1个',q:1,u:'个',cal:72,p:6.3,c:0.4,f:5},
+  {name:'鸡腿肉',unit:'100g',q:100,u:'g',cal:177,p:26,c:0,f:8},
+  {name:'猪里脊',unit:'100g',q:100,u:'g',cal:143,p:27,c:0,f:3.5},
+  {name:'牛奶',unit:'250ml',q:250,u:'ml',cal:135,p:8,c:12,f:8},
+  {name:'米饭',unit:'100g(熟)',q:100,u:'g',cal:116,p:2.6,c:25.9,f:.3},
+  {name:'白菜',unit:'100g',q:100,u:'g',cal:21,p:1.7,c:3.1,f:.2},
+  {name:'青菜',unit:'100g',q:100,u:'g',cal:15,p:1.5,c:1.6,f:.3},
+  {name:'香菇青菜包',unit:'1个(约100g)',q:1,u:'个',cal:313,p:5.4,c:48.4,f:10.7}
+];
+const FOOD_MAP=Object.fromEntries([...LEGACY_FOODS,...FOODS].map(f=>[f.name,f]));
 const MEAL_ORDER=['breakfast','lunch','dinner','snack'];
 const MEAL_LABEL={breakfast:'早餐',lunch:'午餐',dinner:'晚餐',snack:'加餐'};
 
@@ -844,7 +976,7 @@ function setFoodQty(name, meal, delta){
 
 const defaultState={
   schemaVersion:2, planVersion:PLAN_VERSION,
-  profileVersion:PROFILE_VERSION, goal:'bulk', weight:65, target:69, deadline:'2027-06-30',
+  profileVersion:PROFILE_VERSION, goal:'recomp', weight:66, target:66, deadline:'2027-06-30',
   checkins:[], training:{}, setLogs:{}, diet:{}, supplements:{}, weights:{}, bodyWeights:{}, bg:'', planEpoch:'', planOverrides:{}, feedback:{},
   sessionSnapshots:{}, painLogs:[], progressionFreeze:{}, recoveryDeferred:{}, equipmentStatus:{legs_seated_leg_curl:'confirmed'}, legacySetLogs:{}, legacyTraining:{}, migrationPending:false
 };
@@ -886,14 +1018,14 @@ if(state.planVersion!==PLAN_VERSION){
   state.planEpoch=today();
 }
 if(state.profileVersion!==PROFILE_VERSION){
-  state.goal='bulk'; state.weight=65; state.target=69; state.deadline='2027-06-30';
+  state.goal='recomp'; state.weight=66; state.target=66; state.deadline='2027-06-30';
   state.weights=Object.assign({},INITIAL_WEIGHTS,state.weights||{});
   state.bodyWeights=state.bodyWeights||{};
-  if(!state.bodyWeights[today()]) state.bodyWeights[today()]=65;
+  if(!Object.prototype.hasOwnProperty.call(state.bodyWeights,today())) state.bodyWeights[today()]=state.weight;
   state.profileVersion=PROFILE_VERSION;
 }
 save(state);
-let curDay='push';
+let curDay=null;
 let openIdx=null; // 当前展开详情（看图片/要点）的动作下标
 let curFoodCat='全部'; // 自选食物分类
 let curMeal='breakfast'; // 当前餐次（早/午/晚/加餐）
@@ -901,7 +1033,37 @@ let calYear=new Date().getFullYear(); // 日历查看的年份
 let calMonth=new Date().getMonth(); // 日历查看的月份（0-11）
 let restTimerId=null, restPaused=false, restRemaining=0;
 let nutritionAnimationId=null;
+let actionToastTimer=null;
+let trainFeedback=null;
+let dietFeedback=null;
 const checkinCounterAnimations={};
+
+function showActionToast(message){
+  const el=document.getElementById('actionToast'); if(!el) return;
+  el.textContent=message;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+  clearTimeout(actionToastTimer);
+  actionToastTimer=setTimeout(()=>el.classList.remove('show'),1500);
+}
+function pulseElement(target,className){
+  const el=typeof target==='string'?document.getElementById(target):target;
+  if(!el) return;
+  el.classList.remove(className); void el.offsetWidth; el.classList.add(className);
+  setTimeout(()=>el.classList.remove(className),520);
+}
+function refreshDietSection(){
+  ['mealTargetCard','foodList'].forEach(id=>pulseElement(id,'diet-refresh'));
+}
+function revealDietPage(){
+  document.querySelectorAll('#page-diet .diet-reveal').forEach(el=>{
+    el.style.animation='none'; void el.offsetWidth; el.style.animation='';
+  });
+}
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
 
 function paintRestTimer(){
   const el=document.getElementById('restTimer'); if(!el) return;
@@ -909,6 +1071,7 @@ function paintRestTimer(){
 }
 function startRestTimer(seconds){
   clearInterval(restTimerId); restRemaining=Math.max(0,Math.round(seconds)); restPaused=false; paintRestTimer();
+  pulseElement('restTimer','timer-pop');
   restTimerId=setInterval(()=>{ if(restPaused) return; restRemaining=Math.max(0,restRemaining-1); paintRestTimer(); if(!restRemaining){clearInterval(restTimerId);restTimerId=null;} },1000);
 }
 
@@ -921,8 +1084,7 @@ function getKg(key, coef, step){
 }
 
 function proteinTarget(){
-  const c=state.goal==='bulk'?2.0:2.2; // 保持在 1.6–2.2 g/kg 范围内
-  return Math.round(state.weight*c);
+  return Math.round(state.weight*2.2);
 }
 
 function weightTrendData(){
@@ -944,9 +1106,9 @@ function weightTrendData(){
     status=`晨重已满14天，但同期饮食仅记录 ${dietDays}/10 天；暂不自动调整热量。`;
   }else{
     effectiveDate=last[last.length-1][0];
-    if(weeklyPct<0.1){ delta=125; status='后7日增重低于0.1%：每日热量目标增加125 kcal。'; }
-    else if(weeklyPct>0.25){ delta=-125; status='后7日增重高于0.25%：每日热量目标减少125 kcal。'; }
-    else status='后7日增重处于0.1%–0.25%：每日热量目标保持不变。';
+    if(weeklyPct < -0.25){ delta=100; status='后7日下降超过0.25%：为保护训练表现，每日增加100 kcal。'; }
+    else if(weeklyPct > 0.10){ delta=-100; status='后7日增长超过0.10%：为控制脂肪增长，每日减少100 kcal。'; }
+    else status='后7日体重处于稳定区间（-0.25%～+0.10%）：热量保持不变。';
   }
   return {entries,last,daysRemaining,firstAvg,secondAvg,weeklyPct,dietDays,spanDays,intervalOk,delta,status,effectiveDate};
 }
@@ -956,18 +1118,28 @@ function nutritionTrend(){
   return {delta:t.delta,status:t.status,effectiveDate:t.effectiveDate};
 }
 
-// 每日营养目标：蛋白质和脂肪先满足最低线，剩余热量分配给碳水。
+// 增肌减脂目标：Mifflin-St Jeor 估算基础代谢，活动系数1.45；保留小幅热量缺口。
+// 蛋白质 2.2g/kg，脂肪不低于0.9g/kg，剩余热量优先给碳水以支持训练。
 function dailyTargets(){
   const w=state.weight, trend=nutritionTrend();
-  const cal=Math.round((state.goal==='bulk'?w*33:w*25)+trend.delta);
-  const p=Math.round(w*(state.goal==='bulk'?2.0:2.2));
-  const f=Math.round(w*0.8);
+  const bmr=10*w+6.25*USER_PROFILE.height-5*USER_PROFILE.age+5;
+  const maintenance=bmr*USER_PROFILE.activityFactor;
+  const trainingDay=planFor(today())!=='rest';
+  const cal=Math.round((maintenance*(trainingDay?0.94:0.90)+trend.delta)/50)*50;
+  const p=Math.round(w*2.2);
+  const f=Math.round(w*1.0);
   const c=Math.max(0,Math.round((cal-p*4-f*9)/4));
-  return {cal,p,c,f,status:trend.status};
+  return {cal,p,c,f,status:trend.status,trainingDay,maintenance:Math.round(maintenance)};
 }
 
 // 餐次热量分配比例：早30% / 午35% / 晚25% / 加餐10%
-const MEAL_RATIO={breakfast:0.30, lunch:0.35, dinner:0.25, snack:0.10};
+const MEAL_RATIO={breakfast:0.25, lunch:0.35, dinner:0.30, snack:0.10};
+const MEAL_RECOMMENDATION={
+  breakfast:'燕麦60g＋香蕉1根＋高蛋白面包50g＋蛋白粉1勺',
+  lunch:'鸡胸肉150g＋熟意面250g＋西兰花200g＋玉米粒100g',
+  dinner:'三文鱼8片＋土豆块200g＋西兰花200g＋玉米粒100g',
+  snack:'饮品四选一；当天蛋白不足再补1勺蛋白粉'
+};
 
 // 某餐营养目标（四舍五入到整数）
 function mealTargets(meal){
@@ -1079,8 +1251,8 @@ function applyBg(){
 }
 
 function renderHome(){
-  document.getElementById('goalBadge').textContent=state.goal==='bulk'?'增肌':'减脂';
-  document.getElementById('goalBadge').className='badge '+(state.goal==='bulk'?'bulk':'cut');
+  document.getElementById('goalBadge').textContent='增肌减脂';
+  document.getElementById('goalBadge').className='badge bulk';
   document.getElementById('countdownDays').textContent=countdown();
 
   const target=proteinTarget();
@@ -1342,10 +1514,16 @@ function renderVolBanner(fb){
 }
 
 function renderTrain(){
-  renderPrep(curDay);
-  document.querySelectorAll('.daytab').forEach(t=>t.classList.toggle('on',t.dataset.day===curDay));
-  const fb=feedbackToday();
+  const scheduledDay=planFor(today());
+  if(curDay!==scheduledDay){ curDay=scheduledDay; openIdx=null; }
+  const isRest=curDay==='rest';
+  document.getElementById('todayPlanName').textContent={push:'推',pull:'拉',legs:'腿',rest:'休息'}[curDay]||'休息';
+  document.getElementById('trainingBody').hidden=isRest;
+  document.getElementById('restDayCard').hidden=!isRest;
   renderStatus();
+  if(isRest) return;
+  renderPrep(curDay);
+  const fb=feedbackToday();
   const adv=statusAdvice(fb);
   renderVolBanner(fb);
   const skipNames=adv.rest?PROGRAMS[curDay].map(x=>x.name):[];
@@ -1375,7 +1553,7 @@ function renderTrain(){
     }
     const equipmentStatus=state.equipmentStatus?.[e.id]||e.equipmentStatus||'confirmed';
     if(equipmentStatus==='notChecked'){
-      return `<div class="ex" data-i="${i}"><div class="ex-main"><div class="info"><div class="name">${e.name}<span class="inj-tag">器械待确认</span></div><div class="sets">${e.sets} · 未确认前不开始此动作</div></div></div><div class="ex-detail" style="display:block"><div class="tip">请核对器械铭牌确实写有腿弯举 / Leg Curl，且转轴能对准膝关节。</div><button class="btn-secondary confirm-equipment" style="margin-top:8px">我已确认是腿弯举</button></div></div>`;
+      return `<div class="ex open" data-i="${i}"><div class="ex-main"><div class="info"><div class="name">${e.name}<span class="inj-tag">器械待确认</span></div><div class="sets">${e.sets} · 未确认前不开始此动作</div></div></div><div class="ex-detail"><div class="ex-detail-inner"><div class="tip" style="margin-top:10px">请核对器械铭牌确实写有腿弯举 / Leg Curl，且转轴能对准膝关节。</div><button class="btn-secondary confirm-equipment" style="margin-top:8px">我已确认是腿弯举</button></div></div></div>`;
     }
     const done=!!doneMap[e.id];
     const key=e.equipmentId;
@@ -1395,8 +1573,9 @@ function renderTrain(){
         state.weights[e.equipmentId]=kg; state.appliedProgression[token]=true; save(state);
       }
     }
+    const weightFlash=trainFeedback?.type==='weight'&&trainFeedback.exerciseId===e.id?' weight-feedback':'';
     const wt=e.coef
-      ? `<div class="wt"><button class="wbtn" data-w="-1">−</button><span class="wval">${kg}kg</span><button class="wbtn" data-w="1">+</button></div>`
+      ? `<div class="wt${weightFlash}"><button class="wbtn" data-w="-1" aria-label="减少${e.name}重量">−</button><span class="wval">${kg}kg</span><button class="wbtn" data-w="1" aria-label="增加${e.name}重量">+</button></div>`
       : `<div class="wt"><span class="wval">自重</span></div>`;
     const wtag=e.wtag?`<span class="wtag">${e.wtag}</span>`:'';
     const guide=EXERCISE_GUIDES[e.id];
@@ -1406,13 +1585,15 @@ function renderTrain(){
     const setsHtml=adv.light
       ? `<div class="sets"><span class="light-tag">轻量</span>${lightSetsStr(e.sets)} · ${e.muscle}</div>`
       : `<div class="sets">${e.sets} · ${e.muscle}</div>`;
+    const exerciseFlash=trainFeedback?.type==='exercise'&&trainFeedback.exerciseId===e.id?' confirm-feedback':'';
     return `<div class="ex ${done?'done':''} ${openIdx===i?'open':''}" data-i="${i}">
       <div class="ex-main">
+        <button type="button" class="box${exerciseFlash}" aria-label="${done?'取消完成':'标记完成'}：${e.name}">✓</button>
         <div class="info"><div class="name">${e.name}${wtag}</div>${setsHtml}</div>
         ${wt}
-        <span class="box">✓</span>
       </div>
       <div class="ex-detail">
+        <div class="ex-detail-inner">
         <div class="thumb">${visual}</div>
         <div><span class="side-tag">${e.side}</span></div>
         <div class="tip">${e.tip}</div>
@@ -1420,7 +1601,7 @@ function renderTrain(){
         <div class="rx-line"><span class="rx-tag">正式组 RIR ${targetRir}${prev?'':'（首次校准）'}</span><span class="rx-tag">休息 ${rx.rest}秒</span><span class="rx-tag ${suggested.includes('加')?'up':''}">${suggested}</span></div>
         <div class="last-log">上次：${prev?prev.date+' · '+fmtSets(prev.sets):'暂无记录'}<br>本次默认值已自动生成；做完一组直接点“完成”。</div>
         <div class="set-editor">
-          <div class="set-head"><span>类型</span><span>重量kg</span><span>次数</span><span>RIR</span><span>记录</span></div>
+          <div class="set-head"><span>完成</span><span>类型</span><span>重量kg</span><span>次数</span><span>RIR</span></div>
           ${Array.from({length:warmupCount+setCount},(_,si)=>{
             const isWarmup=si<warmupCount, workIndex=si-warmupCount;
             const row=rows[si]||{};
@@ -1433,17 +1614,21 @@ function renderTrain(){
             const baseReps=row.reps!==undefined&&row.reps!==''?row.reps:target.reps;
             const baseRir=row.rir!==undefined&&row.rir!==''?row.rir:target.rir;
             const completed=Number(row.reps)>0;
-            return `<div class="set-row ${completed?'completed':''}"><b>${isWarmup?'热'+(si+1):'正'+(workIndex+1)}</b>
+            const setFlash=trainFeedback?.type==='set'&&trainFeedback.exerciseId===e.id&&trainFeedback.setIndex===si?' confirm-feedback':'';
+            return `<div class="set-row ${completed?'completed':''}">
+              <button type="button" class="set-complete${setFlash}" data-set="${si}" data-set-type="${type}">${completed?'✓ 完成':'完成'}</button>
+              <b>${isWarmup?'热'+(si+1):'正'+(workIndex+1)}</b>
               <input class="set-input" data-field="kg" data-set="${si}" data-set-type="${type}" inputmode="decimal" type="number" step="${e.step||1}" value="${baseKg}">
               <input class="set-input" data-field="reps" data-set="${si}" inputmode="numeric" type="number" min="0" value="${baseReps}">
               <input class="set-input" data-field="rir" data-set="${si}" inputmode="numeric" type="number" min="0" max="10" value="${baseRir}" placeholder="${isWarmup?'—':targetRir}">
-              <button class="set-complete" data-set="${si}" data-set-type="${type}">${completed?'✓ 已完成':'完成'}</button>
             </div>`;
           }).join('')}
+        </div>
         </div>
       </div>
     </div>`;
   }).join('');
+  trainFeedback=null;
   renderTrainingHistory();
 }
 
@@ -1467,7 +1652,6 @@ function renderTrainingHistory(){
 }
 
 function renderMe(){
-  document.querySelectorAll('#goalSeg .opt').forEach(o=>o.classList.toggle('on',o.dataset.goal===state.goal));
   document.getElementById('inWeight').value=state.weight;
   document.getElementById('inTarget').value=state.target;
   document.getElementById('inDeadline').value=state.deadline;
@@ -1527,17 +1711,11 @@ function renderMealTarget(){
     ['脂肪', it.f, tg.f, 'g']
   ];
   document.getElementById('mealTargetCard').innerHTML=
-    '<div class="half-title" style="margin-bottom:12px">'+MEAL_LABEL[curMeal]+'营养目标 · 参考值，可多可少</div>'+
-    rows.map(([n,cur,goal,u])=>{
-      const pct=goal>0?Math.min(1,cur/goal):0;
-      return '<div style="margin-bottom:10px">'+
-        '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px">'+
-          '<span>'+n+'</span>'+
-          '<span><b style="color:var(--orange)">'+Math.round(cur)+'</b> / '+goal+' '+u+'</span>'+
-        '</div>'+
-        '<div class="pbar"><i style="width:'+(pct*100)+'%"></i></div>'+
-      '</div>';
-    }).join('');
+    '<div class="meal-target-head"><strong>'+MEAL_LABEL[curMeal]+'目标</strong><span>参考值，可上下浮动</span></div>'+
+    '<div class="meal-recommend"><b>推荐：</b>'+MEAL_RECOMMENDATION[curMeal]+'</div>'+
+    '<div class="meal-target-grid">'+rows.map(([n,cur,goal,u])=>
+      '<span>'+n+'<b>'+Math.round(cur)+' / '+goal+' '+u+'</b></span>'
+    ).join('')+'</div>';
 }
 
 function renderDiet(){
@@ -1555,10 +1733,12 @@ function renderDiet(){
   ];
   progress.forEach(([key,current,target,label,unit])=>{
     document.getElementById('diet'+key+'Bar').style.width=(Math.min(1,current/target)*100)+'%';
-    document.getElementById('diet'+key+'Lbl').textContent=label+' '+Math.round(current)+' / '+target+' '+unit;
+    document.getElementById('diet'+key+'Lbl').textContent=key==='Cal'?(label+' '+Math.round(current)+' / '+target+' '+unit):('目标 '+target+' '+unit);
   });
   const trend=weightTrendData();
-  document.getElementById('dietTrendStatus').innerHTML='体重趋势：'+trend.status+(trend.effectiveDate?'<br>本轮目标自 '+trend.effectiveDate+' 起生效。':'');
+  const dayType=targets.trainingDay?'训练日':'休息日';
+  document.getElementById('dietDayBadge').textContent=dayType;
+  document.getElementById('dietTrendStatus').innerHTML=dayType+'目标 · 估算维持热量 '+targets.maintenance+' kcal<br>增肌减脂采用小幅热量缺口；'+trend.status+(trend.effectiveDate?'<br>本轮目标自 '+trend.effectiveDate+' 起生效。':'');
 
   const supp=(state.supplements&&state.supplements[today()])||{};
   const dayPlan=planFor(today());
@@ -1584,15 +1764,18 @@ function renderDiet(){
     if(!f.meals.includes(curMeal)) return '';
     if(curFoodCat!=='全部' && f.cat!==curFoodCat) return '';
     const qty=qmap[f.name]||0;
-    return `<div class="foodrow ${qty>0?'on':''}">
+    const feedbackClass=dietFeedback?.name===f.name?(dietFeedback.delta>0?' food-feedback-add':' food-feedback-remove'):'';
+    const qtyClass=dietFeedback?.name===f.name?' qty-pop':'';
+    return `<div class="foodrow ${qty>0?'on':''}${feedbackClass}">
       <div class="foodrow-info">
         <div class="foodrow-name">${f.name}<span class="foodrow-unit">${f.unit}/份</span></div>
-        <div class="foodrow-sub">蛋白${f.p}g · ${f.cal}kcal · 碳水${f.c}g</div>
+        <div class="foodrow-sub">蛋白${f.p}g · ${f.cal}kcal · 碳水${f.c}g · 脂肪${f.f}g</div>
+        ${f.note?`<div class="foodrow-sub">${f.note}</div>`:''}
       </div>
       <div class="stepper">
-        <button class="sbtn" data-i="${i}" data-d="-1">−</button>
-        <span class="sval">${qty>0?fmtQty(f,qty):'0'}</span>
-        <button class="sbtn" data-i="${i}" data-d="1">+</button>
+        <button type="button" class="sbtn" data-i="${i}" data-d="1" aria-label="增加${f.name}">＋</button>
+        <button type="button" class="sbtn" data-i="${i}" data-d="-1" aria-label="减少${f.name}">−</button>
+        <span class="sval${qtyClass}">${qty>0?fmtQty(f,qty):'0'}</span>
       </div>
     </div>`;
   }).join('');
@@ -1604,13 +1787,14 @@ function renderDiet(){
     const cal=list.reduce((s,x)=>s+(FOOD_MAP[x.name]?FOOD_MAP[x.name].cal*x.qty:0),0);
     const pro=list.reduce((s,x)=>s+(FOOD_MAP[x.name]?FOOD_MAP[x.name].p*x.qty:0),0);
     const rows=list.map(x=>{
-      const f=FOOD_MAP[x.name];
+      const f=FOOD_MAP[x.name]||{q:1,u:'份',cal:0,p:0};
+      const safeName=escapeHtml(x.name);
       return `<div class="logitem">
+        <button type="button" class="logitem-del" data-meal="${meal}" data-name="${safeName}" aria-label="减少${safeName}">−</button>
         <div class="logitem-info">
-          <div class="logitem-name">${x.name}</div>
+          <div class="logitem-name">${safeName}${FOOD_MAP[x.name]?'':' · 旧记录'}</div>
           <div class="logitem-sub">${fmtQty(f,x.qty)} · ${Math.round(f.cal*x.qty)}kcal · 蛋白${Math.round(f.p*x.qty)}g</div>
         </div>
-        <button class="logitem-del" data-meal="${meal}" data-name="${x.name}">−</button>
       </div>`;
     }).join('');
     return `<div class="mealgroup">
@@ -1619,6 +1803,7 @@ function renderDiet(){
     </div>`;
   }).join('');
   document.getElementById('dietLog').innerHTML=html||'<div class="food-empty">今日还未记录饮食</div>';
+  dietFeedback=null;
 }
 
 function render(){ renderHome(); renderCal(); renderTrain(); renderMe(); renderDiet(); }
@@ -1656,13 +1841,16 @@ document.getElementById('checkinBtn').addEventListener('click',()=>{
 
 // 今日状态：展开/收起 + 三问选择
 document.getElementById('statusHead').addEventListener('click',()=>{
-  document.getElementById('statusEntry').classList.toggle('open');
+  const entry=document.getElementById('statusEntry');
+  const open=entry.classList.toggle('open');
+  document.getElementById('statusHead').setAttribute('aria-expanded',String(open));
 });
 document.getElementById('sleepOpts').addEventListener('click',e=>{
   const b=e.target.closest('.fb-chip'); if(!b) return;
   const fb=feedbackToday();
   fb.sleep=(fb.sleep===b.dataset.v)?'':b.dataset.v;
   save(state); renderStatus(); renderTrain();
+  showActionToast(fb.sleep?('睡眠已记录 · '+({lt6:'不足6小时',mid:'6~8小时',good:'8小时以上'}[fb.sleep])):'已清除睡眠记录');
 });
 document.getElementById('injuryOpts').addEventListener('click',e=>{
   const b=e.target.closest('.fb-chip'); if(!b) return;
@@ -1673,10 +1861,11 @@ document.getElementById('injuryOpts').addEventListener('click',e=>{
     state.painLogs=state.painLogs||[];
     state.painLogs.push({date:today(),day:curDay,bodyPart:fb.injury,severity:null,stage:'status-check',note:'用户标记异常不适，训练流程停止'});
     state.progressionFreeze=state.progressionFreeze||{};
-    PROGRAMS[curDay].forEach(x=>state.progressionFreeze[x.id]=true);
-    shiftPlanOneDayForRest();
+    (PROGRAMS[curDay]||[]).forEach(x=>state.progressionFreeze[x.id]=true);
+    if(curDay!=='rest') shiftPlanOneDayForRest();
   }
   save(state); renderStatus(); renderTrain();
+  showActionToast(fb.injury==='none'?'已记录 · 无不适':'已记录不适，今日训练已停止');
 });
 document.getElementById('injuryOtherInput').addEventListener('input',e=>{
   const fb=feedbackToday(); fb.injuryText=e.target.value.trim(); save(state); renderStatus(); renderTrain();
@@ -1686,6 +1875,7 @@ document.getElementById('domsOpts').addEventListener('click',e=>{
   const fb=feedbackToday();
   fb.doms=(fb.doms===b.dataset.v)?'none':b.dataset.v;
   save(state); renderStatus(); renderTrain();
+  showActionToast('酸痛状态已更新');
 });
 
 // 训练交互：调重量 / 勾选打卡 / 点击展开看图片与要点
@@ -1706,7 +1896,8 @@ document.getElementById('exList').addEventListener('click',e=>{
     const rows=logBucket(today(),curDay,i,true);
     while(rows.length<=si) rows.push({kg:'',reps:'',rir:'',setType:'working',pain:false,formOk:true});
     const row=rows[si];
-    if(Number(row.reps)>0){
+    const wasCompleted=Number(row.reps)>0;
+    if(wasCompleted){
       row.reps=''; row.rir=''; delete row.completedAt;
     }else{
       const setRow=setComplete.closest('.set-row');
@@ -1725,12 +1916,13 @@ document.getElementById('exList').addEventListener('click',e=>{
     if(!state.training[today()][curDay]) state.training[today()][curDay]={};
     state.training[today()][curDay][exo.id]=rows.filter(x=>(x.setType||'working')==='working'&&Number(x.reps)>0).length>=requiredSets;
     state.activeSession={date:today(),day:curDay,exerciseId:exo.id,exerciseName:exo.name,setIndex:si,updatedAt:new Date().toISOString()};
-    save(state); renderTrain(); return;
+    trainFeedback={type:'set',exerciseId:exo.id,setIndex:si};
+    save(state); renderTrain(); showActionToast(exo.name+' · '+(wasCompleted?'已撤销本组':'本组已完成')); return;
   }
 
   if(confirmEquipment){
     state.equipmentStatus=state.equipmentStatus||{}; state.equipmentStatus[exo.id]='confirmed';
-    save(state); renderTrain(); return;
+    save(state); renderTrain(); showActionToast('器械已确认'); return;
   }
   if(stopPain){
     const severity=prompt('疼痛程度 0–10（可留空）','3');
@@ -1749,20 +1941,25 @@ document.getElementById('exList').addEventListener('click',e=>{
     const cur=getKg(key,coef,step);
     const next=Math.max(step, roundStep(cur + (+wbtn.dataset.w)*step, step));
     state.weights=state.weights||{}; state.weights[key]=next;
-    save(state); renderTrain(); return;
+    trainFeedback={type:'weight',exerciseId:exo.id};
+    save(state); renderTrain(); showActionToast(exo.name+' · '+next+'kg'); return;
   }
 
   if(box){ // 勾选：只标记动作完成，不改重量
     const t=today();
     if(!state.training[t]) state.training[t]={};
     if(!state.training[t][curDay]) state.training[t][curDay]={};
-    state.training[t][curDay][exo.id]=!state.training[t][curDay][exo.id];
-    save(state); renderTrain(); return;
+    const next=!state.training[t][curDay][exo.id];
+    state.training[t][curDay][exo.id]=next;
+    trainFeedback={type:'exercise',exerciseId:exo.id};
+    save(state); renderTrain(); showActionToast(next?(exo.name+' · 已完成'):(exo.name+' · 已撤销')); return;
   }
 
   // 点击卡片其他区域：展开/收起图片与要点
-  openIdx = (openIdx===i ? null : i);
-  renderTrain();
+  const closing=openIdx===i;
+  document.querySelectorAll('#exList .ex.open').forEach(card=>card.classList.remove('open'));
+  openIdx=closing?null:i;
+  if(!closing) requestAnimationFrame(()=>ex.classList.add('open'));
 });
 
 // 逐组记录：重量、实际次数、RIR；填满计划组数后自动标记动作完成
@@ -1798,26 +1995,17 @@ document.getElementById('exList').addEventListener('change',e=>{
   save(state); renderTrain();
 });
 
-document.getElementById('restPause').addEventListener('click',e=>{ restPaused=!restPaused; e.currentTarget.textContent=restPaused?'继续':'暂停'; });
-document.getElementById('restAdd').addEventListener('click',()=>{ restRemaining+=30; paintRestTimer(); });
-document.getElementById('restSkip').addEventListener('click',()=>{ clearInterval(restTimerId); restTimerId=null; restRemaining=0; paintRestTimer(); });
-
-// 训练日切换
-document.querySelectorAll('.daytab').forEach(t=>{
-  t.addEventListener('click',()=>{ curDay=t.dataset.day; openIdx=null; renderTrain(); });
-});
+document.getElementById('restPause').addEventListener('click',e=>{ restPaused=!restPaused; e.currentTarget.textContent=restPaused?'继续':'暂停'; pulseElement('restTimer','timer-pop'); showActionToast(restPaused?'休息计时已暂停':'休息计时继续'); });
+document.getElementById('restAdd').addEventListener('click',()=>{ restRemaining+=30; paintRestTimer(); pulseElement('restTimer','timer-pop'); showActionToast('休息时间 +30秒'); });
+document.getElementById('restSkip').addEventListener('click',()=>{ clearInterval(restTimerId); restTimerId=null; restRemaining=0; paintRestTimer(); pulseElement('restTimer','timer-pop'); showActionToast('已跳过休息'); });
 
 // Tab 切换
 document.querySelectorAll('.tab').forEach(t=>{
   t.addEventListener('click',()=>{
     document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
     document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+t.dataset.page));
+    if(t.dataset.page==='diet') revealDietPage();
   });
-});
-
-// 目标切换
-document.querySelectorAll('#goalSeg .opt').forEach(o=>{
-  o.addEventListener('click',()=>{ state.goal=o.dataset.goal; save(state); render(); });
 });
 
 // 保存
@@ -1869,28 +2057,33 @@ document.getElementById('importInput').addEventListener('change',e=>{
 // 餐次切换
 document.getElementById('mealTabs').addEventListener('click',e=>{
   const tab=e.target.closest('.food-tab'); if(!tab) return;
-  curMeal=tab.dataset.meal; renderDiet();
+  curMeal=tab.dataset.meal; renderDiet(); refreshDietSection(); showActionToast('已切换到'+MEAL_LABEL[curMeal]);
 });
 
 // 食物分类切换
 document.getElementById('foodTabs').addEventListener('click',e=>{
   const tab=e.target.closest('.food-tab'); if(!tab) return;
-  curFoodCat=tab.dataset.cat; renderDiet();
+  curFoodCat=tab.dataset.cat; renderDiet(); refreshDietSection();
 });
 
 // 自选食物：+ / − 增减份数（加入当前餐次，减到 0 即撤回）
 document.getElementById('foodList').addEventListener('click',e=>{
   const btn=e.target.closest('.sbtn'); if(!btn) return;
   const f=FOODS[+btn.dataset.i]; if(!f) return;
-  setFoodQty(f.name, curMeal, +btn.dataset.d);
-  save(state); render();
+  const delta=+btn.dataset.d;
+  setFoodQty(f.name, curMeal, delta);
+  dietFeedback={name:f.name,delta};
+  save(state); renderHome(); renderDiet();
+  showActionToast((delta>0?'已加入':'已减少')+MEAL_LABEL[curMeal]+' · '+f.name);
 });
 
 // 今日记录：点 − 减一份
 document.getElementById('dietLog').addEventListener('click',e=>{
   const btn=e.target.closest('.logitem-del'); if(!btn) return;
   setFoodQty(btn.dataset.name, btn.dataset.meal, -1);
-  save(state); render();
+  dietFeedback={name:btn.dataset.name,delta:-1};
+  save(state); renderHome(); renderDiet();
+  showActionToast('已减少'+MEAL_LABEL[btn.dataset.meal]+' · '+btn.dataset.name);
 });
 
 // 补剂提醒只记录完成状态；蛋白粉的营养需在“加餐”中另行加入，避免重复计算。
@@ -1900,7 +2093,11 @@ document.getElementById('supplementReminder').addEventListener('click',e=>{
   if(!state.supplements) state.supplements={};
   if(!state.supplements[t]) state.supplements[t]={};
   state.supplements[t][btn.dataset.supp]=!state.supplements[t][btn.dataset.supp];
+  const done=state.supplements[t][btn.dataset.supp];
   save(state); renderDiet();
+  const fresh=document.querySelector(`#supplementReminder .supp-check[data-supp="${btn.dataset.supp}"]`);
+  pulseElement(fresh,'confirm-feedback');
+  showActionToast((btn.dataset.supp==='creatine'?'肌酸':'蛋白粉')+(done?' · 已完成':' · 已撤销'));
 });
 
 // 日历：切换月份
@@ -1933,9 +2130,11 @@ document.getElementById('planModalOpts').addEventListener('click',e=>{
   if(!state.planOverrides) state.planOverrides={};
   if(plan==='auto'){ delete state.planOverrides[modalDate]; }
   else { state.planOverrides[modalDate]=plan; }
-  // 若调整的是今天，同步切换当前训练日视图
-  if(modalDate===today() && plan!=='rest' && plan!=='auto'){ curDay=plan; openIdx=null; }
+  // 若调整的是今天，训练页立即同步日历里的结果（包括休息和恢复自动循环）
+  if(modalDate===today()){ curDay=planFor(today()); openIdx=null; }
+  const changedDate=modalDate;
   save(state); renderCal(); renderTrain(); closePlanModal();
+  showActionToast(changedDate+' · '+({push:'推',pull:'拉',legs:'腿',rest:'休息',auto:'自动循环'}[plan]||plan));
 });
 document.getElementById('planModalCancel').addEventListener('click',closePlanModal);
 document.querySelector('#planModal .modal-bg').addEventListener('click',closePlanModal);
