@@ -56,7 +56,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 #page-home.active{display:flex;flex-direction:column}
 .home-spacer{flex:1;min-height:clamp(130px,24vh,240px)}
 .home-stack{flex-shrink:0;display:flex;flex-direction:column;gap:12px;transform:translateY(-12px)}
-.home-panel{background:rgba(246,246,248,.82);border:1px solid rgba(255,255,255,.72);border-radius:22px;color:#1d1d1f;box-shadow:0 18px 52px rgba(0,0,0,.16);backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%)}
+.home-panel{background:rgba(246,246,248,.64);border:1px solid rgba(255,255,255,.68);border-radius:20px;color:#1d1d1f;box-shadow:0 10px 30px rgba(0,0,0,.12);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%)}
 .home-nutrition{width:100%;padding:14px 16px}
 .home-panel-title{font-size:12px;font-weight:650;color:#6e6e73;margin-bottom:7px}
 .nutri-line{display:flex;align-items:baseline;gap:4px;font-size:13px;margin-bottom:8px;color:#6e6e73}
@@ -101,9 +101,26 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .food-empty{color:var(--muted);font-size:14px}
 
 /* 训练页 */
-.today-plan{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:14px 16px;border-radius:16px;background:var(--card);border:1px solid var(--border)}
-.today-plan span{color:var(--muted);font-size:13px}
-.today-plan strong{font-size:22px;color:var(--orange)}
+#page-train{font-variant-numeric:tabular-nums}
+#page-train .fb-entry,#page-train .cal,#page-train .ex,#page-train .prep-card,#page-train .rest-day-card{background:rgba(12,15,20,.48);border-color:rgba(255,255,255,.11);box-shadow:0 7px 20px rgba(0,0,0,.12);backdrop-filter:blur(14px) saturate(112%);-webkit-backdrop-filter:blur(14px) saturate(112%)}
+.train-overview{display:flex;align-items:center;gap:15px;margin-bottom:10px;padding:16px;border-radius:20px;background:rgba(12,15,20,.50);border:1px solid rgba(255,255,255,.12);box-shadow:0 8px 24px rgba(0,0,0,.14);backdrop-filter:blur(14px) saturate(112%);-webkit-backdrop-filter:blur(14px) saturate(112%)}
+.train-overview-copy{flex:1;min-width:0}
+.train-overview-label{display:block;color:rgba(232,236,242,.64);font-size:11px;margin-bottom:4px}
+.train-overview strong{display:block;font-size:25px;line-height:1.1;letter-spacing:-.035em}
+.train-overview-meta{display:flex;gap:10px;margin-top:9px;color:rgba(232,236,242,.68);font-size:11px}
+.train-ring{position:relative;width:76px;height:76px;flex:0 0 auto}
+.train-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.train-ring circle{fill:none;stroke-width:7}
+.train-ring-track{stroke:rgba(255,255,255,.09)}
+.train-ring-value{stroke:var(--orange);stroke-linecap:round;stroke-dasharray:188.5;stroke-dashoffset:188.5;transition:stroke-dashoffset .38s var(--spring),stroke .25s ease}
+.train-ring-text{position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:760;letter-spacing:-.03em}
+.train-ring-text small{display:block;text-align:center;color:var(--muted);font-size:9px;font-weight:600;letter-spacing:0;margin-top:2px}
+.train-overview.complete .train-ring-value{stroke:var(--green)}
+.train-overview.rest .train-ring{opacity:.35}
+.train-overview.rest .train-ring-fraction{display:none}
+.train-overview.rest .train-ring-text small{color:var(--text);font-size:12px;margin:0}
+.train-complete-note{max-height:0;opacity:0;overflow:hidden;color:var(--green);font-size:11px;font-weight:700;transition:max-height .32s var(--spring),opacity .2s,margin .32s var(--spring)}
+.train-complete-note.show{max-height:24px;opacity:1;margin-top:9px}
 .rest-day-card{padding:28px 18px;text-align:center}
 .rest-day-card[hidden],.training-body[hidden]{display:none}
 .rest-day-card strong{display:block;font-size:24px;margin-bottom:8px}
@@ -127,10 +144,11 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .cal-cell.pull .cal-tag{color:var(--green)}
 .cal-cell.legs .cal-tag{color:var(--blue)}
 .cal-cell.rest .cal-tag{color:var(--muted)}
-.cal-cell.today{border-color:var(--orange);background:rgba(255,107,53,.14)}
+.cal-cell.today{border-color:rgba(255,255,255,.76);background:rgba(255,255,255,.10)}
+.cal-cell.today .cal-tag{color:#fff}
 
 .ex{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:7px;overflow:hidden;transition:border-color .24s ease,background-color .24s ease,opacity .24s ease}
-.ex.done{opacity:.55}
+.ex.done{opacity:.68}
 .ex-main{display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer}
 .ex .info{flex:1;min-width:0}
 .ex .name{font-size:14px;font-weight:650}
@@ -170,6 +188,12 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .history-row{padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.5}
 .history-row:last-child{border-bottom:0}
 .history-date{color:var(--orange);font-weight:700;margin-right:6px}
+#page-train .side-tag,#page-train .rx-tag,#page-train .light-tag{background:transparent;border-radius:0;padding:0}
+#page-train .rx-line{gap:10px}
+#page-train .movement-card{box-shadow:none}
+#page-train .movement-card .prep-list{list-style:none;padding-left:0;counter-reset:movement}
+#page-train .movement-card .prep-list li{position:relative;padding:7px 0 7px 27px;margin:0;border-top:1px solid rgba(255,255,255,.08)}
+#page-train .movement-card .prep-list li::before{counter-increment:movement;content:counter(movement);position:absolute;left:0;top:7px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.18);color:rgba(232,236,242,.72);font-size:9px}
 
 /* 我的页 */
 .field{margin-bottom:14px}
@@ -284,6 +308,31 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 @keyframes foodRemoved{45%{transform:scale(.985);border-color:rgba(255,159,123,.65)}}
 @keyframes qtyPop{50%{transform:scale(1.18);color:#fff}}
 
+/* 饮食页：减少模板化卡片，只保留薄材质和清晰分组 */
+#page-diet .diet-summary{background:rgba(12,15,20,.50);border-color:rgba(255,255,255,.10);border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.14);backdrop-filter:blur(14px) saturate(115%);-webkit-backdrop-filter:blur(14px) saturate(115%)}
+#page-diet .macro{position:relative;padding:7px 10px;border-radius:0;background:transparent}
+#page-diet .macro+.macro{border-left:1px solid rgba(255,255,255,.10)}
+#page-diet .diet-day-badge{padding:0;border-radius:0;background:transparent;color:#9ccaff}
+#page-diet .diet-day-badge::before{content:'';display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:50%;background:currentColor;vertical-align:1px}
+#page-diet .meal-target-card,#page-diet .supplement-shell{background:rgba(11,14,20,.40);border:0;border-top:1px solid rgba(255,255,255,.10);border-bottom:1px solid rgba(255,255,255,.10);border-radius:0;box-shadow:none;backdrop-filter:blur(9px) brightness(.78);-webkit-backdrop-filter:blur(9px) brightness(.78)}
+#page-diet .meal-recommend{padding:8px 0;border-radius:0;background:transparent;color:#a9cdf4}
+#page-diet .meal-target-grid span{padding:7px 0;border-radius:0;background:transparent;border-top:1px solid rgba(255,255,255,.07)}
+#page-diet .meal-switch{background:rgba(28,30,36,.56);box-shadow:0 5px 16px rgba(0,0,0,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+#page-diet .food-filter{gap:18px;border-bottom:1px solid rgba(255,255,255,.09)}
+#page-diet .food-filter .food-tab{padding:8px 1px 7px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:rgba(245,247,250,.76)}
+#page-diet .food-filter .food-tab.on{color:#fff;background:transparent;border-color:var(--diet-blue)}
+#page-diet #foodList{overflow:hidden;border-top:1px solid rgba(255,255,255,.09);border-bottom:1px solid rgba(255,255,255,.09);background:rgba(11,14,20,.38);backdrop-filter:blur(9px) brightness(.78);-webkit-backdrop-filter:blur(9px) brightness(.78)}
+#page-diet .foodrow{margin:0;border:0;border-bottom:1px solid rgba(255,255,255,.08);border-radius:0;background:transparent;box-shadow:none}
+#page-diet .foodrow:last-child{border-bottom:0}
+#page-diet .foodrow.on{border-color:rgba(255,255,255,.08);background:rgba(10,132,255,.09);box-shadow:inset 2px 0 var(--diet-blue)}
+#page-diet .logitem{margin:0;border:0;border-bottom:1px solid rgba(255,255,255,.08);border-radius:0;background:rgba(11,14,20,.38);backdrop-filter:blur(9px) brightness(.78);-webkit-backdrop-filter:blur(9px) brightness(.78)}
+#page-diet .logitem:last-child{border-bottom:0}
+#page-diet .foodrow-sub,#page-diet .logitem-sub,#page-diet .mealgroup-title,#page-diet .diet-section-title span{color:rgba(232,236,242,.68)}
+#page-diet .diet-head h2,#page-diet .diet-eyebrow,#page-diet .diet-section-title h2,#page-diet .diet-section-title span,#page-diet .food-filter .food-tab{text-shadow:0 1px 7px rgba(0,0,0,.85)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  #page-diet .diet-summary,#page-diet .meal-switch,#page-train .fb-entry,#page-train .cal,#page-train .ex,#page-train .prep-card,.train-overview{background:rgba(15,18,24,.80)}
+}
+
 /* 今日状态反馈卡 */
 .fb-head{display:flex;justify-content:space-between;align-items:center;margin:0;font-size:15px;font-weight:700}
 .fb-row{margin-bottom:12px}
@@ -373,7 +422,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 /* 启动屏：今日计划 + 进入按钮 */
 .splash{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:14px;padding:24px 16px max(60px,env(safe-area-inset-bottom));background-image:linear-gradient(180deg,rgba(255,255,255,.02) 35%,rgba(0,0,0,.34) 100%),url('bg.jpg');background-size:cover;background-position:center;transition:opacity .45s ease,visibility .45s ease;overflow:hidden}
 .splash.hide{opacity:0;visibility:hidden;pointer-events:none}
-.splash-plan{width:100%;max-width:430px;padding:22px 22px 18px;border:1px solid rgba(255,255,255,.72);border-radius:28px;background:rgba(246,246,248,.82);color:#1d1d1f;box-shadow:0 22px 70px rgba(0,0,0,.2);backdrop-filter:blur(28px) saturate(145%);-webkit-backdrop-filter:blur(28px) saturate(145%);opacity:0;transform:translateY(22px) scale(.985);animation:splashPlanIn .72s cubic-bezier(.22,1,.36,1) .08s forwards}
+.splash-plan{width:100%;max-width:430px;padding:22px 22px 18px;border:1px solid rgba(255,255,255,.68);border-radius:24px;background:rgba(246,246,248,.66);color:#1d1d1f;box-shadow:0 12px 36px rgba(0,0,0,.14);backdrop-filter:blur(18px) saturate(120%);-webkit-backdrop-filter:blur(18px) saturate(120%);opacity:0;transform:translateY(22px) scale(.985);animation:splashPlanIn .72s cubic-bezier(.22,1,.36,1) .08s forwards}
 .splash-kicker{font-size:13px;font-weight:600;letter-spacing:.04em;color:#6e6e73;opacity:0;filter:blur(8px);transform:translateY(6px);animation:splashTextIn .5s ease .18s forwards}
 .splash-day{margin-top:4px;font-size:48px;font-weight:750;line-height:1.08;letter-spacing:-.045em;opacity:0;filter:blur(12px);transform:translateY(8px);animation:splashTextIn .58s cubic-bezier(.22,1,.36,1) .25s forwards}
 .splash-exercises{margin-top:16px;border-top:1px solid rgba(29,29,31,.12)}
@@ -402,7 +451,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
   .splash-plan,.splash-kicker,.splash-day,.splash-exercise,.splash-enter{animation:none;opacity:1;filter:none;transform:none}
   .diet-reveal,.diet-refresh,.food-feedback-add,.food-feedback-remove,.qty-pop,.confirm-feedback,.weight-feedback,.timer-pop{animation:none;opacity:1;filter:none;transform:none}
   .action-toast.show{animation:none;opacity:1;transform:translateX(-50%)}
-  .fb-body,.fb-arrow,.ex-detail,:where(.fb-chip,.cal-nav,.cal-cell,.wbtn,.box,.set-complete,#restCard .btn-secondary,.food-tab,.sbtn,.logitem-del,.supp-check){transition:none}
+  .fb-body,.fb-arrow,.ex-detail,.train-ring-value,.train-complete-note,:where(.fb-chip,.cal-nav,.cal-cell,.wbtn,.box,.set-complete,#restCard .btn-secondary,.food-tab,.sbtn,.logitem-del,.supp-check){transition:none}
 }
 @media (max-width:360px){
   .page{padding-left:12px;padding-right:12px}
@@ -460,9 +509,21 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 
   <!-- 训练 -->
   <section class="page" id="page-train">
+    <div class="train-overview" id="trainOverview">
+      <div class="train-overview-copy">
+        <span class="train-overview-label">今日训练</span>
+        <strong id="todayPlanName">--</strong>
+        <div class="train-overview-meta"><span id="trainTime">预计 -- 分钟</span><span id="trainDone">0 / 0 完成</span></div>
+        <div class="train-complete-note" id="trainCompleteNote">今日训练完成 ✓</div>
+      </div>
+      <div class="train-ring" aria-label="训练完成进度">
+        <svg viewBox="0 0 76 76" aria-hidden="true"><circle class="train-ring-track" cx="38" cy="38" r="30"></circle><circle class="train-ring-value" id="trainRing" cx="38" cy="38" r="30"></circle></svg>
+        <div class="train-ring-text"><div><span class="train-ring-fraction"><span id="trainRingCount">0</span>/<span id="trainRingTotal">0</span></span><small id="trainRingLabel">已完成</small></div></div>
+      </div>
+    </div>
     <div class="card fb-entry" id="statusEntry">
       <button type="button" class="fb-head fb-toggle" id="statusHead" aria-expanded="false" aria-controls="fbBody">
-        <span>📋 今日状态</span>
+        <span>今日状态</span>
         <span class="fb-summary" id="statusSummary">未填写 · 点此展开</span>
         <span class="fb-arrow" id="statusArrow">▾</span>
       </button>
@@ -517,40 +578,31 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
       <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
       <div class="cal-grid" id="calGrid"></div>
     </div>
-    <div class="today-plan">
-      <span>今日训练计划</span>
-      <strong id="todayPlanName">--</strong>
-    </div>
     <div class="card rest-day-card" id="restDayCard" hidden>
       <strong>今日休息</strong>
       <span>恢复体力，下一训练日继续。</span>
     </div>
     <div class="training-body" id="trainingBody">
       <div class="vol-banner" id="volBanner"></div>
-      <div class="train-meta">
-        <span id="trainTime">预计 -- 分钟</span>
-        <span id="trainDone">已完成 0/6</span>
-      </div>
-      <div class="progress-bar"><i id="trainProgress" style="width:0%"></i></div>
       <div class="card prep-card" id="restCard">
-        <div class="prep-title"><span>⏱ 组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
+        <div class="prep-title"><span>组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
         <div class="rest-timer-row"><b class="rest-time" id="restTimer">00:00</b><div class="rest-actions"><button class="btn-secondary" id="restAdd">+30</button><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div></div>
         <details class="rest-help"><summary>使用说明</summary><div class="prep-note">完成每组会自动保存并开始计时；实际表现不同再修改数值。主动作通常休息120–180秒，辅助动作60–90秒。</div></details>
       </div>
-      <div class="card prep-card">
-        <div class="prep-title"><span>🔥 训练前热身</span><span class="prep-sub" id="warmTime">约 5 分钟</span></div>
+      <div class="card prep-card movement-card">
+        <div class="prep-title"><span>训练前热身</span><span class="prep-sub" id="warmTime">约 5 分钟</span></div>
         <ul class="prep-list" id="warmList"></ul>
-        <div class="prep-note">图例：橙色＝身体姿势，灰色＝杠铃、哑铃、训练凳或器械。图例只提示动作方向，实际以动作要点和无痛幅度为准。</div>
+        <div class="prep-note">做到身体微微发热即可，不要在正式训练前做长时间静态拉伸。</div>
       </div>
       <div id="exList"></div>
-      <div class="card prep-card">
-        <div class="prep-title"><span>📈 最近训练</span><span class="prep-sub">自动保存在本机</span></div>
-        <div id="trainingHistory"></div>
-      </div>
-      <div class="card prep-card">
-        <div class="prep-title"><span>🧘 训练后放松</span><span class="prep-sub">约 5 分钟</span></div>
+      <div class="card prep-card movement-card">
+        <div class="prep-title"><span>训练后拉伸</span><span class="prep-sub">约 5 分钟</span></div>
         <ul class="prep-list" id="coolList"></ul>
         <div class="prep-note">拉伸到「微紧」即可，不要拉到刺痛；有伤的部位不强拉。</div>
+      </div>
+      <div class="card prep-card">
+        <div class="prep-title"><span>最近训练</span><span class="prep-sub">自动保存在本机</span></div>
+        <div id="trainingHistory"></div>
       </div>
     </div>
   </section>
@@ -1232,8 +1284,9 @@ function renderCal(){
   for(let d=1;d<=days;d++){
     const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
     const ph=planFor(ds);
-    html+='<div class="cal-cell '+ph+(ds===ts?' today':'')+'" data-date="'+ds+'">'+
-      '<div class="cal-d">'+d+'</div><div class="cal-tag">'+CYCLE_LABEL[ph]+'</div></div>';
+    const isToday=ds===ts;
+    html+='<div class="cal-cell '+ph+(isToday?' today':'')+'" data-date="'+ds+'"'+(isToday?' aria-current="date"':'')+'>'+
+      '<div class="cal-d">'+d+'</div><div class="cal-tag">'+(isToday?'今天·':'')+CYCLE_LABEL[ph]+'</div></div>';
   }
   document.getElementById('calGrid').innerHTML=html;
 }
@@ -1517,11 +1570,23 @@ function renderTrain(){
   const scheduledDay=planFor(today());
   if(curDay!==scheduledDay){ curDay=scheduledDay; openIdx=null; }
   const isRest=curDay==='rest';
-  document.getElementById('todayPlanName').textContent={push:'推',pull:'拉',legs:'腿',rest:'休息'}[curDay]||'休息';
+  const overview=document.getElementById('trainOverview');
+  document.getElementById('todayPlanName').textContent={push:'推部训练',pull:'拉部训练',legs:'腿部力量',rest:'休息日'}[curDay]||'休息日';
   document.getElementById('trainingBody').hidden=isRest;
   document.getElementById('restDayCard').hidden=!isRest;
   renderStatus();
-  if(isRest) return;
+  if(isRest){
+    overview.classList.add('rest'); overview.classList.remove('complete');
+    document.getElementById('trainTime').textContent='今天恢复';
+    document.getElementById('trainDone').textContent='不安排训练';
+    document.getElementById('trainRingCount').textContent='0';
+    document.getElementById('trainRingTotal').textContent='0';
+    document.getElementById('trainRingLabel').textContent='恢复';
+    document.getElementById('trainRing').style.strokeDashoffset='188.5';
+    document.getElementById('trainCompleteNote').classList.remove('show');
+    return;
+  }
+  overview.classList.remove('rest');
   renderPrep(curDay);
   const fb=feedbackToday();
   const adv=statusAdvice(fb);
@@ -1536,9 +1601,16 @@ function renderTrain(){
   const doneCount=active.filter(i=>doneMap[prog[i].id]).length;
   const total=active.length;
 
+  const progress=total?doneCount/total:0;
+  const complete=total>0&&doneCount===total;
   document.getElementById('trainTime').textContent='预计 '+estimateDuration(curDay,timeSkipSet,adv.light)+' 分钟'+(adv.light?'（减量）':'');
-  document.getElementById('trainDone').textContent=total?('已完成 '+doneCount+'/'+total):'今日无可用动作';
-  document.getElementById('trainProgress').style.width=(total?doneCount/total*100:0)+'%';
+  document.getElementById('trainDone').textContent=total?(doneCount+' / '+total+' 完成'):'今日无可用动作';
+  document.getElementById('trainRingCount').textContent=doneCount;
+  document.getElementById('trainRingTotal').textContent=total;
+  document.getElementById('trainRingLabel').textContent='已完成';
+  document.getElementById('trainRing').style.strokeDashoffset=String(188.5*(1-progress));
+  overview.classList.toggle('complete',complete);
+  document.getElementById('trainCompleteNote').classList.toggle('show',complete);
   const activeSession=state.activeSession;
   document.getElementById('resumeHint').textContent=activeSession&&activeSession.date===today()?('可恢复：'+activeSession.exerciseName+' · 第'+(activeSession.setIndex+1)+'行'):'记录正式组后自动计时';
 
