@@ -293,6 +293,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .logitem-name{font-size:14px;font-weight:600}
 .logitem-sub{font-size:11px;color:var(--muted);margin-top:2px}
 .logitem-del{width:44px;height:44px;border:none;border-radius:12px;background:rgba(255,255,255,.06);color:#ff9f7b;font-size:20px;line-height:1;cursor:pointer;flex-shrink:0;font-weight:700}
+.logitem-plan{display:grid;place-items:center;width:44px;height:28px;flex-shrink:0;border-radius:9px;background:rgba(48,209,88,.12);color:#72dc8d;font-size:10px;font-weight:700}
 .supplement-shell{padding:0 15px;margin-top:18px;overflow:hidden}
 .supplement-shell>summary{padding:15px 0;color:var(--text);font-size:14px}
 .supplement-shell[open]>summary{border-bottom:1px solid rgba(255,255,255,.08)}
@@ -962,8 +963,9 @@ const FOODS=[
   {name:'燕麦',unit:'50g',q:50,u:'g',cal:188.5,p:6.3,c:29,f:4,cat:'碳水',meals:['breakfast'],note:'每份50g；按你提供的1578kJ/100g换算'},
   {name:'香蕉',unit:'1根',q:1,u:'根',cal:105,p:1.3,c:27,f:0.4,cat:'碳水',meals:['breakfast']},
   {name:'高蛋白面包',unit:'50g',q:50,u:'g',cal:132,p:7.8,c:20,f:1.3,cat:'碳水',meals:['breakfast']},
+  {name:'奶油面包',unit:'1个(约100g)',q:1,u:'个',cal:350,p:7,c:49,f:14,cat:'碳水',meals:['breakfast'],note:'面包店产品估算：精制面粉面包＋中间奶油夹心；实际热量随大小和奶油量变化'},
   {name:'乳清蛋白粉',unit:'30g',q:30,u:'g',cal:120,p:22.5,c:3,f:1.5,cat:'蛋白',meals:['breakfast','snack']},
-  {name:'霸王茶姬·伯牙绝弦',unit:'1杯',q:1,u:'杯',cal:130,p:2.8,c:6.7,f:10.3,cat:'脂肪',meals:['breakfast','snack'],defaultSize:'中杯',sizes:{'中杯':{cal:130,p:2.8,c:6.7,f:10.3},'大杯':{cal:151,p:3.2,c:7.8,f:12}},note:'标准冰/不另加糖；选择杯型后自动换算'},
+  {name:'霸王茶姬·伯牙绝弦',unit:'1杯',q:1,u:'杯',cal:130,p:2.8,c:6.7,f:10.3,cat:'脂肪',meals:['snack'],defaultSize:'中杯',sizes:{'中杯':{cal:130,p:2.8,c:6.7,f:10.3},'大杯':{cal:151,p:3.2,c:7.8,f:12}},note:'标准冰/不另加糖；选择杯型后自动换算'},
   {name:'古茗·椰香拿铁',unit:'1杯',q:1,u:'杯',cal:180,p:3,c:24,f:8,cat:'脂肪',meals:['breakfast','snack'],defaultSize:'中杯',sizes:{'中杯':{cal:180,p:3,c:24,f:8},'大杯':{cal:220,p:3.7,c:29.3,f:9.8}},note:'杯型营养为估算；减脂期优先少糖'},
   {name:'瑞幸·生椰拿铁',unit:'1杯',q:1,u:'杯',cal:139,p:2.3,c:17.9,f:6.5,cat:'脂肪',meals:['breakfast','snack'],defaultSize:'中杯',sizes:{'中杯':{cal:139,p:2.3,c:17.9,f:6.5},'大杯':{cal:179,p:3,c:23,f:8.3}},note:'大杯沿用现有数据，中杯按容量比例估算'},
   {name:'瑞幸·小黄油拿铁',unit:'1杯',q:1,u:'杯',cal:194,p:4.7,c:21.8,f:9.9,cat:'脂肪',meals:['breakfast','snack'],defaultSize:'中杯',sizes:{'中杯':{cal:194,p:4.7,c:21.8,f:9.9},'大杯':{cal:250,p:6,c:28,f:12.7}},note:'大杯沿用现有数据，中杯按容量比例估算'},
@@ -971,10 +973,12 @@ const FOODS=[
   {name:'鸡胸肉',unit:'100g',q:100,u:'g',cal:165,p:31,c:0,f:3.6,cat:'蛋白',meals:['lunch','dinner'],note:'照片食物；餐厅用油未计'},
   {name:'鸡腿肉',unit:'100g',q:100,u:'g',cal:177,p:26,c:0,f:8,cat:'蛋白',meals:['lunch','dinner'],note:'按熟重、去皮、少油估算'},
   {name:'三文鱼',unit:'1片(约20g)',q:1,u:'片',cal:42,p:4.1,c:0,f:2.7,cat:'蛋白',meals:['lunch','dinner'],note:'偶尔可选，不列入日常三餐建议'},
+  {name:'紫米饭',unit:'100g(熟)',q:100,u:'g',cal:116,p:2.6,c:25.9,f:0.3,cat:'碳水',meals:['lunch','dinner'],note:'按白米混合紫米煮熟估算'},
   {name:'紫薯泥',unit:'100g',q:100,u:'g',cal:120,p:1.6,c:27,f:0.2,cat:'碳水',meals:['lunch','dinner'],note:'照片食物；按少糖估算'},
   {name:'土豆块',unit:'100g',q:100,u:'g',cal:90,p:2,c:20,f:0.2,cat:'碳水',meals:['lunch','dinner'],note:'照片食物；用油另计'},
   {name:'熟意面',unit:'100g',q:100,u:'g',cal:158,p:5.8,c:30.9,f:0.9,cat:'碳水',meals:['lunch','dinner'],note:'照片食物'},
   {name:'熟荞麦面',unit:'100g',q:100,u:'g',cal:99,p:5.1,c:21.4,f:0.1,cat:'碳水',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'牛骨汤米粉',unit:'1碗',q:1,u:'碗',cal:520,p:17,c:82,f:13,cat:'碳水',meals:['lunch','dinner'],defaultSize:'中碗',sizes:{'小碗':{cal:410,p:15,c:61,f:11},'中碗':{cal:520,p:17,c:82,f:13},'大碗':{cal:650,p:20,c:106,f:16}},note:'街边汤米粉估算：牛骨汤油＋5–6片薄牛肉；实际热量会随米粉量和汤油变化'},
   {name:'玉米粒',unit:'100g',q:100,u:'g',cal:96,p:3.4,c:21,f:1.5,cat:'碳水',meals:['lunch','dinner'],note:'照片食物'},
   {name:'南瓜',unit:'100g',q:100,u:'g',cal:45,p:1.4,c:10,f:0.1,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
   {name:'西兰花',unit:'100g',q:100,u:'g',cal:34,p:2.8,c:7,f:0.4,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
@@ -1052,7 +1056,7 @@ function setFoodQty(name, meal, delta, size=''){
   const t=today();
   if(!state.diet[t]) state.diet[t]=[];
   const arr=state.diet[t];
-  const idx=arr.findIndex(x=>x.name===name && (x.meal||'breakfast')===meal && (x.size||'')===size);
+  const idx=arr.findIndex(x=>x.source!=='mealPlan' && x.name===name && (x.meal||'breakfast')===meal && (x.size||'')===size);
   const next=(idx>=0?arr[idx].qty:0)+delta;
   if(next<=0){ if(idx>=0) arr.splice(idx,1); }
   else if(idx>=0){ arr[idx].qty=next; }
@@ -1070,7 +1074,7 @@ function setFoodAmount(name, meal, amount, size=''){
   const t=today();
   if(!state.diet[t]) state.diet[t]=[];
   const arr=state.diet[t];
-  const idx=arr.findIndex(x=>x.name===name && (x.meal||'breakfast')===meal && (x.size||'')===size);
+  const idx=arr.findIndex(x=>x.source!=='mealPlan' && x.name===name && (x.meal||'breakfast')===meal && (x.size||'')===size);
   if(qty<=0){ if(idx>=0) arr.splice(idx,1); return; }
   if(idx>=0) arr[idx].qty=qty;
   else{
@@ -1136,8 +1140,9 @@ let openIdx=null; // 当前展开详情（看图片/要点）的动作下标
 let curFoodCat='全部'; // 自选食物分类
 let curMeal='breakfast'; // 当前餐次（早/午/晚/加餐）
 const selectedDrinkSizes={}; // 饮品只显示产品名，在同一条目内选择杯型
-let calYear=new Date().getFullYear(); // 日历查看的年份
-let calMonth=new Date().getMonth(); // 日历查看的月份（0-11）
+let calStart=new Date(); // 双周日历起点：本周周日
+calStart.setHours(12,0,0,0);
+calStart.setDate(calStart.getDate()-calStart.getDay());
 let restTimerId=null, restPaused=false, restRemaining=0;
 let nutritionAnimationId=null;
 let actionToastTimer=null;
@@ -1239,19 +1244,35 @@ function dailyTargets(){
   return {cal,p,c,f,status:trend.status,trainingDay,maintenance:Math.round(maintenance)};
 }
 
-// 餐次热量分配比例：早30% / 午35% / 晚25% / 加餐10%
+// 餐次热量分配比例：早25% / 午35% / 晚30% / 加餐10%
 const MEAL_RATIO={breakfast:0.25, lunch:0.35, dinner:0.30, snack:0.10};
 const MEAL_RECOMMENDATION={
   breakfast:'燕麦50g＋香蕉1根＋高蛋白面包50g＋水煮蛋2个；蛋白不足再补蛋白粉',
-  lunch:'去皮鸡腿肉150g＋熟荞麦面250g＋西兰花200g＋胡萝卜100g',
-  dinner:'去皮鸡腿肉150g＋土豆200g＋菠菜200g＋蘑菇100g＋玉米粒100g',
+  lunch:'熟紫米饭250g＋去皮鸡腿肉150g＋西兰花200g＋胡萝卜100g',
+  dinner:'熟紫米饭250g＋去皮鸡腿肉150g＋菠菜200g＋蘑菇100g',
   snack:'饮品按杯型选择；减脂期优先少糖，当天蛋白不足再补蛋白粉'
 };
 const MEAL_RECOMMENDATION_META={
   breakfast:'约570 kcal · 蛋白28g',
-  lunch:'约622 kcal · 蛋白58g',
-  dinner:'约616 kcal · 蛋白56g'
+  lunch:'约665 kcal · 蛋白52g',
+  dinner:'约630 kcal · 蛋白55g'
 };
+const MEAL_PLAN_ITEMS={
+  breakfast:[{name:'燕麦',qty:1},{name:'香蕉',qty:1},{name:'高蛋白面包',qty:1},{name:'水煮蛋',qty:2}],
+  lunch:[{name:'紫米饭',qty:2.5},{name:'鸡腿肉',qty:1.5},{name:'西兰花',qty:2},{name:'胡萝卜',qty:1}],
+  dinner:[{name:'紫米饭',qty:2.5},{name:'鸡腿肉',qty:1.5},{name:'菠菜',qty:2},{name:'蘑菇',qty:1}]
+};
+
+// 完成餐计划时自动计入营养；撤销时只删除计划生成的记录，保留手动记录。
+function setMealPlanIntake(date,meal,done){
+  if(!state.diet) state.diet={};
+  const existing=Array.isArray(state.diet[date])?state.diet[date]:[];
+  state.diet[date]=existing.filter(x=>!(x.source==='mealPlan' && x.planMeal===meal));
+  if(!done) return;
+  (MEAL_PLAN_ITEMS[meal]||[]).forEach(item=>{
+    state.diet[date].push({name:item.name,qty:item.qty,meal:meal,source:'mealPlan',planMeal:meal});
+  });
+}
 
 function renderMealChecklist(){
   const meals=['breakfast','lunch','dinner'];
@@ -1347,16 +1368,24 @@ function estimateDuration(day, skipSet, light){
   return Math.max(1, Math.round(sec/60));
 }
 
-// 渲染训练日历（月视图，练三休一标记）
+// 渲染训练日历（本周＋下周，共14天；练三休一标记）
 function renderCal(){
-  document.getElementById('calTitle').textContent=calYear+'年'+(calMonth+1)+'月';
-  const first=new Date(calYear,calMonth,1).getDay();
-  const days=new Date(calYear,calMonth+1,0).getDate();
+  const end=new Date(calStart);
+  end.setDate(end.getDate()+13);
+  const sameYear=calStart.getFullYear()===end.getFullYear();
+  const sameMonth=sameYear&&calStart.getMonth()===end.getMonth();
+  document.getElementById('calTitle').textContent=sameMonth
+    ? calStart.getFullYear()+'年'+(calStart.getMonth()+1)+'月'+calStart.getDate()+'–'+end.getDate()+'日'
+    : sameYear
+      ? calStart.getFullYear()+'年'+(calStart.getMonth()+1)+'月'+calStart.getDate()+'日–'+(end.getMonth()+1)+'月'+end.getDate()+'日'
+      : calStart.getFullYear()+'年'+(calStart.getMonth()+1)+'月'+calStart.getDate()+'日–'+end.getFullYear()+'年'+(end.getMonth()+1)+'月'+end.getDate()+'日';
   const ts=today();
   let html='';
-  for(let i=0;i<first;i++) html+='<div class="cal-cell empty"></div>';
-  for(let d=1;d<=days;d++){
-    const ds=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+  for(let i=0;i<14;i++){
+    const date=new Date(calStart);
+    date.setDate(date.getDate()+i);
+    const d=date.getDate();
+    const ds=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
     const ph=planFor(ds);
     const isToday=ds===ts;
     html+='<div class="cal-cell '+ph+(isToday?' today':'')+'" data-date="'+ds+'"'+(isToday?' aria-current="date"':'')+'>'+
@@ -1918,6 +1947,7 @@ function renderDiet(){
   const qmap={};
   items.forEach(x=>{
     if((x.meal||'breakfast')!==curMeal) return;
+    if(x.source==='mealPlan') return;
     const key=foodEntryKey(x.name,x.size);
     qmap[key]=(qmap[key]||0)+x.qty;
   });
@@ -1932,10 +1962,10 @@ function renderDiet(){
     const amountValue=qty>0?(Number.isInteger(amount)?amount:Math.round(amount*10)/10):'';
     const feedbackClass=dietFeedback?.name===f.name?(dietFeedback.delta>0?' food-feedback-add':' food-feedback-remove'):'';
     const qtyClass=dietFeedback?.name===f.name?' qty-pop':'';
-    const sizeHtml=f.sizes?'<div class="drink-size" aria-label="选择'+f.name+'杯型">'+Object.keys(f.sizes).map(option=>
+    const sizeHtml=f.sizes?'<div class="drink-size" aria-label="选择'+f.name+'规格">'+Object.keys(f.sizes).map(option=>
       '<button type="button" class="drink-size-btn '+(option===size?'on':'')+'" data-i="'+i+'" data-size="'+option+'">'+option+'</button>'
     ).join('')+'</div>':'';
-    const servingLabel=f.sizes?(size+'每杯'):(f.unit+'/份');
+    const servingLabel=f.sizes?(size+'每'+(f.u||'份')):(f.unit+'/份');
     return `<div class="foodrow ${qty>0?'on':''}${feedbackClass}">
       <div class="foodrow-info">
         <div class="foodrow-name">${f.name}<span class="foodrow-unit">${servingLabel}</span></div>
@@ -1961,8 +1991,11 @@ function renderDiet(){
       const f=foodForEntry(x)||{q:1,u:'份',cal:0,p:0};
       const safeName=escapeHtml(x.name);
       const sizeText=x.size?(' · '+escapeHtml(x.size)):'';
+      const control=x.source==='mealPlan'
+        ? '<span class="logitem-plan" aria-label="三餐计划自动计入">计划</span>'
+        : '<button type="button" class="logitem-del" data-meal="'+meal+'" data-name="'+safeName+'" data-size="'+(x.size||'')+'" aria-label="减少'+safeName+sizeText+'">−</button>';
       return `<div class="logitem">
-        <button type="button" class="logitem-del" data-meal="${meal}" data-name="${safeName}" data-size="${x.size||''}" aria-label="减少${safeName}${sizeText}">−</button>
+        ${control}
         <div class="logitem-info">
           <div class="logitem-name">${safeName}${sizeText}${FOOD_MAP[x.name]?'':' · 旧记录'}</div>
           <div class="logitem-sub">${fmtQty(f,x.qty)} · ${Math.round(f.cal*x.qty)}kcal · 蛋白${Math.round(f.p*x.qty)}g</div>
@@ -2291,8 +2324,9 @@ document.getElementById('dietChecklist').addEventListener('click',e=>{
   if(!state.mealChecklist[t]) state.mealChecklist[t]={};
   state.mealChecklist[t][meal]=!state.mealChecklist[t][meal];
   const done=state.mealChecklist[t][meal];
-  save(state); renderMealChecklist();
-  showActionToast(MEAL_LABEL[meal]+(done?' · 已完成':' · 已撤销'));
+  setMealPlanIntake(t,meal,done);
+  save(state); renderHome(); renderDiet();
+  showActionToast(MEAL_LABEL[meal]+(done?' · 已完成，营养已计入':' · 已撤销，营养已移除'));
 });
 
 // 补剂提醒只记录完成状态；蛋白粉的营养需在“加餐”中另行加入，避免重复计算。
@@ -2309,12 +2343,12 @@ document.getElementById('supplementReminder').addEventListener('click',e=>{
   showActionToast((btn.dataset.supp==='creatine'?'肌酸':'蛋白粉')+(done?' · 已完成':' · 已撤销'));
 });
 
-// 日历：切换月份
+// 日历：每次前后切换两周
 document.getElementById('calPrev').addEventListener('click',()=>{
-  calMonth--; if(calMonth<0){ calMonth=11; calYear--; } renderCal();
+  calStart.setDate(calStart.getDate()-14); renderCal();
 });
 document.getElementById('calNext').addEventListener('click',()=>{
-  calMonth++; if(calMonth>11){ calMonth=0; calYear++; } renderCal();
+  calStart.setDate(calStart.getDate()+14); renderCal();
 });
 // 日历：点某天弹出菜单，可手动改为 推/拉/腿/休/自动（按循环）
 let modalDate='';
@@ -2387,11 +2421,10 @@ document.getElementById('splashEnter').addEventListener('click',()=>{
   document.getElementById('splash').classList.add('hide');
 });
 
-// 注册 Service Worker（PWA 离线）
-// 临时关闭：桌面预览面板加载本页时注册 SW 会导致闪退；装手机部署时再取消注释恢复。
-// if('serviceWorker' in navigator){
-//   navigator.serviceWorker.register('./sw.js').catch(err=>console.log('SW 注册失败', err));
-// }
+// 仅在正式站点启用离线缓存，避免桌面预览面板注册 SW 后闪退。
+if('serviceWorker' in navigator && location.hostname==='meteor1108.github.io'){
+  navigator.serviceWorker.register('./sw.js').catch(err=>console.log('SW 注册失败', err));
+}
 </script>
 </body>
 </html>
