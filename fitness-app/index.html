@@ -971,6 +971,7 @@ INJURY_GUIDE.elbow=INJURY_GUIDE.elbowPit;
 // 食物营养库：cal=热量kcal / p=蛋白g / c=碳水g / f=脂肪g（均为「每份」营养）；q=每份基准量, u=单位（用于显示实际量）
 // meals: 适合的餐次（breakfast/lunch/dinner/snack），切餐次时只显示该餐可吃的食物
 const FOODS=[
+  {name:'酸奶（1杯，未计营养）',unit:'1杯',q:1,u:'杯',cal:0,p:0,c:0,f:0,cat:'蛋白',meals:['breakfast'],note:'已加入早餐计划；未提供品牌、容量和含糖量，暂不计入热量和三大营养素'},
   {name:'米饭',unit:'100g(熟)',q:100,u:'g',cal:116,p:2.6,c:25.9,f:0.3,cat:'碳水',meals:['breakfast','lunch','dinner'],note:'按熟米饭估算'},
   {name:'烹调油',unit:'1g',q:1,u:'g',cal:9,p:0,c:0,f:1,cat:'脂肪',meals:['breakfast','lunch','dinner'],note:'估算菜肴中实际吃下的油，不是额外加油；已含油的成品餐不要重复计入'},
   {name:'燕麦',unit:'50g',q:50,u:'g',cal:188.5,p:6.3,c:29,f:4,cat:'碳水',meals:['breakfast'],note:'每份50g；按你提供的1578kJ/100g换算'},
@@ -1243,18 +1244,18 @@ function dailyTargets(){
   return {cal:c*4+p*4+f*9,p,c,f,trainingDay};
 }
 
-// 三餐平均分配全天目标；额外加餐按实际剩余额度记录。
-const MEAL_RATIO={breakfast:1/3,lunch:1/3,dinner:1/3,snack:0};
+// 早餐分配20%，午晚餐各40%；额外加餐按实际剩余额度记录。
+const MEAL_RATIO={breakfast:0.2,lunch:0.4,dinner:0.4,snack:0};
 const MEAL_RECOMMENDATION={
-  breakfast:'熟米饭225g＋熟去皮鸡腿肉110g＋西兰花100g；菜中烹调油估算8g',
-  lunch:'熟米饭225g＋熟去皮鸡腿肉110g＋菠菜100g；菜中烹调油估算8g',
-  dinner:'熟米饭225g＋熟去皮鸡腿肉110g＋西兰花100g；菜中烹调油估算8g',
+  breakfast:'燕麦50g（干重）＋酸奶1杯；酸奶营养待补充，暂不计入总量',
+  lunch:'熟米饭250g＋熟去皮鸡腿肉150g＋西兰花100g；菜中烹调油估算10g',
+  dinner:'熟米饭250g＋熟去皮鸡腿肉150g＋菠菜100g；菜中烹调油估算10g',
   snack:'三餐示例已接近全天目标；加餐按当天剩余额度选择，蛋白不足再补蛋白粉'
 };
 const MEAL_PLAN_ITEMS={
-  breakfast:[{name:'米饭',qty:2.25},{name:'鸡腿肉',qty:1.1},{name:'西兰花',qty:1},{name:'烹调油',qty:8}],
-  lunch:[{name:'米饭',qty:2.25},{name:'鸡腿肉',qty:1.1},{name:'菠菜',qty:1},{name:'烹调油',qty:8}],
-  dinner:[{name:'米饭',qty:2.25},{name:'鸡腿肉',qty:1.1},{name:'西兰花',qty:1},{name:'烹调油',qty:8}]
+  breakfast:[{name:'燕麦',qty:1},{name:'酸奶（1杯，未计营养）',qty:1}],
+  lunch:[{name:'米饭',qty:2.5},{name:'鸡腿肉',qty:1.5},{name:'西兰花',qty:1},{name:'烹调油',qty:10}],
+  dinner:[{name:'米饭',qty:2.5},{name:'鸡腿肉',qty:1.5},{name:'菠菜',qty:1},{name:'烹调油',qty:10}]
 };
 const MEAL_RECOMMENDATION_META=Object.fromEntries(Object.entries(MEAL_PLAN_ITEMS).map(([meal,items])=>{
   const totals=items.reduce((sum,item)=>{const food=FOOD_MAP[item.name];return {cal:sum.cal+food.cal*item.qty,p:sum.p+food.p*item.qty};},{cal:0,p:0});
