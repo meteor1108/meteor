@@ -131,22 +131,26 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .train-meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:8px}
 
 /* 训练页日历（练三休一循环） */
-.cal{background:rgba(28,34,46,.5);border:1px solid var(--border);border-radius:12px;padding:5px 7px;margin-bottom:7px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.train-schedule{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);align-items:stretch;gap:8px;margin-bottom:9px}
+.train-schedule.rest{grid-template-columns:1fr}
+.train-schedule.rest .cal{width:min(100%,330px);justify-self:center}
+.cal{min-width:0;background:rgba(28,34,46,.5);border:1px solid var(--border);border-radius:12px;padding:7px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+#page-train .train-schedule .cal{background:rgba(12,15,20,.86);border-color:rgba(255,107,53,.68);box-shadow:0 0 0 1px rgba(255,107,53,.18),0 7px 20px rgba(0,0,0,.16)}
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
 .cal-nav{width:22px;height:22px;border:none;border-radius:6px;background:var(--surface);color:var(--text);font-size:14px;line-height:1;cursor:pointer}
 .cal-title{font-size:11px;font-weight:700}
-.cal-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:7px;color:var(--muted);margin-bottom:1px}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:9px;color:var(--muted);margin-bottom:3px}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
-.cal-cell{height:21px;border-radius:5px;padding:0 1px;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cal-cell{height:36px;border-radius:6px;padding:0;text-align:center;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .cal-cell.empty{background:none;cursor:default}
-.cal-d{font-size:9px;font-weight:600;line-height:1}
-.cal-tag{font-size:6px;font-weight:700;margin-top:1px;color:var(--muted);line-height:1}
+.cal-d{font-size:11px;font-weight:600;line-height:1}
+.cal-tag{font-size:8px;font-weight:700;margin-top:2px;color:var(--muted);line-height:1}
 .cal-cell.push .cal-tag{color:var(--orange)}
 .cal-cell.pull .cal-tag{color:var(--green)}
 .cal-cell.legs .cal-tag{color:var(--blue)}
 .cal-cell.rest .cal-tag{color:var(--muted)}
-.cal-cell.today{border-color:rgba(255,255,255,.76);background:rgba(255,255,255,.10)}
-.cal-cell.today .cal-tag{color:#fff}
+.cal-cell.today{border-color:rgba(255,107,53,.85);background:rgba(255,107,53,.22)}
+.cal-cell.today .cal-tag{color:#fff;font-size:7px;white-space:nowrap}
 
 .ex{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:7px;overflow:hidden;transition:border-color .24s ease,background-color .24s ease,opacity .24s ease}
 .ex.done{opacity:.68}
@@ -385,13 +389,17 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 .prep-list{margin:0;padding-left:18px}
 .prep-list li{font-size:12px;color:var(--text);line-height:1.55;margin-bottom:2px}
 .prep-note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
-#restCard{padding:10px 12px;margin-bottom:9px}
-#restCard .prep-title{margin-bottom:6px}
-.rest-timer-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.rest-time{font-size:24px;color:var(--orange);font-variant-numeric:tabular-nums}
-.rest-actions{display:flex;gap:5px}
-.rest-actions .btn-secondary{flex:none;min-width:44px;min-height:38px;padding:7px 8px;border-radius:9px;font-size:11px}
-.rest-help{margin-top:6px}
+#restCard{min-width:0;padding:8px;margin:0}
+#page-train #restCard{background:rgba(12,15,20,.82)}
+#restCard[hidden]{display:none}
+#restCard .prep-title{display:block;margin-bottom:4px;font-size:12px}
+#restCard .prep-sub{display:block;margin-top:3px;font-size:9px;line-height:1.2}
+.rest-timer-row{text-align:center}
+.rest-time{display:block;margin:3px 0;font-size:23px;color:var(--orange);font-variant-numeric:tabular-nums}
+.rest-actions{display:flex;gap:3px}
+.rest-actions .btn-secondary{flex:1;min-width:0;min-height:32px;padding:5px 0;border-radius:7px;font-size:10px}
+.rest-help{margin-top:5px}
+.rest-help summary{font-size:10px}
 .rest-help .prep-note{margin:7px 0 1px;font-size:11px}
 .supp-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--border)}
 .supp-row:first-of-type{border-top:0;padding-top:0}
@@ -471,7 +479,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
 @media (max-width:360px){
   .page{padding-left:12px;padding-right:12px}
   .set-head,.set-row{grid-template-columns:50px 26px minmax(46px,1fr) minmax(40px,.8fr) minmax(34px,.7fr);gap:3px}
-  .rest-actions .btn-secondary{min-width:40px;padding-left:6px;padding-right:6px}
+  .rest-actions .btn-secondary{min-width:0;padding-left:0;padding-right:0;font-size:9px}
   .diet-summary{padding:15px 13px}
   .macro{padding:9px 7px}
   .macro .m-n{font-size:16px}
@@ -584,14 +592,21 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
         </div>
       </div>
     </div>
-    <div class="cal">
-      <div class="cal-head">
-        <button class="cal-nav" id="calPrev">‹</button>
-        <div class="cal-title" id="calTitle"></div>
-        <button class="cal-nav" id="calNext">›</button>
+    <div class="train-schedule">
+      <div class="cal">
+        <div class="cal-head">
+          <button class="cal-nav" id="calPrev" aria-label="查看前两周">‹</button>
+          <div class="cal-title" id="calTitle"></div>
+          <button class="cal-nav" id="calNext" aria-label="查看后两周">›</button>
+        </div>
+        <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+        <div class="cal-grid" id="calGrid"></div>
       </div>
-      <div class="cal-week"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
-      <div class="cal-grid" id="calGrid"></div>
+      <div class="card prep-card" id="restCard">
+        <div class="prep-title"><span>组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
+        <div class="rest-timer-row"><b class="rest-time" id="restTimer">00:00</b><div class="rest-actions"><button class="btn-secondary" id="restAdd">+30</button><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div></div>
+        <details class="rest-help"><summary>使用说明</summary><div class="prep-note">完成每组会自动保存并开始计时；实际表现不同再修改数值。主动作通常休息120–180秒，辅助动作60–90秒。</div></details>
+      </div>
     </div>
     <div class="card rest-day-card" id="restDayCard" hidden>
       <strong>今日休息</strong>
@@ -599,11 +614,6 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
     </div>
     <div class="training-body" id="trainingBody">
       <div class="vol-banner" id="volBanner"></div>
-      <div class="card prep-card" id="restCard">
-        <div class="prep-title"><span>组间休息</span><span class="prep-sub" id="resumeHint">记录正式组后自动计时</span></div>
-        <div class="rest-timer-row"><b class="rest-time" id="restTimer">00:00</b><div class="rest-actions"><button class="btn-secondary" id="restAdd">+30</button><button class="btn-secondary" id="restPause">暂停</button><button class="btn-secondary" id="restSkip">跳过</button></div></div>
-        <details class="rest-help"><summary>使用说明</summary><div class="prep-note">完成每组会自动保存并开始计时；实际表现不同再修改数值。主动作通常休息120–180秒，辅助动作60–90秒。</div></details>
-      </div>
       <div class="card prep-card movement-card" id="warmupCard">
         <div class="prep-title"><span id="warmTitle">训练前热身</span><span class="prep-sub" id="warmTime">4 项</span></div>
         <ul class="prep-list" id="warmList"></ul>
@@ -753,6 +763,7 @@ h2{font-size:17px;font-weight:700;margin:18px 0 10px}
         <button data-plan="rest">休</button>
         <button data-plan="auto">按循环自动</button>
       </div>
+      <div class="prep-note">修改当天后，后续日期会按推→拉→腿→休继续排列。</div>
       <button class="modal-cancel" id="planModalCancel">取消</button>
     </div>
   </div>
@@ -1087,7 +1098,7 @@ function setFoodAmount(name, meal, amount, size=''){
 const defaultState={
   schemaVersion:2, planVersion:PLAN_VERSION,
   profileVersion:PROFILE_VERSION, goal:'recomp', weight:66, target:66, deadline:'2027-06-30',
-  checkins:[], training:{}, setLogs:{}, diet:{}, mealChecklist:{}, supplements:{}, weights:{}, bodyWeights:{}, bg:'', planEpoch:'', planOverrides:{}, feedback:{},
+  checkins:[], training:{}, setLogs:{}, diet:{}, mealChecklist:{}, supplements:{}, weights:{}, bodyWeights:{}, bg:'', planEpoch:'', planOverrides:{}, planAnchors:{}, feedback:{},
   sessionSnapshots:{}, painLogs:[], progressionFreeze:{}, recoveryDeferred:{}, equipmentStatus:{legs_seated_leg_curl:'confirmed'}, legacySetLogs:{}, legacyTraining:{}, migrationPending:false
 };
 
@@ -1195,9 +1206,8 @@ function getKg(key, coef, step){
   return startKg(coef, step);
 }
 
-function proteinTarget(){
-  return Math.round(state.weight*2.2);
-}
+const DAILY_MACROS={c:190,p:110,f:Math.round(65*0.8)};
+function proteinTarget(){ return DAILY_MACROS.p; }
 
 function weightTrendData(){
   const entries=Object.entries(state.bodyWeights||{}).filter(([,v])=>Number(v)>0).sort((a,b)=>a[0].localeCompare(b[0]));
@@ -1209,39 +1219,26 @@ function weightTrendData(){
   const dietDays=last.filter(([d])=>Array.isArray(state.diet[d])&&state.diet[d].length).length;
   const spanDays=last.length>=2?Math.round((new Date(last[last.length-1][0]+'T00:00:00')-new Date(last[0][0]+'T00:00:00'))/86400000):0;
   const intervalOk=last.length<14||spanDays<=20;
-  let delta=0, status='', effectiveDate='';
+  let status='';
   if(daysRemaining){
-    status=`还需 ${daysRemaining} 天有效晨重；当前只展示趋势，不调整热量。`;
+    status=`还需 ${daysRemaining} 天有效晨重；当前只展示趋势。`;
   }else if(!intervalOk){
-    status='14次记录跨度超过21天，间隔过大；继续每日记录，暂不调整热量。';
+    status='14次记录跨度超过21天，间隔过大；继续每日记录。';
   }else if(dietDays<10){
-    status=`晨重已满14天，但同期饮食仅记录 ${dietDays}/10 天；暂不自动调整热量。`;
+    status=`晨重已满14天，同期饮食记录 ${dietDays}/10 天。`;
   }else{
-    effectiveDate=last[last.length-1][0];
-    if(weeklyPct < -0.25){ delta=100; status='后7日下降超过0.25%：为保护训练表现，每日增加100 kcal。'; }
-    else if(weeklyPct > 0.10){ delta=-100; status='后7日增长超过0.10%：为控制脂肪增长，每日减少100 kcal。'; }
-    else status='后7日体重处于稳定区间（-0.25%～+0.10%）：热量保持不变。';
+    if(weeklyPct < -0.25) status='后7日平均体重下降超过0.25%。';
+    else if(weeklyPct > 0.10) status='后7日平均体重增长超过0.10%。';
+    else status='后7日平均体重处于稳定区间（-0.25%～+0.10%）。';
   }
-  return {entries,last,daysRemaining,firstAvg,secondAvg,weeklyPct,dietDays,spanDays,intervalOk,delta,status,effectiveDate};
+  return {entries,last,daysRemaining,firstAvg,secondAvg,weeklyPct,dietDays,spanDays,intervalOk,status};
 }
 
-function nutritionTrend(){
-  const t=weightTrendData();
-  return {delta:t.delta,status:t.status,effectiveDate:t.effectiveDate};
-}
-
-// 增肌减脂目标：Mifflin-St Jeor 估算基础代谢，活动系数1.45；保留小幅热量缺口。
-// 蛋白质 2.2g/kg，脂肪不低于0.9g/kg，剩余热量优先给碳水以支持训练。
+// 用户设定的每日固定营养目标；热量按碳水/蛋白质 4 kcal/g、脂肪 9 kcal/g 计算。
 function dailyTargets(){
-  const w=state.weight, trend=nutritionTrend();
-  const bmr=10*w+6.25*USER_PROFILE.height-5*USER_PROFILE.age+5;
-  const maintenance=bmr*USER_PROFILE.activityFactor;
   const trainingDay=planFor(today())!=='rest';
-  const cal=Math.round((maintenance*(trainingDay?0.94:0.90)+trend.delta)/50)*50;
-  const p=Math.round(w*2.2);
-  const f=Math.round(w*1.0);
-  const c=Math.max(0,Math.round((cal-p*4-f*9)/4));
-  return {cal,p,c,f,status:trend.status,trainingDay,maintenance:Math.round(maintenance)};
+  const {c,p,f}=DAILY_MACROS;
+  return {cal:c*4+p*4+f*9,p,c,f,trainingDay};
 }
 
 // 餐次热量分配比例：早25% / 午35% / 晚30% / 加餐10%
@@ -1253,9 +1250,9 @@ const MEAL_RECOMMENDATION={
   snack:'饮品按杯型选择；减脂期优先少糖，当天蛋白不足再补蛋白粉'
 };
 const MEAL_RECOMMENDATION_META={
-  breakfast:'约570 kcal · 蛋白28g',
-  lunch:'约665 kcal · 蛋白52g',
-  dinner:'约630 kcal · 蛋白55g'
+  breakfast:'示例约570 kcal · 蛋白28g',
+  lunch:'示例约665 kcal · 蛋白52g',
+  dinner:'示例约630 kcal · 蛋白55g'
 };
 const MEAL_PLAN_ITEMS={
   breakfast:[{name:'燕麦',qty:1},{name:'香蕉',qty:1},{name:'高蛋白面包',qty:1},{name:'水煮蛋',qty:2}],
@@ -1291,8 +1288,10 @@ function renderMealChecklist(){
 // 某餐营养目标（四舍五入到整数）
 function mealTargets(meal){
   const d=dailyTargets();
-  const r=MEAL_RATIO[meal]||0;
-  return {cal:Math.round(d.cal*r), p:Math.round(d.p*r), c:Math.round(d.c*r), f:Math.round(d.f*r)};
+  const part=total=>meal==='snack'
+    ? total-['breakfast','lunch','dinner'].reduce((sum,key)=>sum+Math.round(total*MEAL_RATIO[key]),0)
+    : Math.round(total*(MEAL_RATIO[meal]||0));
+  return {cal:part(d.cal),p:part(d.p),c:part(d.c),f:part(d.f)};
 }
 
 // 某餐已摄入营养（按餐次聚合）
@@ -1328,13 +1327,21 @@ function streak(){
 const CYCLE=['push','pull','legs','rest'];
 const CYCLE_LABEL={push:'推',pull:'拉',legs:'腿',rest:'休'};
 
-// 某日期对应的训练项目（先查手动覆盖，无覆盖再从 planEpoch 起按 4 天循环）
+// 旧手动覆盖仍只影响当天；新调整从选定日期起重新排列后续训练。
 function planFor(dateStr){
   if(state.planOverrides && state.planOverrides[dateStr]) return state.planOverrides[dateStr];
+  let anchorDate=state.planEpoch;
+  let anchorPhase='push';
+  for(const [date,phase] of Object.entries(state.planAnchors||{})){
+    if(date>=state.planEpoch && date<=dateStr && date>=anchorDate && CYCLE.includes(phase)){
+      anchorDate=date;
+      anchorPhase=phase;
+    }
+  }
   const d=new Date(dateStr+'T00:00:00');
-  const e=new Date(state.planEpoch+'T00:00:00');
+  const e=new Date(anchorDate+'T00:00:00');
   const diff=Math.round((d-e)/86400000);
-  return CYCLE[((diff%4)+4)%4];
+  return CYCLE[((CYCLE.indexOf(anchorPhase)+diff)%4+4)%4];
 }
 
 // 启动屏只展示今日训练名称和动作名称，与日历计划保持一致。
@@ -1372,13 +1379,11 @@ function estimateDuration(day, skipSet, light){
 function renderCal(){
   const end=new Date(calStart);
   end.setDate(end.getDate()+13);
-  const sameYear=calStart.getFullYear()===end.getFullYear();
-  const sameMonth=sameYear&&calStart.getMonth()===end.getMonth();
-  document.getElementById('calTitle').textContent=sameMonth
-    ? calStart.getFullYear()+'年'+(calStart.getMonth()+1)+'月'+calStart.getDate()+'–'+end.getDate()+'日'
-    : sameYear
-      ? calStart.getFullYear()+'年'+(calStart.getMonth()+1)+'月'+calStart.getDate()+'日–'+(end.getMonth()+1)+'月'+end.getDate()+'日'
-      : calStart.getFullYear()+'年'+(calStart.getMonth()+1)+'月'+calStart.getDate()+'日–'+end.getFullYear()+'年'+(end.getMonth()+1)+'月'+end.getDate()+'日';
+  const title=document.getElementById('calTitle');
+  title.textContent=calStart.getMonth()===end.getMonth() && calStart.getFullYear()===end.getFullYear()
+    ? (calStart.getMonth()+1)+'月'+calStart.getDate()+'–'+end.getDate()+'日'
+    : (calStart.getMonth()+1)+'/'+calStart.getDate()+'–'+(end.getMonth()+1)+'/'+end.getDate();
+  title.setAttribute('aria-label',calStart.getFullYear()+'年'+(calStart.getMonth()+1)+'月'+calStart.getDate()+'日至'+end.getFullYear()+'年'+(end.getMonth()+1)+'月'+end.getDate()+'日');
   const ts=today();
   let html='';
   for(let i=0;i<14;i++){
@@ -1389,7 +1394,7 @@ function renderCal(){
     const ph=planFor(ds);
     const isToday=ds===ts;
     html+='<div class="cal-cell '+ph+(isToday?' today':'')+'" data-date="'+ds+'"'+(isToday?' aria-current="date"':'')+'>'+
-      '<div class="cal-d">'+d+'</div><div class="cal-tag">'+(isToday?'今天·':'')+CYCLE_LABEL[ph]+'</div></div>';
+      '<div class="cal-d">'+d+'</div><div class="cal-tag">'+(isToday?'今·':'')+CYCLE_LABEL[ph]+'</div></div>';
   }
   document.getElementById('calGrid').innerHTML=html;
 }
@@ -1488,9 +1493,11 @@ function shiftPlanOneDayForRest(){
   state.recoveryDeferred=state.recoveryDeferred||{};
   const t=today();
   if(state.recoveryDeferred[t]||planFor(t)!==curDay) return;
-  const e=new Date(state.planEpoch+'T00:00:00');
+  const e=new Date(t+'T00:00:00');
   e.setDate(e.getDate()+1);
-  state.planEpoch=e.getFullYear()+'-'+String(e.getMonth()+1).padStart(2,'0')+'-'+String(e.getDate()).padStart(2,'0');
+  const next=e.getFullYear()+'-'+String(e.getMonth()+1).padStart(2,'0')+'-'+String(e.getDate()).padStart(2,'0');
+  state.planAnchors=state.planAnchors||{};
+  if(!state.planAnchors[next]) state.planAnchors[next]=curDay;
   state.planOverrides=state.planOverrides||{};
   state.planOverrides[t]='rest';
   state.recoveryDeferred[t]=curDay;
@@ -1681,6 +1688,8 @@ function renderTrain(){
   const isRest=curDay==='rest';
   const overview=document.getElementById('trainOverview');
   document.getElementById('todayPlanName').textContent={push:'推部训练',pull:'拉部训练',legs:'腿部力量',rest:'休息日'}[curDay]||'休息日';
+  document.querySelector('.train-schedule').classList.toggle('rest',isRest);
+  document.getElementById('restCard').hidden=isRest;
   document.getElementById('trainingBody').hidden=isRest;
   document.getElementById('restDayCard').hidden=!isRest;
   renderStatus();
@@ -1875,7 +1884,6 @@ function renderWeightTrend(){
   const firstText=data.firstAvg===null?'数据不足':data.firstAvg.toFixed(2)+' kg';
   const secondText=data.secondAvg===null?'数据不足':data.secondAvg.toFixed(2)+' kg';
   const change=data.weeklyPct===null?'尚不能计算':`${data.weeklyPct>=0?'+':''}${data.weeklyPct.toFixed(2)}%`;
-  const effective=data.effectiveDate?`<br>生效日期：${data.effectiveDate}；已自动计入饮食页热量、碳水目标。`:'';
   const history=rows.map(([d,v],i)=>{
     const prev=i?Number(rows[i-1][1]):null, diff=prev===null?null:Number(v)-prev;
     const diffText=diff===null?'首条':`${diff>=0?'+':''}${diff.toFixed(1)} kg`;
@@ -1883,7 +1891,7 @@ function renderWeightTrend(){
   }).reverse().join('');
   panel.innerHTML=chart+
     `<div class="weight-avgs"><div class="weight-stat"><span>前7日平均</span><b>${firstText}</b></div><div class="weight-stat"><span>后7日平均</span><b>${secondText}</b></div></div>`+
-    `<div class="weight-status">平均变化：${change}<br>${data.status}${effective}<br>同期饮食记录：${data.dietDays}/10天</div>`+
+    `<div class="weight-status">平均变化：${change}<br>${data.status}<br>饮食目标按你的设定保持固定。同期饮食记录：${data.dietDays}/10天</div>`+
     `<div class="weight-history">${history}</div>`;
 }
 
@@ -1898,8 +1906,8 @@ function renderMealTarget(){
     ['脂肪', it.f, tg.f, 'g']
   ];
   document.getElementById('mealTargetCard').innerHTML=
-    '<div class="meal-target-head"><strong>'+MEAL_LABEL[curMeal]+'目标</strong><span>参考值，可上下浮动</span></div>'+
-    '<div class="meal-recommend"><b>推荐：</b>'+MEAL_RECOMMENDATION[curMeal]+'</div>'+
+    '<div class="meal-target-head"><strong>'+MEAL_LABEL[curMeal]+'目标</strong><span>按每日固定目标分配</span></div>'+
+    '<div class="meal-recommend"><b>示例：</b>'+MEAL_RECOMMENDATION[curMeal]+'</div>'+
     '<div class="meal-target-grid">'+rows.map(([n,cur,goal,u])=>
       '<span>'+n+'<b>'+Math.round(cur)+' / '+goal+' '+u+'</b></span>'
     ).join('')+'</div>';
@@ -1922,10 +1930,9 @@ function renderDiet(){
     document.getElementById('diet'+key+'Bar').style.width=(Math.min(1,current/target)*100)+'%';
     document.getElementById('diet'+key+'Lbl').textContent=key==='Cal'?(label+' '+Math.round(current)+' / '+target+' '+unit):('目标 '+target+' '+unit);
   });
-  const trend=weightTrendData();
   const dayType=targets.trainingDay?'训练日':'休息日';
   document.getElementById('dietDayBadge').textContent=dayType;
-  document.getElementById('dietTrendStatus').innerHTML=dayType+'目标 · 估算维持热量 '+targets.maintenance+' kcal<br>增肌减脂采用小幅热量缺口；'+trend.status+(trend.effectiveDate?'<br>本轮目标自 '+trend.effectiveDate+' 起生效。':'');
+  document.getElementById('dietTrendStatus').textContent='每日固定目标：碳水 '+targets.c+'g、蛋白质 '+targets.p+'g、脂肪 '+targets.f+'g；按 4/4/9 换算为 '+targets.cal+' kcal。晨重趋势仅供观察，不自动调整目标。';
 
   const supp=(state.supplements&&state.supplements[today()])||{};
   const dayPlan=planFor(today());
@@ -2355,7 +2362,7 @@ let modalDate='';
 function openPlanModal(date){
   modalDate=date;
   document.getElementById('planModalDate').textContent=date;
-  const cur=state.planOverrides&&state.planOverrides[date]?state.planOverrides[date]:planFor(date);
+  const cur=(state.planAnchors&&state.planAnchors[date])||(state.planOverrides&&state.planOverrides[date])||planFor(date);
   document.querySelectorAll('#planModalOpts button').forEach(b=>{
     b.classList.toggle('on',b.dataset.plan===cur);
   });
@@ -2371,13 +2378,13 @@ document.getElementById('planModalOpts').addEventListener('click',e=>{
   const b=e.target.closest('button'); if(!b||!modalDate) return;
   const plan=b.dataset.plan;
   if(!state.planOverrides) state.planOverrides={};
-  if(plan==='auto'){ delete state.planOverrides[modalDate]; }
-  else { state.planOverrides[modalDate]=plan; }
-  // 若调整的是今天，训练页立即同步日历里的结果（包括休息和恢复自动循环）
-  if(modalDate===today()){ curDay=planFor(today()); openIdx=null; }
+  if(!state.planAnchors) state.planAnchors={};
+  delete state.planOverrides[modalDate];
+  if(plan==='auto') delete state.planAnchors[modalDate];
+  else state.planAnchors[modalDate]=plan;
   const changedDate=modalDate;
-  save(state); renderCal(); renderTrain(); closePlanModal();
-  showActionToast(changedDate+' · '+({push:'推',pull:'拉',legs:'腿',rest:'休息',auto:'自动循环'}[plan]||plan));
+  save(state); renderCal(); renderTrain(); renderHome(); renderDiet(); closePlanModal();
+  showActionToast(changedDate+'起 · '+({push:'推',pull:'拉',legs:'腿',rest:'休息',auto:'恢复自动循环'}[plan]||plan));
 });
 document.getElementById('planModalCancel').addEventListener('click',closePlanModal);
 document.querySelector('#planModal .modal-bg').addEventListener('click',closePlanModal);
