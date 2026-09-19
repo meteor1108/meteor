@@ -971,6 +971,8 @@ INJURY_GUIDE.elbow=INJURY_GUIDE.elbowPit;
 // 食物营养库：cal=热量kcal / p=蛋白g / c=碳水g / f=脂肪g（均为「每份」营养）；q=每份基准量, u=单位（用于显示实际量）
 // meals: 适合的餐次（breakfast/lunch/dinner/snack），切餐次时只显示该餐可吃的食物
 const FOODS=[
+  {name:'米饭',unit:'100g(熟)',q:100,u:'g',cal:116,p:2.6,c:25.9,f:0.3,cat:'碳水',meals:['breakfast','lunch','dinner'],note:'按熟米饭估算'},
+  {name:'烹调油',unit:'1g',q:1,u:'g',cal:9,p:0,c:0,f:1,cat:'脂肪',meals:['breakfast','lunch','dinner'],note:'估算菜肴中实际吃下的油，不是额外加油；已含油的成品餐不要重复计入'},
   {name:'燕麦',unit:'50g',q:50,u:'g',cal:188.5,p:6.3,c:29,f:4,cat:'碳水',meals:['breakfast'],note:'每份50g；按你提供的1578kJ/100g换算'},
   {name:'香蕉',unit:'1根',q:1,u:'根',cal:105,p:1.3,c:27,f:0.4,cat:'碳水',meals:['breakfast']},
   {name:'高蛋白面包',unit:'50g',q:50,u:'g',cal:132,p:7.8,c:20,f:1.3,cat:'碳水',meals:['breakfast']},
@@ -982,7 +984,7 @@ const FOODS=[
   {name:'瑞幸·小黄油拿铁',unit:'1杯',q:1,u:'杯',cal:194,p:4.7,c:21.8,f:9.9,cat:'脂肪',meals:['breakfast','snack'],defaultSize:'中杯',sizes:{'中杯':{cal:194,p:4.7,c:21.8,f:9.9},'大杯':{cal:250,p:6,c:28,f:12.7}},note:'大杯沿用现有数据，中杯按容量比例估算'},
   {name:'水煮蛋',unit:'1个',q:1,u:'个',cal:72,p:6.3,c:0.4,f:5,cat:'蛋白',meals:['breakfast','lunch','dinner'],note:'照片食物'},
   {name:'鸡胸肉',unit:'100g',q:100,u:'g',cal:165,p:31,c:0,f:3.6,cat:'蛋白',meals:['lunch','dinner'],note:'照片食物；餐厅用油未计'},
-  {name:'鸡腿肉',unit:'100g',q:100,u:'g',cal:177,p:26,c:0,f:8,cat:'蛋白',meals:['lunch','dinner'],note:'按熟重、去皮、少油估算'},
+  {name:'鸡腿肉',unit:'100g',q:100,u:'g',cal:177,p:26,c:0,f:8,cat:'蛋白',meals:['breakfast','lunch','dinner'],note:'按熟重、去皮、少油估算'},
   {name:'三文鱼',unit:'1片(约20g)',q:1,u:'片',cal:42,p:4.1,c:0,f:2.7,cat:'蛋白',meals:['lunch','dinner'],note:'偶尔可选，不列入日常三餐建议'},
   {name:'紫米饭',unit:'100g(熟)',q:100,u:'g',cal:116,p:2.6,c:25.9,f:0.3,cat:'碳水',meals:['lunch','dinner'],note:'按白米混合紫米煮熟估算'},
   {name:'紫薯泥',unit:'100g',q:100,u:'g',cal:120,p:1.6,c:27,f:0.2,cat:'碳水',meals:['lunch','dinner'],note:'照片食物；按少糖估算'},
@@ -992,12 +994,12 @@ const FOODS=[
   {name:'牛骨汤米粉',unit:'1碗',q:1,u:'碗',cal:520,p:17,c:82,f:13,cat:'碳水',meals:['lunch','dinner'],defaultSize:'中碗',sizes:{'小碗':{cal:410,p:15,c:61,f:11},'中碗':{cal:520,p:17,c:82,f:13},'大碗':{cal:650,p:20,c:106,f:16}},note:'街边汤米粉估算：牛骨汤油＋5–6片薄牛肉；实际热量会随米粉量和汤油变化'},
   {name:'玉米粒',unit:'100g',q:100,u:'g',cal:96,p:3.4,c:21,f:1.5,cat:'碳水',meals:['lunch','dinner'],note:'照片食物'},
   {name:'南瓜',unit:'100g',q:100,u:'g',cal:45,p:1.4,c:10,f:0.1,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
-  {name:'西兰花',unit:'100g',q:100,u:'g',cal:34,p:2.8,c:7,f:0.4,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'西兰花',unit:'100g',q:100,u:'g',cal:34,p:2.8,c:7,f:0.4,cat:'蔬果',meals:['breakfast','lunch','dinner'],note:'照片食物'},
   {name:'胡萝卜',unit:'100g',q:100,u:'g',cal:41,p:0.9,c:9.6,f:0.2,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
   {name:'生菜',unit:'100g',q:100,u:'g',cal:15,p:1.4,c:2.9,f:0.2,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
   {name:'黄瓜',unit:'100g',q:100,u:'g',cal:15,p:0.7,c:3.6,f:0.1,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
   {name:'紫甘蓝',unit:'100g',q:100,u:'g',cal:31,p:1.4,c:7.4,f:0.2,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
-  {name:'菠菜',unit:'100g',q:100,u:'g',cal:23,p:2.9,c:3.6,f:0.4,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
+  {name:'菠菜',unit:'100g',q:100,u:'g',cal:23,p:2.9,c:3.6,f:0.4,cat:'蔬果',meals:['breakfast','lunch','dinner'],note:'照片食物'},
   {name:'木耳',unit:'100g',q:100,u:'g',cal:25,p:1.5,c:6.8,f:0.2,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
   {name:'蘑菇',unit:'100g',q:100,u:'g',cal:28,p:3.6,c:5.3,f:0.3,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
   {name:'莲藕',unit:'100g',q:100,u:'g',cal:74,p:2.6,c:17.2,f:0.1,cat:'蔬果',meals:['lunch','dinner'],note:'照片食物'},
@@ -1241,24 +1243,23 @@ function dailyTargets(){
   return {cal:c*4+p*4+f*9,p,c,f,trainingDay};
 }
 
-// 餐次热量分配比例：早25% / 午35% / 晚30% / 加餐10%
-const MEAL_RATIO={breakfast:0.25, lunch:0.35, dinner:0.30, snack:0.10};
+// 三餐平均分配全天目标；额外加餐按实际剩余额度记录。
+const MEAL_RATIO={breakfast:1/3,lunch:1/3,dinner:1/3,snack:0};
 const MEAL_RECOMMENDATION={
-  breakfast:'燕麦50g＋香蕉1根＋高蛋白面包50g＋水煮蛋2个；蛋白不足再补蛋白粉',
-  lunch:'熟紫米饭250g＋去皮鸡腿肉150g＋西兰花200g＋胡萝卜100g',
-  dinner:'熟紫米饭250g＋去皮鸡腿肉150g＋菠菜200g＋蘑菇100g',
-  snack:'饮品按杯型选择；减脂期优先少糖，当天蛋白不足再补蛋白粉'
-};
-const MEAL_RECOMMENDATION_META={
-  breakfast:'示例约570 kcal · 蛋白28g',
-  lunch:'示例约665 kcal · 蛋白52g',
-  dinner:'示例约630 kcal · 蛋白55g'
+  breakfast:'熟米饭225g＋熟去皮鸡腿肉110g＋西兰花100g；菜中烹调油估算8g',
+  lunch:'熟米饭225g＋熟去皮鸡腿肉110g＋菠菜100g；菜中烹调油估算8g',
+  dinner:'熟米饭225g＋熟去皮鸡腿肉110g＋西兰花100g；菜中烹调油估算8g',
+  snack:'三餐示例已接近全天目标；加餐按当天剩余额度选择，蛋白不足再补蛋白粉'
 };
 const MEAL_PLAN_ITEMS={
-  breakfast:[{name:'燕麦',qty:1},{name:'香蕉',qty:1},{name:'高蛋白面包',qty:1},{name:'水煮蛋',qty:2}],
-  lunch:[{name:'紫米饭',qty:2.5},{name:'鸡腿肉',qty:1.5},{name:'西兰花',qty:2},{name:'胡萝卜',qty:1}],
-  dinner:[{name:'紫米饭',qty:2.5},{name:'鸡腿肉',qty:1.5},{name:'菠菜',qty:2},{name:'蘑菇',qty:1}]
+  breakfast:[{name:'米饭',qty:2.25},{name:'鸡腿肉',qty:1.1},{name:'西兰花',qty:1},{name:'烹调油',qty:8}],
+  lunch:[{name:'米饭',qty:2.25},{name:'鸡腿肉',qty:1.1},{name:'菠菜',qty:1},{name:'烹调油',qty:8}],
+  dinner:[{name:'米饭',qty:2.25},{name:'鸡腿肉',qty:1.1},{name:'西兰花',qty:1},{name:'烹调油',qty:8}]
 };
+const MEAL_RECOMMENDATION_META=Object.fromEntries(Object.entries(MEAL_PLAN_ITEMS).map(([meal,items])=>{
+  const totals=items.reduce((sum,item)=>{const food=FOOD_MAP[item.name];return {cal:sum.cal+food.cal*item.qty,p:sum.p+food.p*item.qty};},{cal:0,p:0});
+  return [meal,'示例约'+Math.round(totals.cal)+' kcal · 蛋白'+Math.round(totals.p)+'g'];
+}));
 
 // 完成餐计划时自动计入营养；撤销时只删除计划生成的记录，保留手动记录。
 function setMealPlanIntake(date,meal,done){
@@ -1288,9 +1289,9 @@ function renderMealChecklist(){
 // 某餐营养目标（四舍五入到整数）
 function mealTargets(meal){
   const d=dailyTargets();
-  const part=total=>meal==='snack'
-    ? total-['breakfast','lunch','dinner'].reduce((sum,key)=>sum+Math.round(total*MEAL_RATIO[key]),0)
-    : Math.round(total*(MEAL_RATIO[meal]||0));
+  const before=MEAL_ORDER.slice(0,MEAL_ORDER.indexOf(meal)).reduce((sum,key)=>sum+MEAL_RATIO[key],0);
+  const after=before+(MEAL_RATIO[meal]||0);
+  const part=total=>Math.round(total*after)-Math.round(total*before);
   return {cal:part(d.cal),p:part(d.p),c:part(d.c),f:part(d.f)};
 }
 
